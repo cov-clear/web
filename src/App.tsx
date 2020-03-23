@@ -9,7 +9,6 @@ import {
   Divider,
   Text,
   Heading,
-  Box,
   Container,
 } from 'theme-ui';
 import styled from '@emotion/styled';
@@ -25,15 +24,13 @@ const BlockButton = styled(Button)(() => ({
   width: '100%',
 })) as any;
 
-// TODO: reusable page element
-
 const Homepage = () => {
   return (
     <Container sx={{ maxWidth: '600px' }} py={4} px={2}>
       <Heading>COVID-19 clearing application</Heading>
       <Text my={2}>
         This application is for authorized personnel to order and verify their results of the
-        COVID-19 antibody test.
+        COVID-19 antibody test, lorem ipsum etc
       </Text>
       <Divider />
       <Grid gap={2}>
@@ -48,7 +45,7 @@ const Homepage = () => {
 const IdentityPage = () => {
   return (
     <Container sx={{ maxWidth: '600px' }} py={4} px={2}>
-      <Heading mb={2}>Your identity</Heading>
+      <Heading mb={2}>Your identity, this is a test page to test react router</Heading>
       <IdentityForm />
     </Container>
   );
