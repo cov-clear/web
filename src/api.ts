@@ -1,3 +1,5 @@
+import http from 'axios';
+
 interface Profile {
   name: string;
   dateOfBirth: string;
@@ -43,65 +45,69 @@ interface SharingCode {
 }
 
 const user = {
-  id: "ABCDE-12345-ABCDE-12345",
-  email: "test@test.com",
-  roles: "abc",
+  id: 'ABCDE-12345-ABCDE-12345',
+  email: 'test@test.com',
+  roles: 'abc',
   profile: {
-    name: "John Smith",
-    dateOfBirth: "1970-01-01",
-    sex: "male"
+    name: 'John Smith',
+    dateOfBirth: '1970-01-01',
+    sex: 'male',
   },
   address: {
-    address1: "65 Shoreditch High Street",
-    address2: "Shoreditch",
-    city: "London",
-    region: "Greater London",
-    postcode: "E1 6JJ",
-    countryCode: "UK"
-  }
+    address1: '65 Shoreditch High Street',
+    address2: 'Shoreditch',
+    city: 'London',
+    region: 'Greater London',
+    postcode: 'E1 6JJ',
+    countryCode: 'UK',
+  },
 };
 
 const testResult = {
-  id: "ABCDE-12345-ABCDE-12346",
-  testType: "Antibody",
-  userId: "ABCDE-12345-ABCDE-12345",
-  dateTaken: "2020-04-10",
+  id: 'ABCDE-12345-ABCDE-12346',
+  testType: 'Antibody',
+  userId: 'ABCDE-12345-ABCDE-12345',
+  dateTaken: '2020-04-10',
   results: {
     c: true,
     igg: true,
-    igm: true
+    igm: true,
   },
-  testerId: "ABCDE-12345-ABCDE-12346",
-  trustedTester: true
+  testerId: 'ABCDE-12345-ABCDE-12346',
+  trustedTester: true,
 };
 
 const testType = {
-  id: "ABCDE-12345-ABCDE-12347",
-  name: "Antibody",
+  id: 'ABCDE-12345-ABCDE-12347',
+  name: 'Antibody',
   resultsSchema: {
-    type: "object",
+    type: 'object',
     properties: {
-      c: { type: "boolean", title: "C" },
-      igg: { type: "boolean", title: "IgG" },
-      igm: { type: "boolean", title: "IgM" }
-    }
+      c: { type: 'boolean', title: 'C' },
+      igg: { type: 'boolean', title: 'IgG' },
+      igm: { type: 'boolean', title: 'IgM' },
+    },
   },
-  requiresTrustedTester: false
+  requiresTrustedTester: false,
 };
 
 const sharingCode = {
-  code: "3a44e5ce-a799-4fe8-a626-cc2e05deaf3a",
-  expiry: "2020-04-01T00:00:00Z"
+  code: '3a44e5ce-a799-4fe8-a626-cc2e05deaf3a',
+  expiry: '2020-04-01T00:00:00Z',
 };
 
-function createMagicLink(email: string): Promise<undefined> {
-  // POST /auth/magic-links { email }
-  return getPromise();
+export interface MagicLinkResult {
+  code?: string; // only there in development
+  creationTime: string;
+  active: boolean;
+}
+
+export function createMagicLink(email: string): Promise<MagicLinkResult> {
+  return http.post('/api/v1/auth/magic-links', { email }).then((response) => response.data);
 }
 
 function createLogin(email: string, authCode: string): Promise<undefined> {
   // POST /auth/login { email, authCode, method: "magic-link" }
-  const response = [];
   return getPromise();
 }
 
@@ -120,38 +126,24 @@ function updateUser(token: string, userId: string, user: User): Promise<User> {
   return getPromise(user);
 }
 
-function getTestResults(
-  token: string,
-  userId: string
-): Promise<Array<TestResult>> {
+function getTestResults(token: string, userId: string): Promise<Array<TestResult>> {
   // GET /users/:userId/tests
   return getPromise([testResult]);
 }
 
-function createTestResult(
-  token: string,
-  userId: string,
-  data: any
-): Promise<TestResult> {
+function createTestResult(token: string, userId: string, data: any): Promise<TestResult> {
   // POST /users/:userId/tests { ...data }
   return getPromise(testResult);
 }
 
-function createSharingCode(
-  token: string,
-  userId: string
-): Promise<SharingCode> {
+function createSharingCode(token: string, userId: string): Promise<SharingCode> {
   // POST /users/:userId/sharing-code { }
   return getPromise(sharingCode);
 }
 
-function requestAccess(
-  token: string,
-  userId: string,
-  sharingCode: string
-): Promise<object> {
+function requestAccess(token: string, userId: string, sharingCode: string): Promise<object> {
   // POST /users/:userId/access-requests { sharingCode }
-  return getPromise({ userId: "ABCDE-12345-ABCDE-12345" });
+  return getPromise({ userId: 'ABCDE-12345-ABCDE-12345' });
 }
 
 function getTestTypes(token: string): Promise<Array<TestType>> {
@@ -175,5 +167,5 @@ export default {
   createTestResult,
   createSharingCode,
   requestAccess,
-  getTestTypes
+  getTestTypes,
 };
