@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Switch, Route, Link, useParams, useHistory } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Link,
+  useParams,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import {
   Input,
   Label,
@@ -11,18 +19,22 @@ import {
   Heading,
   Container,
   Spinner,
+  Box,
 } from 'theme-ui';
+import Measure from 'react-measure';
+import QRCode from 'qrcode.react';
 import styled from '@emotion/styled';
 import { useFormik } from 'formik';
 import { useMediaLayout } from 'use-media';
 import * as yup from 'yup';
 
+/* import {  } from './api'; */
 import theme from './theme';
 
 const useMobileLayout = () => useMediaLayout({ maxWidth: '1000px' }); // TODO: how large should it be?
 
 const PageContainer = ({ children }: { children: React.ReactNode }) => (
-  <Container sx={{ maxWidth: '600px' }} py={4} px={2}>
+  <Container sx={{ maxWidth: '600px' }} pt={5} pb={4} px={2}>
     {children}
   </Container>
 );
@@ -31,16 +43,21 @@ const BlockButton = styled(Button)(() => ({
   display: 'block',
   width: '100%',
 })) as any;
+const FloatingButton = styled(Button)(() => ({
+  position: 'fixed',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  bottom: '10vh',
+})) as any;
 
 const Homepage = () => {
   return (
     <PageContainer>
-      <Heading>COVID-19 clearing application</Heading>
-      <Text my={2}>
+      <Heading mb={4}>COVID-19 clearing application</Heading>
+      <Text mb={2}>
         This application is for authorized folks to order and verify their results of the COVID-19
         antibody test, lorem ipsum etc
       </Text>
-      <Divider />
       <Grid gap={2}>
         <BlockButton as={Link} to="/login">
           Sign in
@@ -62,7 +79,7 @@ const IdentityPage = () => {
 
   return (
     <PageContainer>
-      <Heading mb={2}>Your details</Heading>
+      <Heading mb={4}>Your details</Heading>
       <IdentityForm onComplete={handleIdentityFilled} />
     </PageContainer>
   );
@@ -124,7 +141,7 @@ const LoginPage = () => {
 
   return (
     <PageContainer>
-      <Heading mb={2}>Sign in</Heading>
+      <Heading mb={4}>Sign in</Heading>
       {submitted ? (
         <Text>
           Please check your inbox at <strong>{email}</strong> for the signup link.
@@ -184,29 +201,77 @@ const LinkPage = () => {
 
 const MainPage = () => {
   const { userId } = useParams();
+  const { path } = useRouteMatch();
+  const tests = [];
   // TODO: if the user does not have identity, redirect to /identity
+  const permissions = {
+    administerTest: false,
+    administerSelfTest: false,
+    scanPerson: true,
+    listPeople: false,
+  };
+
   return (
     <PageContainer>
-      <Heading>
-        I will show your tests and redirect to qr code page if no tests yet, and have an option to
-        show the code if you have tests
-      </Heading>
+      <Heading pb={4}>Uku Tammet</Heading>
+      <Switch>
+        <Route path={path} exact>
+          I will show tests
+        </Route>
+        <Route path={`${path}/code`} exact>
+          <ResponsiveQRCode value={'8210f7e6-ee90-49f9-bba5-6a4816811e8d'} />
+        </Route>
+      </Switch>
+      {permissions.scanPerson && (
+        <FloatingButton as={Link} to="/scan">
+          Scan code
+        </FloatingButton>
+      )}
     </PageContainer>
   );
 };
 
-const CodePage = () => {
+const ResponsiveQRCode = ({ value }: { value: string }) => {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  function handleResize({ bounds }: any) {
+    console.log(bounds);
+    if (bounds) {
+      setDimensions(bounds);
+    }
+  }
+
+  return (
+    <Measure bounds onResize={handleResize}>
+      {({ measureRef }) => (
+        <Box ref={measureRef} sx={{ width: '100%' }}>
+          <QRCode size={dimensions.width} value={value} />
+        </Box>
+      )}
+    </Measure>
+  );
+};
+
+const NotFoundPage = () => {
   return (
     <PageContainer>
-      <Heading>I will show the QR code</Heading>
+      <Heading>Not found</Heading>
     </PageContainer>
   );
 };
+
+/* const CodePage = () => { */
+/*   return ( */
+/*     <PageContainer> */
+/*       <Heading mb={4}>I will show the QR code</Heading> */
+/*     </PageContainer> */
+/*   ); */
+/* }; */
 
 const ScanPage = () => {
   return (
     <PageContainer>
-      <Heading>I will show the QR code</Heading>
+      <Heading mb={4}>I will scan the QR code</Heading>
     </PageContainer>
   );
 };
@@ -242,14 +307,14 @@ const App = () => {
           <Route path="/users/:userId/identity" exact>
             <IdentityPage />
           </Route>
-          <Route path="/users/:userId/" exact>
+          <Route path="/users/:userId">
             <MainPage />
-          </Route>
-          <Route path="/users/:userId/code" exact>
-            <CodePage />
           </Route>
           <Route path="/scan" exact>
             <ScanPage />
+          </Route>
+          <Route path="*">
+            <NotFoundPage />
           </Route>
         </Switch>
       </BrowserRouter>
