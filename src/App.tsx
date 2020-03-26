@@ -141,7 +141,7 @@ const LoginPage = () => {
 
   return (
     <PageContainer>
-      <Heading mb={4}>Sign in</Heading>
+      <Heading mb={2}>Sign in</Heading>
       {submitted ? (
         <Text>
           Please check your inbox at <strong>{email}</strong> for the signup link.
