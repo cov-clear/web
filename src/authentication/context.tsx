@@ -23,15 +23,12 @@ export const Provider = ({ children }: { children?: ReactNode }) => {
   const signOut = useCallback(() => {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     setToken(null);
-  }, [setToken]);
+  }, []);
 
-  const authenticate = useCallback(
-    (token) => {
-      localStorage.setItem(LOCAL_STORAGE_KEY, token);
-      setToken(token);
-    },
-    [setToken],
-  );
+  const authenticate = useCallback((token) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, token);
+    setToken(token);
+  }, []);
 
   return <ContextProvider value={{ authenticate, signOut, token }}>{children}</ContextProvider>;
 };
