@@ -1,52 +1,38 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Label, Input, Button, Text, Message, Heading, Image } from 'theme-ui';
-import { Link } from 'react-router-dom';
+import { Label, Input, Button, Text, Heading, Box } from 'theme-ui';
 
 import { createMagicLink } from '../api';
-import messageSentIllustration from '../illustrations/messageSent.svg';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
-  const [developmentCode, setDevelopmentCode] = useState('');
 
   const submitted = !!email;
 
   async function handleLogin({ email }: { email: string }) {
-    const result = await createMagicLink(email);
+    await createMagicLink(email);
     setEmail(email);
-    if (result.code) {
-      setDevelopmentCode(result.code.value);
-    }
   }
 
   return (
     <>
-      <Heading mb={5}>Sign in</Heading>
+      <Heading mb={3}>Sign in</Heading>
       {submitted ? (
-        <>
-          <Image
-            src={messageSentIllustration}
-            alt="A person standing next to a giant opened mail envelope"
-            mb={2}
-          />
-          <Text>
-            To sign in, please check your inbox at <strong>{email}</strong> for the signup link.
-          </Text>
-          {developmentCode && (
-            <Message mt={2}>
-              During development mode, you can navigate there directly by clicking{' '}
-              <Link to={`/link/${developmentCode}`}>here</Link>
-            </Message>
-          )}
-        </>
+        <Text>
+          We sent an email to <strong>{email}</strong> with a secure link to sign you in.
+        </Text>
       ) : (
-        <LoginForm onComplete={handleLogin} />
+        <>
+          <Text mb={6}>We’ll send you a secure sign in link to your email</Text>
+          <LoginForm onComplete={handleLogin} />
+        </>
       )}
     </>
   );
 };
+
+const AnyBox = Box as any;
 
 const LoginForm = ({
   onComplete,
@@ -68,13 +54,20 @@ const LoginForm = ({
   });
 
   return (
-    <form onSubmit={form.handleSubmit}>
-      <Label htmlFor="cov-email">Your email</Label>
-      <Input id="cov-email" type="email" {...form.getFieldProps('email')} />
-      {form.touched.email && form.errors.email ? <Text>{form.errors.email}</Text> : null}
+    <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
+      <Box>
+        <Label htmlFor="cov-email">Your email</Label>
+        <Input
+          id="cov-email"
+          type="email"
+          {...form.getFieldProps('email')}
+          placeholder="e.g. john.smith@email.com"
+        />
+        {form.touched.email && form.errors.email ? <Text>{form.errors.email}</Text> : null}
+      </Box>
       <Button type="submit" variant="block" disabled={form.isSubmitting} mt={2}>
-        Submit
+        Send magic link
       </Button>
-    </form>
+    </AnyBox>
   );
 };
