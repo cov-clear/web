@@ -60,16 +60,17 @@ const LoginForm = ({
     validationSchema: yup.object().shape({
       email: yup
         .string()
+        .trim()
         .email('Please check your email address')
         .required('Please fill your email address'),
     }),
-    onSubmit: onComplete,
+    onSubmit: ({ email }) => onComplete({ email: email.trim() }),
   });
 
   return (
     <form onSubmit={form.handleSubmit}>
       <Label htmlFor="cov-email">Your email</Label>
-      <Input name="email" id="cov-email" type="email" {...form.getFieldProps('email')} />
+      <Input id="cov-email" type="email" {...form.getFieldProps('email')} />
       {form.touched.email && form.errors.email ? <Text>{form.errors.email}</Text> : null}
       <Button
         sx={{ display: 'block', width: '100%' }}
