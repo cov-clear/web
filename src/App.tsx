@@ -2,9 +2,15 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ThemeProvider, Container } from 'theme-ui';
 
-import { LoginPage, LinkPage, Provider as AuthenticationProvider } from './authentication';
-import theme from './theme';
+import {
+  LoginPage,
+  LinkPage,
+  Provider as AuthenticationProvider,
+  AuthenticatedRoute,
+} from './authentication';
+import { IdentityPage } from './identity';
 
+import theme from './theme';
 import { NotFoundPage, StartPage } from './staticPages';
 
 const App = () => {
@@ -20,6 +26,9 @@ const App = () => {
         <Route path="/link/:linkId" exact>
           <LinkPage />
         </Route>
+        <AuthenticatedRoute path="/users/:userId" exact>
+          <IdentityPage />
+        </AuthenticatedRoute>
         <Route path="*">
           <NotFoundPage />
         </Route>
