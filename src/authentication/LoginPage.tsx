@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Label, Input, Button, Text, Message, Heading } from 'theme-ui';
+import { Label, Input, Button, Text, Message, Heading, Image } from 'theme-ui';
 import { Link } from 'react-router-dom';
 
 import { createMagicLink } from '../api';
+import messageSentIllustration from '../illustrations/messageSent.svg';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -25,12 +26,17 @@ export const LoginPage = () => {
       <Heading mb={4}>Sign in</Heading>
       {submitted ? (
         <>
+          <Image
+            src={messageSentIllustration}
+            alt="A person standing next to a giant opened mail envelope"
+            mb={2}
+          />
           <Text>
-            Please check your inbox at <strong>{email}</strong> for the signup link.
+            To sign in, please check your inbox at <strong>{email}</strong> for the signup link.
           </Text>
           {developmentCode && (
             <Message mt={2}>
-              In development mode, you can navigate there directly by clicking{' '}
+              During development mode, you can navigate there directly by clicking{' '}
               <Link to={`/link/${developmentCode}`}>here</Link>
             </Message>
           )}
