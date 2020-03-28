@@ -1,28 +1,11 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route, Link, LinkProps } from 'react-router-dom';
-import { ThemeProvider, Container, Heading, Button, ButtonProps } from 'theme-ui';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { ThemeProvider, Container } from 'theme-ui';
 
 import { LoginPage, LinkPage, Provider as AuthenticationProvider } from './authentication';
 import theme from './theme';
 
-const NavButton = Button as React.FC<ButtonProps & LinkProps>;
-const NotFound = () => (
-  <>
-    <Heading mb={4}>This page wasn't found</Heading>
-    <NavButton as={Link} sx={{ display: 'block', width: '100%' }} to="/">
-      Go to the start page
-    </NavButton>
-  </>
-);
-
-const StartPage = () => (
-  <>
-    <Heading mb={4}>cov-clear</Heading>
-    <NavButton as={Link} sx={{ display: 'block', width: '100%' }} to="/login">
-      Sign in
-    </NavButton>
-  </>
-);
+import { NotFoundPage, StartPage } from './staticPages';
 
 const App = () => {
   return (
@@ -38,7 +21,7 @@ const App = () => {
           <LinkPage />
         </Route>
         <Route path="*">
-          <NotFound />
+          <NotFoundPage />
         </Route>
       </Switch>
     </Container>
