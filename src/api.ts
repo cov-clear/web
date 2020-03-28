@@ -1,4 +1,66 @@
-import http from 'axios';
+import http, { CancelToken } from 'axios';
+
+const authenticated = (token: Token) =>
+  http.create({
+    timeout: 3000,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export interface HttpOptions {
+  cancelToken?: CancelToken;
+}
+
+export interface MagicLinkResult {
+  code?: string; // only there in development
+  creationTime: string;
+  active: boolean;
+}
+
+export async function createMagicLink(
+  email: string,
+  options?: HttpOptions,
+): Promise<MagicLinkResult> {
+  const response = await http.post(
+    '/api/v1/auth/magic-links',
+    { email },
+    { cancelToken: options?.cancelToken },
+  );
+  return response.data;
+}
+
+export async function authenticate(authCode: string, options?: HttpOptions): Promise<Token> {
+  const response = await http.post(
+    '/api/v1/auth/login',
+    { authCode },
+    { cancelToken: options?.cancelToken },
+  );
+  return response.data.token;
+}
+
+export type Token = string;
+
+export interface AuthenticatedHttpOptions extends HttpOptions {
+  token: Token;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  creationTime: string;
+  profile?: Profile;
+  address?: Address;
+}
+
+export async function fetchUser(id: string, options: AuthenticatedHttpOptions): Promise<User> {
+  const response = await authenticated(options.token).get(`/api/v1/users/${id}`, {
+    cancelToken: options.cancelToken,
+  });
+  return response.data;
+}
+
+// mock apis below
 
 interface Profile {
   name: string;
@@ -13,14 +75,6 @@ interface Address {
   region: string;
   postcode: string;
   countryCode: string;
-}
-
-interface User {
-  id?: string;
-  email: string;
-  roles: string; // Define this
-  profile: Profile;
-  address: Address;
 }
 
 interface TestType {
@@ -95,16 +149,6 @@ const sharingCode = {
   code: '3a44e5ce-a799-4fe8-a626-cc2e05deaf3a',
   expiry: '2020-04-01T00:00:00Z',
 };
-
-export interface MagicLinkResult {
-  code?: string; // only there in development
-  creationTime: string;
-  active: boolean;
-}
-
-export function createMagicLink(email: string): Promise<MagicLinkResult> {
-  return http.post('/api/v1/auth/magic-links', { email }).then((response) => response.data);
-}
 
 function createLogin(email: string, authCode: string): Promise<undefined> {
   // POST /auth/login { email, authCode, method: "magic-link" }
