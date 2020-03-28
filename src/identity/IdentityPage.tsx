@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 
 import { useUser } from '../resources';
-import { Profile } from '../api';
+import { Profile, Address } from '../api';
 
 import { ProfileForm } from './ProfileForm';
+import { AddressForm } from './AddressForm';
 
 export const IdentityPage = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -20,21 +21,35 @@ export const IdentityPage = () => {
     return updateUser({ ...user!, profile });
   }
 
+  function createAddress(address: Address) {
+    return updateUser({ ...user!, address });
+  }
+
   return (
     <>
       <Heading mb={5}>
         {!user.profile ? (
           <>
-            Enter your details <small>1/2</small>
+            Enter your details{' '}
+            <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
+              1/2
+            </Text>
+          </>
+        ) : !user.address ? (
+          <>
+            Enter your details{' '}
+            <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
+              2/2
+            </Text>
           </>
         ) : (
-          <>
-            {user.profile.firstName} {user.profile.lastName}
-          </>
+          `${user.profile.firstName} ${user.profile.lastName}`
         )}
       </Heading>
       {!user.profile ? (
         <ProfileForm onComplete={createProfile} />
+      ) : !user.address ? (
+        <AddressForm onComplete={createAddress} />
       ) : (
         <Identity email={user.email} profile={user.profile} />
       )}
