@@ -4,15 +4,20 @@ import * as yup from 'yup';
 import { Label, Input, Button, Text, Heading, Box } from 'theme-ui';
 
 import { createMagicLink } from '../api';
+import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
+  const [developmentCode, setDevelopmentCode] = useState('');
 
   const submitted = !!email;
 
   async function handleLogin({ email }: { email: string }) {
-    await createMagicLink(email);
+    const result = await createMagicLink(email);
     setEmail(email);
+    if (result.code) {
+      setDevelopmentCode(result.code.value);
+    }
   }
 
   return (
@@ -28,6 +33,12 @@ export const LoginPage = () => {
           <LoginForm onComplete={handleLogin} />
         </>
       )}
+      {developmentCode ? (
+        <Text mt={7}>
+          Development only: <Link to={`/link/${developmentCode}`}>Click here</Link> to sign in
+          immediately
+        </Text>
+      ) : null}
     </>
   );
 };
