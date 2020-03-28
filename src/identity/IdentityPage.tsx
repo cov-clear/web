@@ -22,8 +22,16 @@ export const IdentityPage = () => {
 
   return (
     <>
-      <Heading mb={4}>
-        {user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : 'Fill your identity'}
+      <Heading mb={5}>
+        {!user.profile ? (
+          <>
+            Enter your details <small>1/2</small>
+          </>
+        ) : (
+          <>
+            {user.profile.firstName} {user.profile.lastName}
+          </>
+        )}
       </Heading>
       {!user.profile ? (
         <ProfileForm onComplete={createProfile} />
@@ -46,4 +54,3 @@ const Identity = ({ email, profile }: { email: string; profile: Profile }) => {
     </>
   );
 };
-

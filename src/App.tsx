@@ -15,7 +15,7 @@ import { NotFoundPage, StartPage } from './staticPages';
 
 const App = () => {
   return (
-    <Container sx={{ maxWidth: '600px' }} pt={5} pb={4} px={2}>
+    <Container sx={{ maxWidth: '600px' }} pt={6} pb={5} px={3}>
       <Switch>
         <Route path="/" exact>
           <StartPage />

@@ -53,7 +53,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
     form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
 
   return (
-    <AnyBox as="form" sx={{ display: 'grid', gridGap: 2 }} onSubmit={form.handleSubmit}>
+    <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
       <Box>
         <Label htmlFor="identity-first-name">First names</Label>
         <Input id="identity-first-name" type="text" {...form.getFieldProps('firstName')} />
@@ -78,19 +78,25 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       </Box>
 
       <Box>
-        <Label>
-          <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.FEMALE })} />
-          Female
-        </Label>
-        <Label>
-          <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.MALE })} />
-          Male
-        </Label>
+        <Label htmlFor="identity-sex-female">Sex</Label>
+        <Box sx={{ display: 'flex' }}>
+          <Label>
+            <Radio
+              id="identity-sex-female"
+              {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.FEMALE })}
+            />
+            Female
+          </Label>
+          <Label>
+            <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.MALE })} />
+            Male
+          </Label>
+        </Box>
         {fieldError('sex')}
       </Box>
 
       <Button variant="block" type="submit" disabled={form.isSubmitting}>
-        Submit
+        Next
       </Button>
     </AnyBox>
   );
