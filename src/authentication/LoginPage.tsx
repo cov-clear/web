@@ -23,7 +23,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      <Heading mb={4}>Sign in</Heading>
+      <Heading mb={5}>Sign in</Heading>
       {submitted ? (
         <>
           <Image
