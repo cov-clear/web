@@ -12,8 +12,12 @@ export interface HttpOptions {
   cancelToken?: CancelToken;
 }
 
+export interface DevelopmentAuthCode {
+  value: string;
+}
+
 export interface MagicLinkResult {
-  code?: string; // only there in development
+  code?: DevelopmentAuthCode; // only there in development
   creationTime: string;
   active: boolean;
 }

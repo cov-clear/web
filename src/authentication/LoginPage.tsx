@@ -17,7 +17,7 @@ export const LoginPage = () => {
     const result = await createMagicLink(email);
     setEmail(email);
     if (result.code) {
-      setDevelopmentCode(result.code);
+      setDevelopmentCode(result.code.value);
     }
   }
 
