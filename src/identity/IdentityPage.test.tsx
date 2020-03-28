@@ -154,20 +154,6 @@ describe('Identity page', () => {
       await wait(() => expect(screen.queryByText(/fill your date of birth/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
-
-    /* it('shows errors for incorrect date of birth', async () => { */
-    /*   await wait(() => expect(screen.queryByText(/fill your identity/i)).toBeTruthy()); */
-    /*   fireEvent.change(screen.getByLabelText(/first name/i), { */
-    /*     target: { value: '  First Middle  ' }, */
-    /*   }); */
-    /*   fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: '  Last  ' } }); */
-    /*   fireEvent.click(screen.getByLabelText(/female/i)); */
-    /*   fireEvent.change(screen.getByLabelText(/date of birth/i), { */
-    /*     target: { value: '2025-10-01' }, */
-    /*   }); */
-    /*   await wait(() => expect(screen.queryByText(/check your date of birth/i)).toBeTruthy()); */
-    /*   expect(updateUserMock).not.toHaveBeenCalled(); */
-    /* }); */
   });
 });
 
