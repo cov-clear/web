@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import http, { CancelToken } from 'axios';
+import http from 'axios';
 import { useAuthentication } from './authentication';
 
-import { fetchUser, updateUser, User } from './api';
+import { fetchUser, updateUser, User, Country, fetchCountries } from './api';
 
 export function useUser(id: string) {
   const [user, setUser] = useState<User | null>(null);
@@ -11,16 +11,16 @@ export function useUser(id: string) {
   useEffect(() => {
     const cancelToken = http.CancelToken.source();
 
-    const loadUser = async (cancelToken?: CancelToken) => {
+    const loadUser = async () => {
       if (token) {
-        const fetchedUser = await fetchUser(id, { token, cancelToken });
+        const fetchedUser = await fetchUser(id, { token, cancelToken: cancelToken.token });
         setUser(fetchedUser);
       } else {
         setUser(null);
       }
     };
 
-    loadUser(cancelToken.token);
+    loadUser();
     return () => cancelToken.cancel();
   }, [id, token, setUser]);
 
@@ -35,4 +35,27 @@ export function useUser(id: string) {
   );
 
   return { user, update };
+}
+
+export function useCountries() {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const { token } = useAuthentication();
+
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+
+    const loadCountries = async () => {
+      if (token) {
+        const countries = await fetchCountries({ token, cancelToken: cancelToken.token });
+        setCountries(countries);
+      } else {
+        setCountries([]);
+      }
+    };
+
+    loadCountries();
+    return () => cancelToken.cancel();
+  }, [token]);
+
+  return countries;
 }
