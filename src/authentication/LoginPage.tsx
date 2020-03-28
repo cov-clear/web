@@ -72,12 +72,7 @@ const LoginForm = ({
       <Label htmlFor="cov-email">Your email</Label>
       <Input id="cov-email" type="email" {...form.getFieldProps('email')} />
       {form.touched.email && form.errors.email ? <Text>{form.errors.email}</Text> : null}
-      <Button
-        sx={{ display: 'block', width: '100%' }}
-        type="submit"
-        disabled={form.isSubmitting}
-        mt={2}
-      >
+      <Button type="submit" variant="block" disabled={form.isSubmitting} mt={2}>
         Submit
       </Button>
     </form>

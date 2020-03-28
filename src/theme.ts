@@ -8,8 +8,10 @@ const theme = {
     primary: {
       cursor: 'pointer',
     },
-    secondary: {
+    block: {
       cursor: 'pointer',
+      display: 'block',
+      width: '100%',
     },
   },
 };

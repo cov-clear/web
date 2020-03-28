@@ -10,7 +10,7 @@ export const NotFoundPage = () => (
   <>
     <Heading mb={4}>This page doesn't exist</Heading>
     <Image src={balloonIllustration} alt="A woman flying away with a bundle of balloons" mb={2} />
-    <NavButton as={Link} sx={{ display: 'block', width: '100%' }} to="/">
+    <NavButton as={Link} variant="block" to="/">
       Go to the start page
     </NavButton>
   </>
@@ -24,7 +24,7 @@ export const StartPage = () => (
       alt="Two doctors standing next to a large pill bottle"
       mb={2}
     />
-    <NavButton as={Link} sx={{ display: 'block', width: '100%' }} to="/login">
+    <NavButton as={Link} variant="block" to="/login">
       Sign in
     </NavButton>
   </>
