@@ -76,10 +76,29 @@ export interface Profile {
   sex: Sex;
 }
 
-export interface Address {}
+export interface Address {
+  address1: string;
+  address2?: string;
+  city: string;
+  region: string;
+  postcode: string;
+  countryCode: string;
+}
+
+export interface Country {
+  code: string;
+  name: string;
+}
 
 export async function updateUser(user: User, options: AuthenticatedHttpOptions): Promise<User> {
   const response = await authenticated(options.token).patch(`/api/v1/users/${user.id}`, user, {
+    cancelToken: options.cancelToken,
+  });
+  return response.data;
+}
+
+export async function fetchCountries(options: AuthenticatedHttpOptions): Promise<Country[]> {
+  const response = await authenticated(options.token).get('/api/v1/countries', {
     cancelToken: options.cancelToken,
   });
   return response.data;
