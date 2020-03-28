@@ -22,7 +22,7 @@ export function useUser(id: string) {
 
     loadUser();
     return () => cancelToken.cancel();
-  }, [id, token, setUser]);
+  }, [id, token]);
 
   const update = useCallback(
     async (user: User) => {
@@ -31,7 +31,7 @@ export function useUser(id: string) {
         setUser(updatedUser);
       }
     },
-    [token, setUser],
+    [token],
   );
 
   return { user, update };
@@ -57,5 +57,5 @@ export function useCountries() {
     return () => cancelToken.cancel();
   }, [token]);
 
-  return countries;
+  return { countries };
 }
