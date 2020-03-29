@@ -26,7 +26,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       firstName: yup
         .string()
         .trim()
-        .required('Please fill your first name(s)'),
+        .required('Please fill your first names'),
       lastName: yup
         .string()
         .trim()

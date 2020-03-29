@@ -8,7 +8,9 @@ import balloonIllustration from './illustrations/balloons.svg';
 const NavButton = Button as React.FC<ButtonProps & LinkProps>;
 export const NotFoundPage = () => (
   <>
-    <Heading mb={5}>This page doesn't exist</Heading>
+    <Heading as="h1" mb={5}>
+      This page doesn't exist
+    </Heading>
     <Image src={balloonIllustration} alt="A woman flying away with a bundle of balloons" mb={2} />
     <NavButton as={Link} variant="block" to="/">
       Go to the start page
@@ -18,7 +20,9 @@ export const NotFoundPage = () => (
 
 export const StartPage = () => (
   <>
-    <Heading mb={5}>Cov-clear</Heading>
+    <Heading as="h1" mb={5}>
+      Cov-clear
+    </Heading>
     <Image
       src={medicalIllustration}
       alt="Two doctors standing next to a large pill bottle"

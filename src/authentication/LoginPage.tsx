@@ -22,7 +22,9 @@ export const LoginPage = () => {
 
   return (
     <>
-      <Heading mb={3}>Sign in</Heading>
+      <Heading as="h1" mb={3}>
+        Sign in
+      </Heading>
       {submitted ? (
         <Text>
           We sent an email to <strong>{email}</strong> with a secure link to sign you in.
