@@ -33,6 +33,23 @@ const theme = {
       },
     },
   },
+  layout: {
+    page: {
+      maxWidth: '600px',
+      paddingTop: 6,
+      paddingBottom: 5,
+      paddingRight: 3,
+      paddingLeft: 3,
+    },
+  },
+  spinner: {
+    main: {
+      position: 'fixed',
+      top: '25%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  },
   buttons: {
     primary: {
       cursor: 'pointer',

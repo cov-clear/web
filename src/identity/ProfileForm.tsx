@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Box, Radio, Label, Input, Button, Text } from 'theme-ui';
+import { Flex, Box, Radio, Label, Input, Button, Text } from 'theme-ui';
 
 import { Profile, Sex } from '../api';
 
@@ -78,8 +78,10 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       </Box>
 
       <Box>
-        <Label htmlFor="identity-sex-female">Sex</Label>
-        <Box sx={{ display: 'flex' }}>
+        <Label mb={1} htmlFor="identity-sex-female">
+          Sex
+        </Label>
+        <Flex>
           <Label>
             <Radio
               id="identity-sex-female"
@@ -91,7 +93,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
             <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.MALE })} />
             Male
           </Label>
-        </Box>
+        </Flex>
         {fieldError('sex')}
       </Box>
 
