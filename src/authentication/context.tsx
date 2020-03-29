@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { Token } from '../api';
+import { decode } from './token';
 
 interface AuthenticationContext {
   token: Token | null;
@@ -33,4 +34,17 @@ export const Provider = ({ children }: { children?: ReactNode }) => {
   return <ContextProvider value={{ authenticate, signOut, token }}>{children}</ContextProvider>;
 };
 
-export const useAuthentication = (): AuthenticationContext => useContext(authenticationContext);
+export interface Authentication extends AuthenticationContext {
+  userId?: string;
+}
+
+export const useAuthentication = (): Authentication => {
+  const context = useContext(authenticationContext);
+  if (context.token) {
+    return {
+      ...context,
+      userId: decode(context.token).userId,
+    };
+  }
+  return context;
+};
