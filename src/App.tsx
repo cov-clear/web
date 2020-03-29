@@ -26,7 +26,7 @@ const App = () => {
         <Route path="/link/:linkId" exact>
           <LinkPage />
         </Route>
-        <AuthenticatedRoute path="/users/:userId" exact>
+        <AuthenticatedRoute path="/users/:userId">
           <IdentityPage />
         </AuthenticatedRoute>
         <Route path="*">
