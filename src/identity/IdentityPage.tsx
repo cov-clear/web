@@ -6,6 +6,7 @@ import {
   Heading,
   NavLink as ThemeUiNavLink,
   Flex,
+  Container,
   NavLinkProps,
 } from 'theme-ui';
 import {
@@ -43,7 +44,7 @@ export const IdentityPage = () => {
   const sharingCode = useSharingCode(userId);
 
   if (!user) {
-    return <Spinner mx="auto" sx={{ display: 'block' }} />;
+    return <Spinner variant="spinner.main" />;
   }
 
   function createProfile(profile: Profile) {
@@ -56,28 +57,28 @@ export const IdentityPage = () => {
 
   if (!user.profile) {
     return (
-      <>
+      <Container variant="page">
         <Heading as="h1" mb={5}>
           Enter your details <Small>1/2</Small>
         </Heading>
         <ProfileForm onComplete={createProfile} />
-      </>
+      </Container>
     );
   }
 
   if (!user.address) {
     return (
-      <>
+      <Container variant="page">
         <Heading as="h1" mb={5}>
           Enter your details <Small>2/2</Small>
         </Heading>
         <AddressForm onComplete={createAddress} />
-      </>
+      </Container>
     );
   }
 
   return (
-    <>
+    <Container variant="page">
       <Heading as="h1" mb={5}>
         {user.profile.firstName} {user.profile.lastName}
       </Heading>
@@ -103,6 +104,6 @@ export const IdentityPage = () => {
         </Route>
       </Switch>
       <Redirect from={url} to={`${url}/profile`} />
-    </>
+    </Container>
   );
 };

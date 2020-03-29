@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Label, Input, Button, Text, Heading, Box } from 'theme-ui';
+import { Container, Label, Input, Button, Text, Heading, Box } from 'theme-ui';
 
 import { createMagicLink } from '../api';
 import { Link } from 'react-router-dom';
@@ -21,7 +21,7 @@ export const LoginPage = () => {
   }
 
   return (
-    <>
+    <Container variant="page">
       <Heading as="h1" mb={3}>
         Sign in
       </Heading>
@@ -41,7 +41,7 @@ export const LoginPage = () => {
           immediately
         </Text>
       ) : null}
-    </>
+    </Container>
   );
 };
 
