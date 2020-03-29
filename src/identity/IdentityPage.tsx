@@ -8,6 +8,8 @@ import {
   Flex,
   Container,
   NavLinkProps,
+  ButtonProps,
+  Button,
 } from 'theme-ui';
 import {
   useRouteMatch,
@@ -16,6 +18,8 @@ import {
   NavLink as RouterNavLink,
   NavLinkProps as RouterNavLinkProps,
   Redirect,
+  Link,
+  LinkProps,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 
@@ -25,7 +29,7 @@ import { Profile, Address } from '../api';
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
 import { QRCode } from './QRCode';
-import { Test as TestIcon, Profile as ProfileIcon } from './icons';
+import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from './icons';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -34,6 +38,7 @@ const Small = ({ children }: { children: React.ReactNode }) => (
 );
 
 const NavLink = ThemeUiNavLink as React.FC<NavLinkProps & RouterNavLinkProps>;
+const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 
 export const IdentityPage = () => {
   const {
@@ -104,6 +109,9 @@ export const IdentityPage = () => {
         </Route>
       </Switch>
       <Redirect from={url} to={`${url}/profile`} />
+      <LinkButton as={Link} to="/scan" variant="fab">
+        <CameraIcon /> Scan
+      </LinkButton>
     </Container>
   );
 };

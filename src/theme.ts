@@ -61,6 +61,20 @@ const theme = {
       display: 'block',
       width: '100%',
     },
+    fab: {
+      cursor: 'pointer',
+      fontWeight: semibold,
+      color: 'primary',
+      borderColor: 'primary',
+      border: '2px solid',
+      backgroundColor: 'background',
+      position: 'fixed',
+      right: 4,
+      bottom: 4,
+      boxShadow: '2px 4px 12px rgba(0, 0, 0, 0.24)',
+      borderRadius: '24px',
+      fill: 'primary',
+    },
   },
 };
 
