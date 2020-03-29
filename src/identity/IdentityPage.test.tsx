@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { createMemoryHistory, History } from 'history';
 import { wait, render, fireEvent, screen } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
@@ -23,7 +23,7 @@ const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.Mocked
 >;
 
 describe('Identity page', () => {
-  let history;
+  let history: History;
   let userApi: MockUserApi;
 
   beforeEach(() => {
@@ -68,6 +68,30 @@ describe('Identity page', () => {
     it('loads and shows their sharing code in a qr code', async () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy();
+    });
+
+    it('lets you switch to the tests tab', async () => {
+      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
+      fireEvent.click(screen.getByText(/profile/i));
+      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+    });
+
+    it('lets you navigate with browser history', async () => {
+      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
+      history.goBack();
+      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      history.goForward();
+      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
   });
 
