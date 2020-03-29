@@ -104,3 +104,21 @@ export async function fetchCountries(options: AuthenticatedHttpOptions): Promise
   return response.data;
 }
 
+export interface SharingCode {
+  code: string;
+  expiryTime: string;
+}
+
+export async function createSharingCodeForUserId(
+  userId: string,
+  options: AuthenticatedHttpOptions,
+) {
+  const response = await authenticated(options.token).post(
+    `/api/v1/users/${userId}/sharing-code`,
+    undefined,
+    {
+      cancelToken: options.cancelToken,
+    },
+  );
+  return response.data;
+}
