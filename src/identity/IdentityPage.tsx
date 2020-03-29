@@ -3,11 +3,12 @@ import { Spinner, Text, Heading } from 'theme-ui';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { useUser } from '../resources';
+import { useUser, useSharingCode } from '../resources';
 import { Profile, Address } from '../api';
 
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
+import { QRCode } from './QRCode';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -18,6 +19,7 @@ const Small = ({ children }: { children: React.ReactNode }) => (
 export const IdentityPage = () => {
   const { userId } = useParams<{ userId: string }>();
   const { user, update: updateUser } = useUser(userId);
+  const sharingCode = useSharingCode(userId);
 
   if (!user) {
     return <Spinner mx="auto" sx={{ display: 'block' }} />;
@@ -34,7 +36,7 @@ export const IdentityPage = () => {
   if (!user.profile) {
     return (
       <>
-        <Heading mb={5}>
+        <Heading as="h1" mb={5}>
           Enter your details <Small>1/2</Small>
         </Heading>
         <ProfileForm onComplete={createProfile} />
@@ -45,7 +47,7 @@ export const IdentityPage = () => {
   if (!user.address) {
     return (
       <>
-        <Heading mb={5}>
+        <Heading as="h1" mb={5}>
           Enter your details <Small>2/2</Small>
         </Heading>
         <AddressForm onComplete={createAddress} />
@@ -55,23 +57,11 @@ export const IdentityPage = () => {
 
   return (
     <>
-      <Heading mb={5}>
+      <Heading as="h1" mb={5}>
         {user.profile.firstName} {user.profile.lastName}
       </Heading>
-      <Identity email={user.email} profile={user.profile} />
-    </>
-  );
-};
-
-const Identity = ({ email, profile }: { email: string; profile: Profile }) => {
-  return (
-    <>
-      <Text>
-        Born <strong>{format(new Date(profile.dateOfBirth), 'dd/MM/yyyy')}</strong>
-      </Text>
-      <Text>
-        Contact <strong>{email}</strong>
-      </Text>
+      <Text mb={5}>Date of birth: {format(new Date(user.profile.dateOfBirth), 'dd/MM/yyyy')}</Text>
+      {sharingCode ? <QRCode value={sharingCode.code} /> : null}
     </>
   );
 };

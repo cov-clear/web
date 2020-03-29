@@ -5,14 +5,22 @@ import { wait, render, fireEvent, screen } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
-import { fetchUser, updateUser, User, Sex } from '../api';
+import { fetchUser, updateUser, createSharingCodeForUserId, User, Sex } from '../api';
 import { useAuthentication } from '../authentication';
 
 jest.mock('../api');
 jest.mock('../authentication');
+jest.mock('./QRCode', () => ({
+  QRCode({ value }: { value: string }) {
+    return `Mock QRCode: ${value}`;
+  },
+}));
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
+const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.MockedFunction<
+  typeof createSharingCodeForUserId
+>;
 
 describe('Identity page', () => {
   let history;
@@ -28,6 +36,13 @@ describe('Identity page', () => {
       authenticate: jest.fn(),
       signOut: jest.fn(),
     }));
+    createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
+      const user = await userApi.fetchUser(userId, { token });
+      if (user) {
+        return { code: 'mock-sharing-code' };
+      }
+      throw new Error('Unknown user');
+    });
 
     render(
       <Router history={history}>
@@ -44,11 +59,15 @@ describe('Identity page', () => {
       history.push('/users/mock-user');
     });
 
-    it('shows their name, date of birth, and contact information', async () => {
+    it('shows their name and date of birth', async () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/mock@example.com/i)).toBeTruthy();
       expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('loads and shows their sharing code in a qr code', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy();
     });
   });
 
