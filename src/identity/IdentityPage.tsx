@@ -9,6 +9,12 @@ import { Profile, Address } from '../api';
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
 
+const Small = ({ children }: { children: React.ReactNode }) => (
+  <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
+    {children}
+  </Text>
+);
+
 export const IdentityPage = () => {
   const { userId } = useParams<{ userId: string }>();
   const { user, update: updateUser } = useUser(userId);
@@ -25,34 +31,34 @@ export const IdentityPage = () => {
     return updateUser({ ...user!, address });
   }
 
+  if (!user.profile) {
+    return (
+      <>
+        <Heading mb={5}>
+          Enter your details <Small>1/2</Small>
+        </Heading>
+        <ProfileForm onComplete={createProfile} />
+      </>
+    );
+  }
+
+  if (!user.address) {
+    return (
+      <>
+        <Heading mb={5}>
+          Enter your details <Small>2/2</Small>
+        </Heading>
+        <AddressForm onComplete={createAddress} />
+      </>
+    );
+  }
+
   return (
     <>
       <Heading mb={5}>
-        {!user.profile ? (
-          <>
-            Enter your details{' '}
-            <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
-              1/2
-            </Text>
-          </>
-        ) : !user.address ? (
-          <>
-            Enter your details{' '}
-            <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
-              2/2
-            </Text>
-          </>
-        ) : (
-          `${user.profile.firstName} ${user.profile.lastName}`
-        )}
+        {user.profile.firstName} {user.profile.lastName}
       </Heading>
-      {!user.profile ? (
-        <ProfileForm onComplete={createProfile} />
-      ) : !user.address ? (
-        <AddressForm onComplete={createAddress} />
-      ) : (
-        <Identity email={user.email} profile={user.profile} />
-      )}
+      <Identity email={user.email} profile={user.profile} />
     </>
   );
 };
