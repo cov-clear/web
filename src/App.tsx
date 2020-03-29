@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider, Container } from 'theme-ui';
 
 import {
@@ -11,15 +11,13 @@ import {
 import { IdentityPage } from './identity';
 
 import theme from './theme';
-import { NotFoundPage, StartPage } from './staticPages';
+import { NotFoundPage } from './staticPages';
 
 const App = () => {
   return (
     <Container sx={{ maxWidth: '600px' }} pt={6} pb={5} px={3}>
       <Switch>
-        <Route path="/" exact>
-          <StartPage />
-        </Route>
+        <Route path="/" exact render={() => <Redirect to="/login" />} />
         <Route path="/login" exact>
           <LoginPage />
         </Route>
