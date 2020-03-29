@@ -7,7 +7,6 @@ export const QRCode = ({ value }: { value: string }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   function handleResize({ bounds }: any) {
-    console.log(bounds);
     if (bounds) {
       setDimensions(bounds);
     }
