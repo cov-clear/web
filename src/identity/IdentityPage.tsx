@@ -1,6 +1,21 @@
 import React from 'react';
-import { Spinner, Text, Heading } from 'theme-ui';
-import { useParams } from 'react-router-dom';
+import {
+  Box,
+  Spinner,
+  Text,
+  Heading,
+  NavLink as ThemeUiNavLink,
+  Flex,
+  NavLinkProps,
+} from 'theme-ui';
+import {
+  useRouteMatch,
+  Switch,
+  Route,
+  NavLink as RouterNavLink,
+  NavLinkProps as RouterNavLinkProps,
+  Redirect,
+} from 'react-router-dom';
 import { format } from 'date-fns';
 
 import { useUser, useSharingCode } from '../resources';
@@ -9,6 +24,7 @@ import { Profile, Address } from '../api';
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
 import { QRCode } from './QRCode';
+import { Test as TestIcon, Profile as ProfileIcon } from './icons';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -16,8 +32,13 @@ const Small = ({ children }: { children: React.ReactNode }) => (
   </Text>
 );
 
+const NavLink = ThemeUiNavLink as React.FC<NavLinkProps & RouterNavLinkProps>;
+
 export const IdentityPage = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const {
+    url,
+    params: { userId },
+  } = useRouteMatch();
   const { user, update: updateUser } = useUser(userId);
   const sharingCode = useSharingCode(userId);
 
@@ -60,8 +81,28 @@ export const IdentityPage = () => {
       <Heading as="h1" mb={5}>
         {user.profile.firstName} {user.profile.lastName}
       </Heading>
-      <Text mb={5}>Date of birth: {format(new Date(user.profile.dateOfBirth), 'dd/MM/yyyy')}</Text>
-      {sharingCode ? <QRCode value={sharingCode.code} /> : null}
+      <Text mb={4}>Date of birth: {format(new Date(user.profile.dateOfBirth), 'dd/MM/yyyy')}</Text>
+      <Flex as="nav">
+        <NavLink as={RouterNavLink} to={`${url}/profile`} variant="tab">
+          <ProfileIcon /> Profile
+        </NavLink>
+        <NavLink as={RouterNavLink} to={`${url}/tests`} variant="tab">
+          <TestIcon /> Tests
+        </NavLink>
+      </Flex>
+      <Switch>
+        <Route path={`${url}/profile`} exact>
+          {sharingCode ? (
+            <Box mt={5}>
+              <QRCode value={sharingCode.code} />
+            </Box>
+          ) : null}
+        </Route>
+        <Route path={`${url}/tests`} exact>
+          Tests will be shown here
+        </Route>
+      </Switch>
+      <Redirect from={url} to={`${url}/profile`} />
     </>
   );
 };
