@@ -8,10 +8,12 @@ import {
   Provider as AuthenticationProvider,
   AuthenticatedRoute,
 } from './authentication';
-import { IdentityPage } from './identity';
 
 import theme from './theme';
 import { NotFoundPage } from './staticPages';
+
+import { ScanPage } from './scanning';
+import { IdentityPage } from './identity';
 
 const App = () => {
   return (
@@ -25,6 +27,9 @@ const App = () => {
       </Route>
       <AuthenticatedRoute path="/users/:userId">
         <IdentityPage />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/scan">
+        <ScanPage />
       </AuthenticatedRoute>
       <Route path="*">
         <NotFoundPage />
