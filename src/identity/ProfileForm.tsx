@@ -55,13 +55,13 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
   return (
     <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
       <Box>
-        <Label htmlFor="identity-first-name">First names</Label>
+        <Label htmlFor="identity-first-name">First name(s)</Label>
         <Input id="identity-first-name" type="text" {...form.getFieldProps('firstName')} />
         {fieldError('firstName')}
       </Box>
 
       <Box>
-        <Label htmlFor="identity-last-name">Last names</Label>
+        <Label htmlFor="identity-last-name">Last name</Label>
         <Input
           name="name"
           id="identity-last-name"
@@ -72,7 +72,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       </Box>
 
       <Box>
-        <Label htmlFor="identity-dateOfBirth">Your date of birth</Label>
+        <Label htmlFor="identity-dateOfBirth">Date of birth</Label>
         <Input id="identity-dateOfBirth" type="date" {...form.getFieldProps('dateOfBirth')} />
         {fieldError('dateOfBirth')}
       </Box>
