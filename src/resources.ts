@@ -103,7 +103,7 @@ export function useSharingCode(userId: string) {
 
 export function useTestTypes() {
   const [testTypes, setTestTypes] = useState<TestType[]>([]);
-  const { token } = useAuthentication();
+  const { token, hasPermission } = useAuthentication();
 
   useEffect(() => {
     const cancelToken = http.CancelToken.source();
@@ -121,11 +121,19 @@ export function useTestTypes() {
     return () => cancelToken.cancel();
   }, [token]);
 
-  return { testTypes };
+  const permittedTestTypes = testTypes.filter((type) =>
+    hasPermission(type.neededPermissionToAddResults),
+  );
+
+  return {
+    testTypes,
+    permittedTestTypes,
+  };
 }
 
 export function useTests(userId: string) {
   const [tests, setTests] = useState<Test[]>([]);
+  const [loading, setLoading] = useState(false);
   const { token } = useAuthentication();
 
   useEffect(() => {
@@ -133,8 +141,10 @@ export function useTests(userId: string) {
 
     const loadTests = async () => {
       if (token) {
+        setLoading(true);
         const tests = await fetchTests(userId, { token, cancelToken: cancelToken.token });
         setTests(tests);
+        setLoading(false);
       } else {
         setTests([]);
       }
@@ -144,7 +154,7 @@ export function useTests(userId: string) {
     return () => cancelToken.cancel();
   }, [token, userId]);
 
-  return { tests };
+  return { tests, loading };
 }
 
 export function useTest(testId: string) {
