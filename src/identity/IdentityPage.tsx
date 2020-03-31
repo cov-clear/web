@@ -32,7 +32,7 @@ import { SharingCode } from './SharingCode';
 import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from '../icons';
 import { useAuthentication } from '../authentication';
 
-import { TestList } from '../testing';
+import { TestList, AddTestFlow } from '../testing';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -48,9 +48,22 @@ export const IdentityPage = () => {
     url,
     params: { userId },
   } = useRouteMatch();
+  const addTestMatch = useRouteMatch(`${url}/add-test`);
   const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
   const isOwnUser = userId === authenticatedUserId;
+
+  if (addTestMatch) {
+    // TODO: should we have this route defined here and not on the main page?
+    return (
+      <>
+        {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
+        <Container variant="page" pt={isOwnUser ? undefined : 4}>
+          <AddTestFlow userId={userId} />
+        </Container>
+      </>
+    );
+  }
 
   if (!user) {
     return <Spinner variant="spinner.main" />;
