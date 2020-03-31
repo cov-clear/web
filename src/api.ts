@@ -176,12 +176,26 @@ export async function fetchTests(
   return response.data;
 }
 
-export type FieldType = 'boolean' | 'string' | 'number';
+export type FieldType = 'boolean' | 'string' | 'number' | 'integer' | 'null';
+
+export interface FieldSchema {
+  type: FieldType;
+  title: string;
+  description?: string;
+}
+
+// TODO: we are currently hardcoding only simple object -> property json schemas.
+// Should support larger range in the future.
+export interface ObjectSchema {
+  type: 'object';
+  title: string;
+  properties: { [key: string]: FieldSchema };
+}
 
 export interface TestType {
   id: string;
   name: string;
-  resultsSchema: object;
+  resultsSchema: ObjectSchema;
   neededPermissionToAddResults: string;
 }
 
@@ -192,10 +206,12 @@ export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise
   return response.data;
 }
 
+export type FilledSchema = { [key: string]: boolean | string | number };
+
 export interface CreateTestCommand {
   testTypeId: string;
   results?: {
-    details: object; // TODO
+    details: FilledSchema; // TODO
   };
 }
 
