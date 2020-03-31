@@ -54,10 +54,12 @@ const theme = {
     primary: {
       cursor: 'pointer',
       fontWeight: semibold,
+      fill: 'background',
     },
     block: {
       cursor: 'pointer',
       fontWeight: semibold,
+      fill: 'background',
       display: 'block',
       width: '100%',
     },
