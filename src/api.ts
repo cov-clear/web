@@ -181,7 +181,8 @@ export type FieldType = 'boolean' | 'string' | 'number';
 export interface TestType {
   id: string;
   name: string;
-  resultsSchema: { [key: string]: FieldType };
+  resultsSchema: object;
+  neededPermissionToAddResults: string;
 }
 
 export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise<TestType[]> {
