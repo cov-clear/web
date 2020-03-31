@@ -36,15 +36,29 @@ export const Provider = ({ children }: { children?: ReactNode }) => {
 
 export interface Authentication extends AuthenticationContext {
   userId?: string;
+  hasPermission: (permission: string) => boolean;
 }
 
 export const useAuthentication = (): Authentication => {
   const context = useContext(authenticationContext);
-  if (context.token) {
+  const decodedToken = context.token ? decode(context.token) : null;
+
+  const hasPermission = useCallback((permission: string) => {
+    if (!decodedToken) {
+      return false;
+    }
+    return decodedToken.permissions.includes(permission);
+  }, [decodedToken]);
+
+  if (decodedToken) {
     return {
       ...context,
-      userId: decode(context.token).userId,
+      userId: decodedToken.userId,
+      hasPermission,
     };
   }
-  return context;
+  return {
+    ...context,
+    hasPermission,
+  };
 };
