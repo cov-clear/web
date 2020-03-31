@@ -112,10 +112,30 @@ export interface SharingCode {
 export async function createSharingCodeForUserId(
   userId: string,
   options: AuthenticatedHttpOptions,
-) {
+): Promise<SharingCode> {
   const response = await authenticated(options.token).post(
     `/api/v1/users/${userId}/sharing-code`,
     undefined,
+    {
+      cancelToken: options.cancelToken,
+    },
+  );
+  return response.data;
+}
+
+export interface AccessPass {
+  userId: string;
+  expiryTime: string;
+}
+
+export async function createAccessPass(
+  userId: string,
+  code: string,
+  options: AuthenticatedHttpOptions,
+): Promise<AccessPass> {
+  const response = await authenticated(options.token).post(
+    `/api/v1/users/${userId}/access-passes`,
+    { code },
     {
       cancelToken: options.cancelToken,
     },

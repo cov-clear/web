@@ -93,6 +93,13 @@ describe('Identity page', () => {
       await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
+
+    it('lets you go to the scan page', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      expect(history.location.pathname).not.toBe('/scan');
+      fireEvent.click(screen.getByText(/scan/i));
+      expect(history.location.pathname).toBe('/scan');
+    });
   });
 
   describe('when filling address', () => {

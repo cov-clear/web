@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Box, Radio, Label, Input, Button, Text } from 'theme-ui';
+import { Flex, Box, Radio, Label, Input, Button, Text } from 'theme-ui';
 
 import { Profile, Sex } from '../api';
 
@@ -55,13 +55,13 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
   return (
     <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
       <Box>
-        <Label htmlFor="identity-first-name">First names</Label>
+        <Label htmlFor="identity-first-name">First name(s)</Label>
         <Input id="identity-first-name" type="text" {...form.getFieldProps('firstName')} />
         {fieldError('firstName')}
       </Box>
 
       <Box>
-        <Label htmlFor="identity-last-name">Last names</Label>
+        <Label htmlFor="identity-last-name">Last name</Label>
         <Input
           name="name"
           id="identity-last-name"
@@ -72,14 +72,16 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       </Box>
 
       <Box>
-        <Label htmlFor="identity-dateOfBirth">Your date of birth</Label>
+        <Label htmlFor="identity-dateOfBirth">Date of birth</Label>
         <Input id="identity-dateOfBirth" type="date" {...form.getFieldProps('dateOfBirth')} />
         {fieldError('dateOfBirth')}
       </Box>
 
       <Box>
-        <Label htmlFor="identity-sex-female">Sex</Label>
-        <Box sx={{ display: 'flex' }}>
+        <Label mb={1} htmlFor="identity-sex-female">
+          Sex
+        </Label>
+        <Flex>
           <Label>
             <Radio
               id="identity-sex-female"
@@ -91,7 +93,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
             <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.MALE })} />
             Male
           </Label>
-        </Box>
+        </Flex>
         {fieldError('sex')}
       </Box>
 

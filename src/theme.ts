@@ -33,6 +33,23 @@ const theme = {
       },
     },
   },
+  layout: {
+    page: {
+      maxWidth: '600px',
+      paddingTop: 6,
+      paddingBottom: 5,
+      paddingRight: 3,
+      paddingLeft: 3,
+    },
+  },
+  spinner: {
+    main: {
+      position: 'fixed',
+      top: '25%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  },
   buttons: {
     primary: {
       cursor: 'pointer',
@@ -43,6 +60,20 @@ const theme = {
       fontWeight: semibold,
       display: 'block',
       width: '100%',
+    },
+    fab: {
+      cursor: 'pointer',
+      fontWeight: semibold,
+      color: 'primary',
+      borderColor: 'primary',
+      border: '2px solid',
+      backgroundColor: 'background',
+      position: 'fixed',
+      right: 4,
+      bottom: 4,
+      boxShadow: '2px 4px 12px rgba(0, 0, 0, 0.24)',
+      borderRadius: '24px',
+      fill: 'primary',
     },
   },
 };

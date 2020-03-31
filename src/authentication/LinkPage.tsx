@@ -28,5 +28,5 @@ export const LinkPage = () => {
     return () => cancelToken.cancel();
   }, [authenticate, history, linkId]);
 
-  return <Spinner mx="auto" sx={{ display: 'block' }} />;
+  return <Spinner variant="spinner.main" />;
 };
