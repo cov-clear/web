@@ -31,6 +31,7 @@ describe('Identity page', () => {
     updateUserMock.mockImplementation(userApi.updateUser.bind(userApi));
     useAuthenticationMock.mockImplementation(() => ({
       token: userApi.mockToken,
+      userId: 'mock-user',
       authenticate: jest.fn(),
       signOut: jest.fn(),
     }));
@@ -97,6 +98,46 @@ describe('Identity page', () => {
       expect(history.location.pathname).not.toBe('/scan');
       fireEvent.click(screen.getByText(/scan/i));
       expect(history.location.pathname).toBe('/scan');
+    });
+  });
+
+  describe('when the user is looking at another person', () => {
+    beforeEach(() => {
+      useAuthenticationMock.mockImplementation(() => ({
+        token: userApi.mockToken,
+        userId: 'mock-user-2',
+        authenticate: jest.fn(),
+        signOut: jest.fn(),
+      }));
+      userApi.updateUser(aUser(), { token: userApi.mockToken });
+      const user2 = aUser();
+      user2.id = 'mock-user-2';
+      userApi.updateUser(user2, { token: userApi.mockToken });
+    });
+
+    it('shows their name and date of birth', async () => {
+      history.push('/users/mock-user');
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
+      expect(fetchUserMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows a special header that you are looking at another person', async () => {
+      history.push('/users/mock-user-2');
+      await wait(() => expect(screen.queryByText(/viewing profile/i)).not.toBeTruthy());
+      history.push('/users/mock-user');
+      await wait(() => expect(screen.queryByText(/viewing profile/i)).toBeTruthy());
+    });
+
+    it('does not show their QR code', async () => {
+      history.push('/users/mock-user');
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).not.toBeTruthy();
+    });
+
+    it('starts on the tests tab', async () => {
+      history.push('/users/mock-user');
+      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
     });
   });
 

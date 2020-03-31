@@ -6,7 +6,6 @@ import ReactQRCode from 'qrcode.react';
 import { useSharingCode } from '../resources';
 
 export const SharingCode = ({ userId }: { userId: string }) => {
-  console.log(<ReactQRCode value="test" />);
   const sharingCode = useSharingCode(userId);
 
   if (!sharingCode) {
