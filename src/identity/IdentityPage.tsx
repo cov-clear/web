@@ -23,12 +23,12 @@ import {
 } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { useUser, useSharingCode } from '../resources';
+import { useUser } from '../resources';
 import { Profile, Address } from '../api';
 
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
-import { QRCode } from './QRCode';
+import { SharingCode } from './SharingCode';
 import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from './icons';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
@@ -46,7 +46,6 @@ export const IdentityPage = () => {
     params: { userId },
   } = useRouteMatch();
   const { user, update: updateUser } = useUser(userId);
-  const sharingCode = useSharingCode(userId);
 
   if (!user) {
     return <Spinner variant="spinner.main" />;
@@ -98,11 +97,9 @@ export const IdentityPage = () => {
       </Flex>
       <Switch>
         <Route path={`${url}/profile`} exact>
-          {sharingCode ? (
-            <Box mt={5}>
-              <QRCode value={sharingCode.code} />
-            </Box>
-          ) : null}
+          <Box mt={6}>
+            <SharingCode userId={userId} />
+          </Box>
         </Route>
         <Route path={`${url}/tests`} exact>
           Tests will be shown here

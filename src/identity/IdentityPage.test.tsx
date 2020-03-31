@@ -8,13 +8,11 @@ import { IdentityPage } from './IdentityPage';
 import { fetchUser, updateUser, createSharingCodeForUserId, User, Sex } from '../api';
 import { useAuthentication } from '../authentication';
 
+jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
+
 jest.mock('../api');
 jest.mock('../authentication');
-jest.mock('./QRCode', () => ({
-  QRCode({ value }: { value: string }) {
-    return `Mock QRCode: ${value}`;
-  },
-}));
+
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
@@ -39,7 +37,7 @@ describe('Identity page', () => {
     createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
       const user = await userApi.fetchUser(userId, { token });
       if (user) {
-        return { code: 'mock-sharing-code' };
+        return { code: 'mock-sharing-code', expiryTime: new Date().toISOString() };
       }
       throw new Error('Unknown user');
     });
