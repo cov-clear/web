@@ -10,6 +10,11 @@ import {
   fetchCountries,
   SharingCode,
   createSharingCodeForUserId,
+  TestType,
+  fetchTestTypes,
+  Test,
+  fetchTests,
+  fetchTest,
 } from './api';
 
 export function useUser(id: string) {
@@ -92,4 +97,75 @@ export function useSharingCode(userId: string) {
   }, [token, userId]);
 
   return sharingCode;
+}
+
+// TODO: refactor all these simple hooks using a common hook
+
+export function useTestTypes() {
+  const [testTypes, setTestTypes] = useState<TestType[]>([]);
+  const { token } = useAuthentication();
+
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+
+    const loadTestTypes = async () => {
+      if (token) {
+        const testTypes = await fetchTestTypes({ token, cancelToken: cancelToken.token });
+        setTestTypes(testTypes);
+      } else {
+        setTestTypes([]);
+      }
+    };
+
+    loadTestTypes();
+    return () => cancelToken.cancel();
+  }, [token]);
+
+  return { testTypes };
+}
+
+export function useTests(userId: string) {
+  const [tests, setTests] = useState<Test[]>([]);
+  const { token } = useAuthentication();
+
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+
+    const loadTests = async () => {
+      if (token) {
+        const tests = await fetchTests(userId, { token, cancelToken: cancelToken.token });
+        setTests(tests);
+      } else {
+        setTests([]);
+      }
+    };
+
+    loadTests();
+    return () => cancelToken.cancel();
+  }, [token, userId]);
+
+  return { tests };
+}
+
+export function useTest(testId: string) {
+  const [test, setTests] = useState<Test | null>(null);
+  const { token } = useAuthentication();
+
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+
+    const loadTests = async () => {
+      if (token) {
+        const test = await fetchTest(testId, { token, cancelToken: cancelToken.token });
+        setTests(test);
+      } else {
+        setTests(null);
+      }
+    };
+
+    loadTests();
+    return () => cancelToken.cancel();
+  }, [testId, token]);
+
+  return { test };
 }
