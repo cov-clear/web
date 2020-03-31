@@ -80,7 +80,7 @@ export interface Address {
   address1: string;
   address2?: string;
   city: string;
-  region: string;
+  region?: string;
   postcode: string;
   countryCode: string;
 }

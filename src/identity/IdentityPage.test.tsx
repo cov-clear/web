@@ -221,15 +221,15 @@ describe('Identity page', () => {
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
-    it('shows errors for missing region', async () => {
+    it('allows missing region', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/state/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/fill the state/i)).toBeTruthy());
-      expect(updateUserMock).not.toHaveBeenCalled();
+      await wait(() => expect(screen.queryByText(/fill the state/i)).toBeFalsy());
+      expect(updateUserMock).toHaveBeenCalled();
     });
 
     it('shows errors for missing postcode', async () => {

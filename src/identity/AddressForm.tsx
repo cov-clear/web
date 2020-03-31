@@ -17,7 +17,7 @@ interface AddressFormFields {
   address1: string;
   address2?: string;
   city: string;
-  region: string;
+  region?: string;
   postcode: string;
   countryCode: string;
 }
@@ -36,7 +36,7 @@ export const AddressForm = ({ onComplete }: { onComplete: (address: Address) => 
       address1: requiredString('Please fill line 1 of your address'),
       address2: yup.string().trim(),
       city: requiredString('Please fill the city of your address'),
-      region: requiredString('Please fill the state / county of your address'),
+      region: yup.string().trim(),
       postcode: requiredString('Please fill the postcode of your address'),
       countryCode: requiredString('Please select your country of residence'),
     }),
@@ -45,7 +45,7 @@ export const AddressForm = ({ onComplete }: { onComplete: (address: Address) => 
         address1: address1.trim(),
         address2: address2?.trim() || undefined,
         city: city.trim(),
-        region: region.trim(),
+        region: region?.trim() || undefined,
         postcode: postcode.trim(),
         countryCode: countryCode.trim(),
       }),
@@ -70,7 +70,7 @@ export const AddressForm = ({ onComplete }: { onComplete: (address: Address) => 
       {field('address1', 'Address line 1 *')}
       {field('address2', 'Address line 2')}
       {field('city', 'City *')}
-      {field('region', 'State / County *')}
+      {field('region', 'State / County / Region')}
       {field('postcode', 'Postcode / Zip code *')}
 
       <Box>
