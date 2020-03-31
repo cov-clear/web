@@ -7,6 +7,7 @@ import {
   LinkPage,
   Provider as AuthenticationProvider,
   AuthenticatedRoute,
+  useAuthentication,
 } from './authentication';
 
 import theme from './theme';
@@ -16,9 +17,19 @@ import { ScanPage } from './scanning';
 import { IdentityPage } from './identity';
 
 const App = () => {
+  const { userId } = useAuthentication();
   return (
     <Switch>
-      <Route path="/" exact render={() => <Redirect to="/login" />} />
+      <Route
+        path="/"
+        exact
+        render={() => {
+          if (userId) {
+            return <Redirect to={`/users/${userId}`} />;
+          }
+          return <Redirect to="/login" />;
+        }}
+      />
       <Route path="/login" exact>
         <LoginPage />
       </Route>
