@@ -16,10 +16,16 @@ export const LinkPage = () => {
 
     async function authenticateWithLink() {
       if (linkId) {
-        const token = await exchangeLinkForToken(linkId, { cancelToken: cancelToken.token });
-        authenticate(token);
-        const { userId } = decode(token);
-        history.replace(`/users/${userId}`);
+        try {
+          const token = await exchangeLinkForToken(linkId, {
+            cancelToken: cancelToken.token,
+          });
+          authenticate(token);
+          const { userId } = decode(token);
+          history.replace(`/users/${userId}`);
+        } catch (error) {
+          history.replace(`/login?invalid=true`);
+        }
       }
     }
 
