@@ -13,6 +13,8 @@ export const AddTestForm = ({
   testType: TestType;
   onComplete: (command: CreateTestCommand) => any;
 }) => {
+  // TODO: validation
+  // TODO: supporting more arbitrary schemas
   const form = useFormik({
     initialValues: getInitialValues(testType.resultsSchema),
     onSubmit(details: FilledSchema) {
