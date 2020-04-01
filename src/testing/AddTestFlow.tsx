@@ -14,7 +14,7 @@ export const AddTestFlow = ({ userId }: { userId: string }) => {
   const [testResult, setTestResult] = useState<CreateTestCommand | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
-  const { token } = useAuthentication();
+  const { token, userId: ownUserId } = useAuthentication();
   const { permittedTestTypes } = useTestTypes();
   const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
 
@@ -24,15 +24,32 @@ export const AddTestFlow = ({ userId }: { userId: string }) => {
     }
   }, [permittedTestTypes, selectedTestTypeId]);
 
-  async function handleSubmit() {
+  async function handleSubmit(testResult: CreateTestCommand) {
+    const isOwnUser = userId === ownUserId;
+    if (isOwnUser) {
+      return saveAndFinish(testResult);
+    } else {
+      setTestResult(testResult);
+    }
+  }
+
+  async function handleConfirmIdentity() {
+    if (testResult) {
+      return saveAndFinish(testResult);
+    }
+  }
+
+  async function saveAndFinish(testResult: CreateTestCommand) {
     setSubmitting(true);
-    await createTest(userId, testResult!, { token: token! });
+    await createTest(userId, testResult, { token: token! });
     history.push(`/users/${userId}/tests`);
   }
 
   if (testResult) {
     // TODO: do this via react-router instead, so they can navigate back to the form.
-    return <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleSubmit} />;
+    return (
+      <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
+    );
   }
 
   return (
@@ -54,9 +71,8 @@ export const AddTestFlow = ({ userId }: { userId: string }) => {
         ))}
       </Select>
       {selectedTestType ? (
-        <AddTestForm testType={selectedTestType} onComplete={setTestResult} />
+        <AddTestForm testType={selectedTestType} onComplete={handleSubmit} />
       ) : null}
     </>
   );
 };
-

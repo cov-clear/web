@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { Box, Message, Spinner, Alert, Text, Button, Heading } from 'theme-ui';
+import { Box, Spinner, Alert, Text, Button, Heading } from 'theme-ui';
 
 import { useUser, useCountries } from '../resources';
 import { Warning as WarningIcon } from '../icons';
