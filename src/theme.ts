@@ -87,6 +87,18 @@ const theme = {
       border: '1px solid #FFE58F', // TODO: integrate these colors into the design system
     },
   },
+  alerts: {
+    warning: {
+      background: '#FFFBE6',
+      border: '1px solid #FFE58F', // TODO: integrate these colors into the design system
+      color: 'text',
+      fontWeight: 'inherit',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 4,
+      paddingRight: 4,
+    },
+  },
 };
 
 export default theme;
