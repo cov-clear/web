@@ -10,7 +10,6 @@ const theme = {
   space: [0, 4, 8, 16, 24, 40, 64, 128, 256, 512],
   colors: {
     ...baseTheme.colors,
-    // primary: '#1890FF',
     primary: '#096DD9',
   },
   links: {
@@ -79,12 +78,6 @@ const theme = {
       boxShadow: '2px 4px 12px rgba(0, 0, 0, 0.24)',
       borderRadius: '24px',
       fill: 'primary',
-    },
-  },
-  messages: {
-    warning: {
-      background: '#FFFBE6',
-      border: '1px solid #FFE58F', // TODO: integrate these colors into the design system
     },
   },
   alerts: {
