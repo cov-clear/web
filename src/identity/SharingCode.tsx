@@ -6,13 +6,13 @@ import ReactQRCode from 'qrcode.react';
 import { useSharingCode } from '../resources';
 
 export const SharingCode = ({ userId }: { userId: string }) => {
-  const sharingCode = useSharingCode(userId);
+  const { loading, sharingCode } = useSharingCode(userId);
 
-  if (!sharingCode) {
+  if (loading || !sharingCode) {
     return <Spinner sx={{ display: 'block' }} mx="auto" />;
   }
 
-  return <QRCode value={sharingCode.code} />;
+  return <QRCode value={sharingCode!.code} />;
 };
 
 const QRCode = ({ value }: { value: string }) => {
