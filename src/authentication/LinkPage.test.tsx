@@ -22,6 +22,8 @@ describe('Link page', () => {
   let history: History;
   let saveToken: (token: string) => any;
 
+  const linkId = 'i-am-a-link';
+
   beforeEach(() => {
     history = createMemoryHistory();
     saveToken = jest.fn();
@@ -30,36 +32,49 @@ describe('Link page', () => {
       token: null,
       signOut: jest.fn(),
     }));
-    authenticateMock.mockImplementation(() => Promise.resolve(mockToken));
 
     render(
       <Router history={history}>
         <Route path="/link/:linkId">
           <LinkPage />
         </Route>
-      </Router>,
+      </Router>
     );
   });
 
-  it('exchanges the link for the token and saves the token', async () => {
-    expect(saveToken).not.toHaveBeenCalled();
-    expect(authenticate).not.toHaveBeenCalled();
-    const linkId = 'i-am-a-link';
-    history.push(`/link/${linkId}`);
+  describe('when a valid token is supplied', () => {
+    beforeEach(() => {
+      authenticateMock.mockImplementation(() => Promise.resolve(mockToken));
+      history.push(`/link/${linkId}`);
+    });
 
-    await wait(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
-    expect(saveToken).toHaveBeenCalledTimes(1);
-    expect(authenticate).toHaveBeenCalledWith(linkId, expect.anything());
-    expect(authenticate).toHaveBeenCalledTimes(1);
+    it('exchanges the link for the token and saves the token', async () => {
+      await wait(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
+      expect(saveToken).toHaveBeenCalledTimes(1);
+      expect(authenticate).toHaveBeenCalledWith(linkId, expect.anything());
+      expect(authenticate).toHaveBeenCalledTimes(1);
+    });
+
+    it('replaces the route with the user page, removing it from history', async () => {
+      await wait(() =>
+        expect(history.location.pathname).toBe('/users/f99c9790-f137-404f-9bf1-243d6e3e6f3e')
+      );
+      history.goBack();
+      expect(history.location.pathname).toBe('/');
+    });
   });
 
-  it('replaces the route with the user page, removing it from history', async () => {
-    const linkId = 'i-am-a-link';
-    history.push(`/link/${linkId}`);
-    await wait(() =>
-      expect(history.location.pathname).toBe('/users/f99c9790-f137-404f-9bf1-243d6e3e6f3e'),
-    );
-    history.goBack();
-    expect(history.location.pathname).toBe('/');
+  describe('when an invalid token is supplied', () => {
+    beforeEach(() => {
+      authenticateMock.mockImplementation(() => Promise.reject());
+      history.push(`/link/${linkId}`);
+    });
+
+    it('should redirect to the login page', async () => {
+      await wait(() => {
+        expect(history.location.pathname).toBe('/login');
+        expect(history.location.search).toBe('?invalid=true');
+      });
+    });
   });
 });
