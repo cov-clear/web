@@ -1,2 +1,2 @@
 export * from './TestList';
-export * from './AddTestFlow';
+export * from './AddTestPage';
