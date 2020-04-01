@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Select, Label } from 'theme-ui';
+import { Heading, Select, Label, Container } from 'theme-ui';
 
 import { CreateTestCommand, createTest } from '../api';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { useTestTypes } from '../resources';
 import { useAuthentication } from '../authentication';
+import { ViewingOtherProfileHeader } from '../identity';
 import { ConfirmIdentity } from './ConfirmIdentity';
 import { AddTestForm } from './AddTestForm';
 
-export const AddTestFlow = ({ userId }: { userId: string }) => {
+export const AddTestPage = () => {
+  const { userId } = useParams<{ userId: string }>();
   const [selectedTestTypeId, setSelectedTestTypeId] = useState<string>();
   const [testResult, setTestResult] = useState<CreateTestCommand | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
   const { token, userId: ownUserId } = useAuthentication();
+  const isOwnUser = userId === ownUserId;
   const { permittedTestTypes } = useTestTypes();
   const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
 
@@ -25,7 +28,6 @@ export const AddTestFlow = ({ userId }: { userId: string }) => {
   }, [permittedTestTypes, selectedTestTypeId]);
 
   async function handleSubmit(testResult: CreateTestCommand) {
-    const isOwnUser = userId === ownUserId;
     if (isOwnUser) {
       return saveAndFinish(testResult);
     } else {
@@ -54,25 +56,28 @@ export const AddTestFlow = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      <Heading as="h1" mb={5}>
-        Enter new test result
-      </Heading>
-      <Label htmlFor="test-type">Test type</Label>
-      <Select
-        value={selectedTestTypeId}
-        onChange={(event) => setSelectedTestTypeId(event.target.value)}
-        required
-        mb={4}
-      >
-        {permittedTestTypes.map((type) => (
-          <option key={type.id} value={type.id}>
-            {type.name}
-          </option>
-        ))}
-      </Select>
-      {selectedTestType ? (
-        <AddTestForm testType={selectedTestType} onComplete={handleSubmit} />
-      ) : null}
+      {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
+      <Container variant="page" pt={isOwnUser ? undefined : 4}>
+        <Heading as="h1" mb={5}>
+          Enter new test result
+        </Heading>
+        <Label htmlFor="test-type">Test type</Label>
+        <Select
+          value={selectedTestTypeId}
+          onChange={(event) => setSelectedTestTypeId(event.target.value)}
+          required
+          mb={4}
+        >
+          {permittedTestTypes.map((type) => (
+            <option key={type.id} value={type.id}>
+              {type.name}
+            </option>
+          ))}
+        </Select>
+        {selectedTestType ? (
+          <AddTestForm testType={selectedTestType} onComplete={handleSubmit} />
+        ) : null}
+      </Container>
     </>
   );
 };
