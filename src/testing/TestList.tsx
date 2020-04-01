@@ -9,11 +9,10 @@ import { useTests, useTestTypes } from '../resources';
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 
 export const TestList = ({ userId }: { userId: string }) => {
-  const { loading, tests } = useTests(userId);
-  const { permittedTestTypes, testTypes } = useTestTypes();
+  const { loading: loadingTests, tests } = useTests(userId);
+  const { permittedTestTypes, testTypes, loading: loadingTestTypes } = useTestTypes();
 
-  // TODO: loading state for test typs as well
-  if (loading || !testTypes.length) {
+  if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;
   }
 
