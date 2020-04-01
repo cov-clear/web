@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Container, Label, Input, Button, Text, Heading, Box } from 'theme-ui';
+import { Container, Label, Input, Button, Text, Heading, Box, Alert } from 'theme-ui';
 
 import { createMagicLink } from '../api';
 import { Link } from 'react-router-dom';
@@ -20,8 +20,16 @@ export const LoginPage = () => {
     }
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const invalidLink = urlParams.get('invalid');
+
   return (
     <Container variant="page">
+      {invalidLink && !submitted && (
+        <Alert variant="secondary" mb={4}>
+          That link wasn't valid, please request a new one.
+        </Alert>
+      )}
       <Heading as="h1" mb={3}>
         Sign in
       </Heading>
