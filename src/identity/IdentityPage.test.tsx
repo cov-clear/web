@@ -5,7 +5,15 @@ import { wait, render, fireEvent, screen } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
-import { fetchUser, updateUser, createSharingCodeForUserId, User, Sex } from '../api';
+import {
+  fetchUser,
+  fetchTests,
+  fetchTestTypes,
+  updateUser,
+  createSharingCodeForUserId,
+  User,
+  Sex,
+} from '../api';
 import { useAuthentication } from '../authentication';
 
 jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
@@ -15,6 +23,8 @@ jest.mock('../authentication');
 
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
+const fetchTestsMock = fetchTests as jest.MockedFunction<typeof fetchTests>;
+const fetchTestTypesMock = fetchTestTypes as jest.MockedFunction<typeof fetchTestTypes>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
 const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.MockedFunction<
   typeof createSharingCodeForUserId
@@ -34,7 +44,10 @@ describe('Identity page', () => {
       userId: 'mock-user',
       authenticate: jest.fn(),
       signOut: jest.fn(),
+      hasPermission: () => false,
     }));
+    fetchTestsMock.mockImplementation(() => Promise.resolve([]));
+    fetchTestTypesMock.mockImplementation(() => Promise.resolve([]));
     createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
       const user = await userApi.fetchUser(userId, { token });
       if (user) {
@@ -71,25 +84,25 @@ describe('Identity page', () => {
 
     it('lets you switch to the tests tab', async () => {
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/profile/i));
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
     });
 
     it('lets you navigate with browser history', async () => {
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       history.goBack();
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       history.goForward();
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
 
@@ -108,6 +121,7 @@ describe('Identity page', () => {
         userId: 'mock-user-2',
         authenticate: jest.fn(),
         signOut: jest.fn(),
+        hasPermission: () => false,
       }));
       userApi.updateUser(aUser(), { token: userApi.mockToken });
       const user2 = aUser();
@@ -137,7 +151,7 @@ describe('Identity page', () => {
 
     it('starts on the tests tab', async () => {
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
     });
   });
 
