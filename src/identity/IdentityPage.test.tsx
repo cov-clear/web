@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, fireEvent, screen } from '@testing-library/react';
+import { wait, render, fireEvent, screen, queryByText } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
@@ -13,6 +13,8 @@ import {
   createSharingCodeForUserId,
   User,
   Sex,
+  Test,
+  TestType,
 } from '../api';
 import { useAuthentication } from '../authentication';
 
@@ -47,7 +49,7 @@ describe('Identity page', () => {
       hasPermission: () => false,
     }));
     fetchTestsMock.mockImplementation(() => Promise.resolve([]));
-    fetchTestTypesMock.mockImplementation(() => Promise.resolve([]));
+    fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
     createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
       const user = await userApi.fetchUser(userId, { token });
       if (user) {
@@ -91,6 +93,15 @@ describe('Identity page', () => {
       fireEvent.click(screen.getByText(/profile/i));
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
       expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
+    });
+
+    it('shows all your tests on the tests tab', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
+      expect(screen.queryByText(/01\/10\/2005/i)).toBeTruthy();
+      expect(screen.queryByText(/01\/11\/2005/i)).toBeTruthy();
     });
 
     it('lets you navigate with browser history', async () => {
@@ -442,6 +453,37 @@ function aNewUserWithAProfile(): User {
       lastName: 'Last',
       dateOfBirth: '1950-10-01',
       sex: Sex.FEMALE,
+    },
+  };
+}
+
+function aTest(): Test {
+  return {
+    id: 'mock-test',
+    userId: 'mock-id',
+    testTypeId: 'mock-test-type',
+    creationTime: new Date('2005-10-01').toISOString(),
+  };
+}
+
+function anotherTest(): Test {
+  return {
+    id: 'mock-test-2',
+    userId: 'mock-id',
+    testTypeId: 'mock-test-type',
+    creationTime: new Date('2005-11-01').toISOString(),
+  };
+}
+
+function aTestType(): TestType {
+  return {
+    id: 'mock-test-type',
+    name: 'Mock test',
+    neededPermissionToAddResults: 'mock-permission',
+    resultsSchema: {
+      type: 'object',
+      title: 'Mock test',
+      properties: {},
     },
   };
 }
