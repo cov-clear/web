@@ -12,7 +12,7 @@ export const ViewingOtherProfileHeader = () => {
     <Box sx={{ backgroundColor: 'primary', color: 'background' }}>
       <Flex px={3} py={2} sx={{ justifyContent: 'space-between', maxWidth: '600px' }} mx="auto">
         <Heading as="h2" sx={{ lineHeight: 1.8 }}>
-          Viewing profile
+          Patient profile
         </Heading>
         <LinkButton
           as={Link}

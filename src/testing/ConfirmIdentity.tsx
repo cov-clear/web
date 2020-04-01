@@ -16,6 +16,7 @@ export const ConfirmIdentity = ({
 }) => {
   const { countries } = useCountries();
   const { user } = useUser(userId);
+
   if (!user || !countries.length) {
     return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;
   }

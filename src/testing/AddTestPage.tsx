@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heading, Select, Label, Container } from 'theme-ui';
 
 import { CreateTestCommand, createTest } from '../api';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import { useTestTypes } from '../resources';
 import { useAuthentication } from '../authentication';
@@ -11,8 +11,11 @@ import { ConfirmIdentity } from './ConfirmIdentity';
 import { AddTestForm } from './AddTestForm';
 
 export const AddTestPage = () => {
-  const { userId } = useParams<{ userId: string }>();
-  const [selectedTestTypeId, setSelectedTestTypeId] = useState<string>();
+  const {
+    url,
+    params: { userId },
+  } = useRouteMatch<{ userId: string }>();
+  const [selectedTestTypeId, setSelectedTestTypeId] = useState<string>('');
   const [testResult, setTestResult] = useState<CreateTestCommand | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
@@ -20,6 +23,7 @@ export const AddTestPage = () => {
   const isOwnUser = userId === ownUserId;
   const { permittedTestTypes } = useTestTypes();
   const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
+  const confirmPageMatch = useRouteMatch(`${url}/confirm`);
 
   useEffect(() => {
     if (!selectedTestTypeId && permittedTestTypes.length) {
@@ -32,6 +36,7 @@ export const AddTestPage = () => {
       return saveAndFinish(testResult);
     } else {
       setTestResult(testResult);
+      history.push(`${url}/confirm`);
     }
   }
 
@@ -47,10 +52,17 @@ export const AddTestPage = () => {
     history.push(`/users/${userId}/tests`);
   }
 
-  if (testResult) {
-    // TODO: do this via react-router instead, so they can navigate back to the form.
+  if (confirmPageMatch) {
+    if (!testResult) {
+      return <Redirect to={url} />;
+    }
     return (
-      <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
+      <>
+        {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
+        <Container variant="page" pt={isOwnUser ? undefined : 4}>
+          <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
+        </Container>
+      </>
     );
   }
 
@@ -61,21 +73,30 @@ export const AddTestPage = () => {
         <Heading as="h1" mb={5}>
           Enter new test result
         </Heading>
-        <Label htmlFor="test-type">Test type</Label>
-        <Select
-          value={selectedTestTypeId}
-          onChange={(event) => setSelectedTestTypeId(event.target.value)}
-          required
-          mb={4}
-        >
-          {permittedTestTypes.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.name}
-            </option>
-          ))}
-        </Select>
+        {permittedTestTypes.length > 1 ? (
+          <>
+            <Label htmlFor="test-type">Test type</Label>
+            <Select
+              id="test-type"
+              value={selectedTestTypeId}
+              onChange={(event) => setSelectedTestTypeId(event.target.value)}
+              required
+              mb={4}
+            >
+              {permittedTestTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </Select>
+          </>
+        ) : null}
         {selectedTestType ? (
-          <AddTestForm testType={selectedTestType} onComplete={handleSubmit} />
+          <AddTestForm
+            key={selectedTestType.id}
+            testType={selectedTestType}
+            onComplete={handleSubmit}
+          />
         ) : null}
       </Container>
     </>
