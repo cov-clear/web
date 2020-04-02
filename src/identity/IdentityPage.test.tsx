@@ -63,7 +63,7 @@ describe('Identity page', () => {
         <Route path="/users/:userId">
           <IdentityPage />
         </Route>
-      </Router>,
+      </Router>
     );
   });
 
@@ -75,7 +75,7 @@ describe('Identity page', () => {
 
     it('shows their name and date of birth', async () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
+      expect(screen.queryByText(/01 Oct 1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
@@ -100,8 +100,8 @@ describe('Identity page', () => {
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
       fireEvent.click(screen.getByText(/tests/i));
       await wait(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
-      expect(screen.queryByText(/01\/10\/2005/i)).toBeTruthy();
-      expect(screen.queryByText(/01\/11\/2005/i)).toBeTruthy();
+      expect(screen.queryByText(/01 Oct 2005/i)).toBeTruthy();
+      expect(screen.queryByText(/01 Nov 2005/i)).toBeTruthy();
     });
 
     it('lets you navigate with browser history', async () => {
@@ -143,7 +143,7 @@ describe('Identity page', () => {
     it('shows their name and date of birth', async () => {
       history.push('/users/mock-user');
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
+      expect(screen.queryByText(/01 Oct 1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
@@ -193,7 +193,7 @@ describe('Identity page', () => {
           },
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
@@ -220,7 +220,7 @@ describe('Identity page', () => {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
@@ -282,7 +282,7 @@ describe('Identity page', () => {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
   });
@@ -307,7 +307,7 @@ describe('Identity page', () => {
           ...aNewUserWithAProfile(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 

@@ -23,7 +23,7 @@ export const TestList = ({ userId }: { userId: string }) => {
         <Text mt={4}>No tests yet.</Text>
       ) : (
         <Box as="ul" sx={{ listStyleType: 'none' }} px={0}>
-          {tests.map((test) => {
+          {tests.map(test => {
             const testType = testTypes.find(({ id }) => id === test.testTypeId)!;
             return (
               <Flex
@@ -33,7 +33,7 @@ export const TestList = ({ userId }: { userId: string }) => {
                 sx={{ justifyContent: 'space-between', borderBottom: '1px solid #DEDEDE' }}
               >
                 <Text>{testType.name}</Text>
-                <Text>{format(new Date(test.creationTime), 'dd/MM/yyyy')}</Text>
+                <Text>{format(new Date(test.creationTime), 'dd MMM yyyy')}</Text>
               </Flex>
             );
           })}
