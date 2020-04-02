@@ -18,7 +18,7 @@ The system understands the role of the person both administering the test, and r
 
 #### In person tests
 * The patient registers their details in the application
-* The medical professional scans the patients profile
+* The medical professional scans the patient's profile
 * The medical professional administers the test and adds the resuls
 * The results appear on the patients device
 
