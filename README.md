@@ -7,6 +7,8 @@ The cov clear web application is designed to securely manage:
 ### Registration ###
 Registration and sign in occurs through one-time links sent to users inboxes.  No passwords are stored within the system, only someone with access to that email inbox can access the data.
 
+![image](https://user-images.githubusercontent.com/1318111/78276488-02c86900-750b-11ea-8e93-d3135bc62de4.png)
+
 ### Test flows ###
 There are multiple ways that tests can be administered. Tests can be run in person by medical practitioners, or can can be sent out to patients in the post.  Results may be immediately registered, or returned by post for analysis in the lab, whichever is required for that test equipment.  Tests may be for antigens or antibodies.  
 
@@ -33,14 +35,21 @@ The system understands the role of the person both administering the test, and r
     * On reciept of the test sample, a medical professional processes the sample.
     * The medical professional scans the printed QR code, and then enters the rest results.
     * The test results appear in the patients application.
+    
+![image](https://user-images.githubusercontent.com/1318111/78276614-2e4b5380-750b-11ea-98f8-3e258bdfb1f6.png)
 
 ### Test results ###
 Users can see a list of their test results indicating whether antigens or antibodies were found, depending on the test type. If a medical professional added notes these are also available to view.  Along with links to additional information on understanding test results.
+
+![image](https://user-images.githubusercontent.com/1318111/78277018-bcbfd500-750b-11ea-9e0c-54f08f9d2092.png)
 
 ### Immunity passport ###
 Access to test results can be shared with others.  On the users profile page there is a short-lived QR code that grants temporary access to view & confirm another user's status.  The second user (the checker) takes a photo of this QR code, granting them access to view the test results of the first user (the patient).
 
 At this point, if the 'checker' is a medical professional with sufficient priviledges, they can also add new verified test results for the patient (facillitating the in-person test flow).
+
+![image](https://user-images.githubusercontent.com/1318111/78276524-107dee80-750b-11ea-88a2-cdb056428221.png)
+
 
 ## Team ##
 
