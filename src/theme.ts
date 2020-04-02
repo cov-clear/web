@@ -92,6 +92,16 @@ const theme = {
       paddingRight: 4,
     },
   },
+  badges: {
+    primary: {
+      fontWeight: normalWeight,
+      paddingLeft: 2,
+      paddingRight: 2,
+      color: '#2F54EB',
+      border: '1px solid #2F54EB', // TODO: integrate these colors into the design system
+      backgroundColor: '#F0F5FF',
+    },
+  },
 };
 
 export default theme;

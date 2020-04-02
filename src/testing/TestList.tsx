@@ -1,13 +1,13 @@
 import React from 'react';
-import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading } from 'theme-ui';
+import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
+import { Test } from '../api';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
-
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
@@ -32,6 +32,9 @@ export const TestList = ({ userId }: { userId: string }) => {
               >
                 <Box>
                   <Heading as="h3">{format(new Date(test.creationTime), 'd MMM yyyy')}</Heading>
+                  <Badge mt={2} variant="primary">
+                    Test interpretation will be here
+                  </Badge>
                 </Box>
                 <Caret sx={{ alignSelf: 'center' }} />
               </Flex>
