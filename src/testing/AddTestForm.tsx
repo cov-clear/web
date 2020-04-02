@@ -27,7 +27,6 @@ export const AddTestForm = ({
 
   return (
     <>
-      <Text>Result</Text>
       <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
         {Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
           if (value.type === 'boolean') {
@@ -35,7 +34,14 @@ export const AddTestForm = ({
               <Box key={key}>
                 <Label>
                   <Checkbox {...form.getFieldProps(key)} />
-                  {value.title}
+                  <Box>
+                    {value.title}
+                    {value.description ? (
+                      <Text as="small" sx={{ display: 'block' }}>
+                        {value.description}
+                      </Text>
+                    ) : null}
+                  </Box>
                 </Label>
               </Box>
             );

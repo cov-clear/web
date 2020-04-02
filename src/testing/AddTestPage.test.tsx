@@ -107,6 +107,11 @@ describe('Test adding page', () => {
       await wait(() => expect(screen.queryByText(/boolean/i)).toBeTruthy());
       expect(screen.queryByText(/test type/i)).not.toBeTruthy();
     });
+
+    it('shows descriptions of properties if they exist', async () => {
+      history.push('/users/mock-user/add-test');
+      await wait(() => expect(screen.queryByText(/this is a description/i)).toBeTruthy());
+    });
   });
 
   describe('when testing someone else', () => {
@@ -213,6 +218,7 @@ function aSimpleTestType(): TestType {
         bool: {
           title: 'Boolean field',
           type: 'boolean',
+          description: 'this is a description',
         },
       },
     },
