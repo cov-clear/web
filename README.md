@@ -25,7 +25,7 @@ The system understands the role of the person both administering the test, and r
 #### Tests via post
 * The test administrator generates a number of unique QR codes for their tests, which are printed out with test instructions.
 * One printed QR code is sent out with each test.
-* The patient recives the test in the post.
+* The patient receives the test in the post.
 * The patient registers in the application (they can be already registered).
 * The patient scans the printed QR code to register the test.
 * The patient administers the test, following the instructions.
