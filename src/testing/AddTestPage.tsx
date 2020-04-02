@@ -22,7 +22,7 @@ export const AddTestPage = () => {
   const { token, userId: ownUserId } = useAuthentication();
   const isOwnUser = userId === ownUserId;
   const { permittedTestTypes } = useTestTypes();
-  const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
+  const selectedTestType = permittedTestTypes.find(type => type.id === selectedTestTypeId);
   const confirmPageMatch = useRouteMatch(`${url}/confirm`);
 
   useEffect(() => {
@@ -79,11 +79,11 @@ export const AddTestPage = () => {
             <Select
               id="test-type"
               value={selectedTestTypeId}
-              onChange={(event) => setSelectedTestTypeId(event.target.value)}
+              onChange={event => setSelectedTestTypeId(event.target.value)}
               required
               mb={4}
             >
-              {permittedTestTypes.map((type) => (
+              {permittedTestTypes.map(type => (
                 <option key={type.id} value={type.id}>
                   {type.name}
                 </option>
