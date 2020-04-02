@@ -3,7 +3,6 @@ import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge } from 't
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { Test } from '../api';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
