@@ -146,7 +146,7 @@ export async function createAccessPass(
 export type FieldValue = boolean | string | number;
 
 export interface TestResults {
-  details: { [key: string]: FieldValue }; // TODO: proper typing based on test type
+  details: { [key: string]: FieldValue };
   testerUserId: string;
   creationTime: string;
 }
@@ -182,13 +182,13 @@ export interface FieldSchema {
   type: FieldType;
   title: string;
   description?: string;
+  enum?: FieldValue[];
 }
 
-// TODO: we are currently hardcoding only simple object -> property json schemas.
-// Should support larger range in the future.
 export interface ObjectSchema {
   type: 'object';
   title: string;
+  description?: string;
   properties: { [key: string]: FieldSchema };
 }
 
@@ -206,12 +206,12 @@ export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise
   return response.data;
 }
 
-export type FilledSchema = { [key: string]: boolean | string | number };
+export type FilledSchema = { [key: string]: FieldValue };
 
 export interface CreateTestCommand {
   testTypeId: string;
   results?: {
-    details: FilledSchema; // TODO
+    details: FilledSchema;
   };
 }
 
