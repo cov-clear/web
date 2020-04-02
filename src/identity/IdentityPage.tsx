@@ -95,7 +95,7 @@ export const IdentityPage = () => {
           {user.profile.firstName} {user.profile.lastName}
         </Heading>
         <Text mb={4}>
-          Date of birth: {format(new Date(user.profile.dateOfBirth), 'dd MMM yyyy')}
+          Date of birth: {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
         </Text>
         {isOwnUser ? (
           <Flex as="nav">

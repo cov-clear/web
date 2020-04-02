@@ -46,10 +46,10 @@ describe('Identity page', () => {
       userId: 'mock-user',
       authenticate: jest.fn(),
       signOut: jest.fn(),
-      hasPermission: () => false,
+      hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestsMock.mockImplementation(() => Promise.resolve([]));
-    fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
+    fetchTestTypesMock.mockImplementation(() => Promise.resolve([aNonPermittedTestType()]));
     createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
       const user = await userApi.fetchUser(userId, { token });
       if (user) {
@@ -75,7 +75,7 @@ describe('Identity page', () => {
 
     it('shows their name and date of birth', async () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/01 Oct 1950/i)).toBeTruthy();
+      expect(screen.queryByText(/1 Oct 1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
@@ -99,9 +99,23 @@ describe('Identity page', () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
-      expect(screen.queryByText(/01 Oct 2005/i)).toBeTruthy();
-      expect(screen.queryByText(/01 Nov 2005/i)).toBeTruthy();
+      await wait(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
+      expect(screen.queryByText(/1 Nov 2005/i)).toBeTruthy();
+    });
+
+    it('prompts you to go to the adding tests flow if you are permitted to run a test', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
+      expect(screen.queryByText(/add new test/i)).toBeNull();
+
+      fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
+      fireEvent.click(screen.getByText(/profile/i));
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryByText(/add new test/i)).toBeTruthy());
+      fireEvent.click(screen.getByText(/add new test/i));
+      expect(history.location.pathname).toBe('/users/mock-user/add-test');
     });
 
     it('lets you navigate with browser history', async () => {
@@ -143,7 +157,7 @@ describe('Identity page', () => {
     it('shows their name and date of birth', async () => {
       history.push('/users/mock-user');
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/01 Oct 1950/i)).toBeTruthy();
+      expect(screen.queryByText(/1 Oct 1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
@@ -480,6 +494,19 @@ function aTestType(): TestType {
     id: 'mock-test-type',
     name: 'Mock test',
     neededPermissionToAddResults: 'mock-permission',
+    resultsSchema: {
+      type: 'object',
+      title: 'Mock test',
+      properties: {},
+    },
+  };
+}
+
+function aNonPermittedTestType(): TestType {
+  return {
+    id: 'mock-permitted-test-type',
+    name: 'Mock test',
+    neededPermissionToAddResults: 'mock-other-permission',
     resultsSchema: {
       type: 'object',
       title: 'Mock test',
