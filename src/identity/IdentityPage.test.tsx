@@ -48,7 +48,7 @@ describe('Identity page', () => {
         <Route path="/users/:userId">
           <IdentityPage />
         </Route>
-      </Router>,
+      </Router>
     );
   });
 
@@ -141,22 +141,22 @@ describe('Identity page', () => {
     });
   });
 
-  describe('when filling address', () => {
+  describe('when we have personal details but no address', () => {
     beforeEach(() => {
       userApi.updateUser(aNewUserWithAProfile(), { token: userApi.mockToken });
       history.push('/users/mock-user');
     });
 
-    it('lets you fill your address with the correct information and then goes to your profile screen', async () => {
+    it('should get the user and show the address form', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByText(/first middle last/i)).not.toBeTruthy();
+    });
 
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/address line 2/i), {
-        target: { value: ' line 2  ' },
-      });
-      fireEvent.click(screen.getByText(/register/i));
+    it('lets you fill your address with the correct information and then goes to your profile screen', async () => {
+      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      fillAddress({ address2: ' line 2 ' });
+      clickRegister();
 
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
@@ -168,26 +168,27 @@ describe('Identity page', () => {
           },
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('does not let you update while it is loading', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
-      fireEvent.click(screen.getByText(/register/i));
-      fireEvent.click(screen.getByText(/register/i));
-      fireEvent.click(screen.getByText(/register/i));
-      fireEvent.click(screen.getByText(/register/i));
-      fireEvent.click(screen.getByText(/register/i));
+      clickRegister();
+      clickRegister();
+      clickRegister();
+      clickRegister();
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('lets you skip address line 2', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.click(screen.getByText(/register/i));
+      fillAddress({ address2: '' });
+      clickRegister();
 
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
@@ -195,69 +196,59 @@ describe('Identity page', () => {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('shows errors for missing line 1', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/line 1/i), {
-        target: { value: '  ' },
-      });
-      fireEvent.click(screen.getByText(/register/i));
+      fillAddress({ address1: '' });
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/fill line 1/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing city', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/city/i), {
-        target: { value: '' },
-      });
-      fireEvent.click(screen.getByText(/register/i));
+      fillAddress({ city: '' });
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/fill the city/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('allows missing region', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/state/i), {
-        target: { value: '' },
-      });
-      fireEvent.click(screen.getByText(/register/i));
+      fillAddress({ state: '' });
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/fill the state/i)).toBeFalsy());
       expect(updateUserMock).toHaveBeenCalled();
     });
 
     it('shows errors for missing postcode', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/postcode/i), {
-        target: { value: '' },
-      });
-      fireEvent.click(screen.getByText(/register/i));
+      fillAddress({ postcode: '' });
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/fill the postcode/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('does not currently let you change country', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillAddress();
-      fireEvent.change(screen.getByLabelText(/country/i), {
-        target: { value: 'Estonia' },
-      });
+      fillAddress({ country: 'Estonia' });
       expect((screen.getByLabelText(/country/i) as HTMLInputElement).value).toBe('United Kingdom');
-      fireEvent.click(screen.getByText(/register/i));
+      clickRegister();
+
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
         {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
   });
@@ -270,7 +261,7 @@ describe('Identity page', () => {
 
     it('lets you fill your profile with the correct information and then goes to the next step', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      expect(fetchUserMock).toHaveBeenCalledTimes(1);
+      await wait(() => expect(fetchUserMock).toHaveBeenCalledTimes(1));
       expect(screen.queryByText(/2\/2/i)).not.toBeTruthy();
 
       fillProfileForm();
@@ -282,91 +273,137 @@ describe('Identity page', () => {
           ...aNewUserWithAProfile(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('does not let you update while it is loading', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillProfileForm();
-      fireEvent.click(screen.getByText(/next/i));
-      fireEvent.click(screen.getByText(/next/i));
-      fireEvent.click(screen.getByText(/next/i));
-      fireEvent.click(screen.getByText(/next/i));
-      fireEvent.click(screen.getByText(/next/i));
+      clickNext();
+      clickNext();
+      clickNext();
+      clickNext();
+      clickNext();
+
       await wait(() => expect(screen.queryByText(/2\/2/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('shows errors for missing first name', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillProfileForm();
-      fireEvent.change(screen.getByLabelText(/first name/i), {
-        target: { value: '' },
-      });
-      fireEvent.click(screen.getByText(/next/i));
+      fillProfileForm({ firstName: '' });
+      clickNext();
+
       await wait(() => expect(screen.queryByText(/fill your first name/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing last name', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fillProfileForm();
-      fireEvent.change(screen.getByLabelText(/last name/i), {
-        target: { value: '' },
-      });
-      fireEvent.click(screen.getByText(/next/i));
+      fillProfileForm({ lastName: '' });
+      clickNext();
+
       await wait(() => expect(screen.queryByText(/fill your last name/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing sex', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fireEvent.change(screen.getByLabelText(/first name/i), {
-        target: { value: '  First Middle  ' },
-      });
-      fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: '  Last  ' } });
-      fireEvent.change(screen.getByLabelText(/date of birth/i), {
-        target: { value: '1950-10-01' },
-      });
-      fireEvent.click(screen.getByText(/next/i));
+      fillProfileForm({ sex: null });
+      clickNext();
+
       await wait(() => expect(screen.queryByText(/select your legal sex/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing date of birth', async () => {
       await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
-      fireEvent.change(screen.getByLabelText(/first name/i), {
-        target: { value: '  First Middle  ' },
-      });
-      fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: '  Last  ' } });
-      fireEvent.click(screen.getByLabelText(/female/i));
-      fireEvent.click(screen.getByText(/next/i));
+      fillProfileForm({ dateOfBirth: null });
+      clickNext();
+
       await wait(() => expect(screen.queryByText(/fill your date of birth/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
   });
+
+  // describe('when saving the user profile data fails', () => {
+  //   beforeEach(() => {
+  //     userApi.updateUser(aNewUser(), { token: userApi.mockToken });
+  //     history.push('/users/mock-user');
+  //     updateUserMock.mockImplementation(() => Promise.reject('my error'));
+  //   });
+  //
+  //   it('should throw an error', async () => {
+  //     await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+  //     fillProfileForm();
+  //     clickNext();
+  //
+  //     await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+  //     expect(updateUserMock).toThrow();
+  //   });
+  // });
 });
 
-function fillProfileForm() {
-  fireEvent.change(screen.getByLabelText(/first name/i), {
-    target: { value: '  First Middle  ' },
-  });
-  fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: '  Last  ' } });
-  fireEvent.click(screen.getByLabelText(/female/i));
-  fireEvent.change(screen.getByLabelText(/date of birth/i), {
-    target: { value: '1950-10-01' },
-  });
+function clickNext() {
+  fireEvent.click(screen.getByText(/next/i));
 }
 
-function fillAddress() {
-  fireEvent.change(screen.getByLabelText(/address line 1/i), {
-    target: { value: '  56 Shoreditch High st  ' },
-  });
-  fireEvent.change(screen.getByLabelText(/city/i), { target: { value: '  London  ' } });
-  fireEvent.change(screen.getByLabelText(/state/i), { target: { value: '  London  ' } });
-  fireEvent.change(screen.getByLabelText(/postcode/i), { target: { value: ' E16JJ  ' } });
+function clickRegister() {
+  fireEvent.click(screen.getByText(/register/i));
+}
+
+function fillProfileForm(overrides) {
+  const data = {
+    firstName: '  First Middle  ',
+    lastName: '  Last  ',
+    sex: Sex.FEMALE,
+    dateOfBirth: '1950-10-01',
+    ...overrides,
+  };
+
+  fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: data.firstName } });
+  fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: data.lastName } });
+
+  if (data.sex === Sex.FEMALE) {
+    fireEvent.click(screen.getByLabelText(/female/i));
+  } else if (data.sex === Sex.MALE) {
+    fireEvent.click(screen.getByLabelText(/male/i));
+  }
+
+  if (data.dateOfBirth) {
+    fireEvent.change(screen.getByLabelText(/date of birth/i), {
+      target: { value: data.dateOfBirth },
+    });
+  }
+}
+
+function fillAddress(overrides) {
+  const data = {
+    address1: '  56 Shoreditch High st  ',
+    city: '  London  ',
+    state: '  London  ',
+    postcode: ' E16JJ  ',
+    country: 'UK',
+    ...overrides,
+  };
+
+  fireEvent.change(screen.getByLabelText(/address line 1/i), { target: { value: data.address1 } });
+
+  if (data.address2) {
+    fireEvent.change(screen.getByLabelText(/address line 2/i), {
+      target: { value: data.address2 },
+    });
+  }
+
+  fireEvent.change(screen.getByLabelText(/city/i), { target: { value: data.city } });
+  fireEvent.change(screen.getByLabelText(/state/i), { target: { value: data.state } });
+  fireEvent.change(screen.getByLabelText(/postcode/i), { target: { value: data.postcode } });
   fireEvent.click(screen.getByLabelText(/postcode/i));
+
+  if (data.country) {
+    fireEvent.change(screen.getByLabelText(/country/i), { target: { value: data.country } });
+  }
 }
 
 class MockUserApi {
