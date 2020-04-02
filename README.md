@@ -20,7 +20,7 @@ The system understands the role of the person both administering the test, and r
 * The patient registers their details in the application
 * The medical professional scans the patient's profile
 * The medical professional administers the test and adds the resuls
-* The results appear on the patients device
+* The results appear on the patient's device
 
 #### Tests via post
 * The test administrator generates a number of unique QR codes for their tests, which are printed out with test instructions.
