@@ -17,17 +17,24 @@ const authenticationContext = createContext<AuthenticationContext>({
 const { Provider: ContextProvider } = authenticationContext;
 
 const LOCAL_STORAGE_KEY = 'token';
+const useLocalStorage = process.env.NODE_ENV !== 'production';
 
 export const Provider = ({ children }: { children?: ReactNode }) => {
-  const [token, setToken] = useState<Token | null>(localStorage.getItem(LOCAL_STORAGE_KEY));
+  const [token, setToken] = useState<Token | null>(
+    useLocalStorage ? localStorage.getItem(LOCAL_STORAGE_KEY) : null
+  );
 
   const signOut = useCallback(() => {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    if (useLocalStorage) {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
     setToken(null);
   }, []);
 
-  const authenticate = useCallback((token) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, token);
+  const authenticate = useCallback(token => {
+    if (useLocalStorage) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, token);
+    }
     setToken(token);
   }, []);
 
@@ -43,12 +50,15 @@ export const useAuthentication = (): Authentication => {
   const context = useContext(authenticationContext);
   const decodedToken = context.token ? decode(context.token) : null;
 
-  const hasPermission = useCallback((permission: string) => {
-    if (!decodedToken) {
-      return false;
-    }
-    return decodedToken.permissions.includes(permission);
-  }, [decodedToken]);
+  const hasPermission = useCallback(
+    (permission: string) => {
+      if (!decodedToken) {
+        return false;
+      }
+      return decodedToken.permissions.includes(permission);
+    },
+    [decodedToken]
+  );
 
   if (decodedToken) {
     return {
