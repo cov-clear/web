@@ -19,7 +19,6 @@ const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof us
 
 describe('Test adding page', () => {
   let history: History;
-  let debug;
 
   beforeEach(() => {
     history = createMemoryHistory();
@@ -32,22 +31,22 @@ describe('Test adding page', () => {
       hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestTypesMock.mockImplementation(() =>
-      Promise.resolve([aSimpleTestType(), aTestType(), aNonPermittedTestType()]),
+      Promise.resolve([aSimpleTestType(), aTestType(), aNonPermittedTestType()])
     );
     fetchCountriesMock.mockImplementation(() =>
       Promise.resolve([
         { code: 'GB', name: 'United Kingdom' },
         { code: 'EE', name: 'Estonia' },
-      ]),
+      ])
     );
 
-    debug = render(
+    render(
       <Router history={history}>
         <Route path="/users/:userId/add-test">
           <AddTestPage />
         </Route>
-      </Router>,
-    ).debug;
+      </Router>
+    );
   });
 
   describe('when testing yourself', () => {
@@ -65,6 +64,9 @@ describe('Test adding page', () => {
       fireEvent.change(screen.queryByLabelText(/number field/i), {
         target: { value: '42' },
       });
+      fireEvent.change(screen.queryByLabelText(/additional notes/i), {
+        target: { value: 'some free text notes' },
+      });
       fireEvent.click(screen.queryByText(/save/i));
       await wait(() => expect(history.location.pathname).toBe('/users/mock-user/tests'));
       expect(createTestMock).toHaveBeenCalledTimes(1);
@@ -78,9 +80,10 @@ describe('Test adding page', () => {
               string: 'string value',
               number: 42,
             },
+            notes: 'some free text notes',
           },
         },
-        expect.objectContaining({ token: 'mock-token' }),
+        expect.objectContaining({ token: 'mock-token' })
       );
     });
 
@@ -98,7 +101,7 @@ describe('Test adding page', () => {
 
     it('does not show the test type selector if you can only select one type of test', async () => {
       fetchTestTypesMock.mockImplementation(() =>
-        Promise.resolve([aTestType(), aNonPermittedTestType()]),
+        Promise.resolve([aTestType(), aNonPermittedTestType()])
       );
       history.push('/users/mock-user/add-test');
       await wait(() => expect(screen.queryByText(/boolean/i)).toBeTruthy());
@@ -142,9 +145,10 @@ describe('Test adding page', () => {
             details: {
               bool: true,
             },
+            notes: '',
           },
         },
-        expect.objectContaining({ token: 'mock-token' }),
+        expect.objectContaining({ token: 'mock-token' })
       );
     });
   });
