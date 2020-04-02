@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Text, Label, Input, Checkbox, Button } from 'theme-ui';
+import { Box, Text, Label, Input, Checkbox, Button, Textarea } from 'theme-ui';
 import { useFormik } from 'formik';
 
 import { CreateTestCommand, TestType, FilledSchema, ObjectSchema, FieldSchema } from '../api';
 
 const AnyBox = Box as any;
+
+type FormValues = FilledSchema & { notes: string };
 
 export const AddTestForm = ({
   testType,
@@ -13,12 +15,13 @@ export const AddTestForm = ({
   testType: TestType;
   onComplete: (command: CreateTestCommand) => any;
 }) => {
-  // TODO: validation
-  // TODO: supporting more arbitrary schemas
   const form = useFormik({
-    initialValues: getInitialValues(testType.resultsSchema),
-    onSubmit(details: FilledSchema) {
-      onComplete({ testTypeId: testType.id, results: { details } });
+    initialValues: {
+      ...getInitialValues(testType.resultsSchema),
+      notes: '',
+    },
+    onSubmit({ notes, ...details }: FormValues) {
+      onComplete({ testTypeId: testType.id, results: { details, notes } });
     },
   });
 
@@ -49,6 +52,11 @@ export const AddTestForm = ({
             </Box>
           );
         })}
+        <Box>
+          <Label htmlFor="test-notes">Additional notes</Label>
+          <Textarea id="test-notes" {...form.getFieldProps('notes')} sx={{ resize: 'vertical' }} />
+        </Box>
+
         <Button type="submit" variant="block">
           Save
         </Button>
