@@ -1,11 +1,21 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, fireEvent, screen } from '@testing-library/react';
+import { wait, render, fireEvent, screen, queryByText } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
-import { fetchUser, updateUser, createSharingCodeForUserId, User, Sex } from '../api';
+import {
+  fetchUser,
+  fetchTests,
+  fetchTestTypes,
+  updateUser,
+  createSharingCodeForUserId,
+  User,
+  Sex,
+  Test,
+  TestType,
+} from '../api';
 import { useAuthentication } from '../authentication';
 
 jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
@@ -15,6 +25,8 @@ jest.mock('../authentication');
 
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
+const fetchTestsMock = fetchTests as jest.MockedFunction<typeof fetchTests>;
+const fetchTestTypesMock = fetchTestTypes as jest.MockedFunction<typeof fetchTestTypes>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
 const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.MockedFunction<
   typeof createSharingCodeForUserId
@@ -34,7 +46,10 @@ describe('Identity page', () => {
       userId: 'mock-user',
       authenticate: jest.fn(),
       signOut: jest.fn(),
+      hasPermission: () => false,
     }));
+    fetchTestsMock.mockImplementation(() => Promise.resolve([]));
+    fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
     createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
       const user = await userApi.fetchUser(userId, { token });
       if (user) {
@@ -71,25 +86,34 @@ describe('Identity page', () => {
 
     it('lets you switch to the tests tab', async () => {
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/profile/i));
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
+    });
+
+    it('shows all your tests on the tests tab', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
+      expect(screen.queryByText(/01\/10\/2005/i)).toBeTruthy();
+      expect(screen.queryByText(/01\/11\/2005/i)).toBeTruthy();
     });
 
     it('lets you navigate with browser history', async () => {
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       history.goBack();
       await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
-      expect(screen.queryByText(/tests will be shown here/i)).toBeFalsy();
+      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       history.goForward();
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
 
@@ -108,6 +132,7 @@ describe('Identity page', () => {
         userId: 'mock-user-2',
         authenticate: jest.fn(),
         signOut: jest.fn(),
+        hasPermission: () => false,
       }));
       userApi.updateUser(aUser(), { token: userApi.mockToken });
       const user2 = aUser();
@@ -124,9 +149,9 @@ describe('Identity page', () => {
 
     it('shows a special header that you are looking at another person', async () => {
       history.push('/users/mock-user-2');
-      await wait(() => expect(screen.queryByText(/viewing profile/i)).not.toBeTruthy());
+      await wait(() => expect(screen.queryByText(/patient profile/i)).not.toBeTruthy());
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/viewing profile/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
     });
 
     it('does not show their QR code', async () => {
@@ -137,7 +162,7 @@ describe('Identity page', () => {
 
     it('starts on the tests tab', async () => {
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/tests will be shown here/i)).toBeTruthy());
+      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
     });
   });
 
@@ -428,6 +453,37 @@ function aNewUserWithAProfile(): User {
       lastName: 'Last',
       dateOfBirth: '1950-10-01',
       sex: Sex.FEMALE,
+    },
+  };
+}
+
+function aTest(): Test {
+  return {
+    id: 'mock-test',
+    userId: 'mock-id',
+    testTypeId: 'mock-test-type',
+    creationTime: new Date('2005-10-01').toISOString(),
+  };
+}
+
+function anotherTest(): Test {
+  return {
+    id: 'mock-test-2',
+    userId: 'mock-id',
+    testTypeId: 'mock-test-type',
+    creationTime: new Date('2005-11-01').toISOString(),
+  };
+}
+
+function aTestType(): TestType {
+  return {
+    id: 'mock-test-type',
+    name: 'Mock test',
+    neededPermissionToAddResults: 'mock-permission',
+    resultsSchema: {
+      type: 'object',
+      title: 'Mock test',
+      properties: {},
     },
   };
 }

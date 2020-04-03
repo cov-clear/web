@@ -6,31 +6,48 @@ import {
   fetchUser,
   updateUser,
   User,
-  Country,
   fetchCountries,
-  SharingCode,
   createSharingCodeForUserId,
+  fetchTestTypes,
+  fetchTests,
+  fetchTest,
+  AuthenticatedHttpOptions,
 } from './api';
 
-export function useUser(id: string) {
-  const [user, setUser] = useState<User | null>(null);
+function useAuthenticatedHttpResource<ResourceT>(
+  initialState: ResourceT,
+  fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>,
+) {
+  const [resource, setResource] = useState<ResourceT>(initialState);
+  const [loading, setLoading] = useState(false);
   const { token } = useAuthentication();
 
   useEffect(() => {
     const cancelToken = http.CancelToken.source();
-
-    const loadUser = async () => {
+    const load = async () => {
       if (token) {
-        const fetchedUser = await fetchUser(id, { token, cancelToken: cancelToken.token });
-        setUser(fetchedUser);
-      } else {
-        setUser(null);
+        setLoading(true);
+        const response = await fetcher({ token, cancelToken: cancelToken.token });
+        setResource(response);
+        setLoading(false);
       }
     };
-
-    loadUser();
+    load();
     return () => cancelToken.cancel();
-  }, [id, token]);
+  }, [fetcher, token]);
+
+  return { loading, resource, setResource };
+}
+
+export function useUser(id: string) {
+  const { token } = useAuthentication();
+  const userFetcher = useCallback((options: AuthenticatedHttpOptions) => fetchUser(id, options), [
+    id,
+  ]);
+  const { loading, resource: user, setResource: setUser } = useAuthenticatedHttpResource(
+    null,
+    userFetcher,
+  );
 
   const update = useCallback(
     async (user: User) => {
@@ -39,57 +56,63 @@ export function useUser(id: string) {
         setUser(updatedUser);
       }
     },
-    [token],
+    [setUser, token],
   );
 
-  return { user, update };
+  return { loading, user, update };
 }
 
 export function useCountries() {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const { token } = useAuthentication();
-
-  useEffect(() => {
-    const cancelToken = http.CancelToken.source();
-
-    const loadCountries = async () => {
-      if (token) {
-        const countries = await fetchCountries({ token, cancelToken: cancelToken.token });
-        setCountries(countries);
-      } else {
-        setCountries([]);
-      }
-    };
-
-    loadCountries();
-    return () => cancelToken.cancel();
-  }, [token]);
-
-  return { countries };
+  const countryFetcher = useCallback(
+    (options: AuthenticatedHttpOptions) => fetchCountries(options),
+    [],
+  );
+  const { loading, resource: countries } = useAuthenticatedHttpResource([], countryFetcher);
+  return { countries, loading };
 }
 
 export function useSharingCode(userId: string) {
-  const [sharingCode, setSharingCode] = useState<SharingCode | null>(null);
-  const { token } = useAuthentication();
+  const codeCreator = useCallback(
+    (options: AuthenticatedHttpOptions) => createSharingCodeForUserId(userId, options),
+    [userId],
+  );
+  const { loading, resource: sharingCode } = useAuthenticatedHttpResource(null, codeCreator);
+  return { loading, sharingCode };
+}
 
-  useEffect(() => {
-    const cancelToken = http.CancelToken.source();
+export function useTestTypes() {
+  const { hasPermission } = useAuthentication();
+  const testTypeFetcher = useCallback(
+    (options: AuthenticatedHttpOptions) => fetchTestTypes(options),
+    [],
+  );
+  const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-    const createCode = async () => {
-      if (token) {
-        const code = await createSharingCodeForUserId(userId, {
-          token,
-          cancelToken: cancelToken.token,
-        });
-        setSharingCode(code);
-      } else {
-        setSharingCode(null);
-      }
-    };
+  const permittedTestTypes = testTypes.filter((type) =>
+    hasPermission(type.neededPermissionToAddResults),
+  );
 
-    createCode();
-    return () => cancelToken.cancel();
-  }, [token, userId]);
+  return {
+    loading,
+    testTypes,
+    permittedTestTypes,
+  };
+}
 
-  return sharingCode;
+export function useTests(userId: string) {
+  const testFetcher = useCallback(
+    (options: AuthenticatedHttpOptions) => fetchTests(userId, options),
+    [userId],
+  );
+  const { loading, resource: tests } = useAuthenticatedHttpResource([], testFetcher);
+  return { tests, loading };
+}
+
+export function useTest(testId: string) {
+  const testFetcher = useCallback(
+    (options: AuthenticatedHttpOptions) => fetchTest(testId, options),
+    [testId],
+  );
+  const { loading, resource: test } = useAuthenticatedHttpResource(null, testFetcher);
+  return { loading, test };
 }

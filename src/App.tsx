@@ -15,6 +15,7 @@ import { NotFoundPage } from './staticPages';
 
 import { ScanPage } from './scanning';
 import { IdentityPage } from './identity';
+import { AddTestPage } from './testing';
 
 const App = () => {
   const { userId } = useAuthentication();
@@ -36,10 +37,13 @@ const App = () => {
       <Route path="/link/:linkId" exact>
         <LinkPage />
       </Route>
+      <AuthenticatedRoute path="/users/:userId/add-test">
+        <AddTestPage />
+      </AuthenticatedRoute>
       <AuthenticatedRoute path="/users/:userId">
         <IdentityPage />
       </AuthenticatedRoute>
-      <AuthenticatedRoute path="/scan">
+      <AuthenticatedRoute path="/scan" exact>
         <ScanPage />
       </AuthenticatedRoute>
       <Route path="*">

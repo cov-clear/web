@@ -24,12 +24,12 @@ export interface MagicLinkResult {
 
 export async function createMagicLink(
   email: string,
-  options?: HttpOptions,
+  options?: HttpOptions
 ): Promise<MagicLinkResult> {
   const response = await http.post(
     '/api/v1/auth/magic-links',
     { email },
-    { cancelToken: options?.cancelToken },
+    { cancelToken: options?.cancelToken }
   );
   return response.data;
 }
@@ -38,7 +38,7 @@ export async function authenticate(authCode: string, options?: HttpOptions): Pro
   const response = await http.post(
     '/api/v1/auth/login',
     { authCode },
-    { cancelToken: options?.cancelToken },
+    { cancelToken: options?.cancelToken }
   );
   return response.data.token;
 }
@@ -111,14 +111,14 @@ export interface SharingCode {
 
 export async function createSharingCodeForUserId(
   userId: string,
-  options: AuthenticatedHttpOptions,
+  options: AuthenticatedHttpOptions
 ): Promise<SharingCode> {
   const response = await authenticated(options.token).post(
     `/api/v1/users/${userId}/sharing-code`,
     undefined,
     {
       cancelToken: options.cancelToken,
-    },
+    }
   );
   return response.data;
 }
@@ -131,14 +131,103 @@ export interface AccessPass {
 export async function createAccessPass(
   userId: string,
   code: string,
-  options: AuthenticatedHttpOptions,
+  options: AuthenticatedHttpOptions
 ): Promise<AccessPass> {
   const response = await authenticated(options.token).post(
     `/api/v1/users/${userId}/access-passes`,
     { code },
     {
       cancelToken: options.cancelToken,
-    },
+    }
+  );
+  return response.data;
+}
+
+export type FieldValue = boolean | string | number;
+
+export interface TestResults {
+  details: { [key: string]: FieldValue };
+  notes: string;
+  testerUserId: string;
+  creationTime: string;
+}
+
+export interface Test {
+  id: string;
+  userId: string;
+  testTypeId: string;
+  creationTime: string;
+  results?: TestResults;
+}
+
+export async function fetchTest(testId: string, options: AuthenticatedHttpOptions): Promise<Test> {
+  const response = await authenticated(options.token).get(`/api/v1/tests/${testId}`, {
+    cancelToken: options.cancelToken,
+  });
+  return response.data;
+}
+
+export async function fetchTests(
+  userId: string,
+  options: AuthenticatedHttpOptions
+): Promise<Test[]> {
+  const response = await authenticated(options.token).get(`/api/v1/users/${userId}/tests`, {
+    cancelToken: options.cancelToken,
+  });
+  return response.data;
+}
+
+export type FieldType = 'boolean' | 'string' | 'number' | 'integer' | 'null';
+
+export interface FieldSchema {
+  type: FieldType;
+  title: string;
+  description?: string;
+  enum?: FieldValue[];
+}
+
+export interface ObjectSchema {
+  type: 'object';
+  title: string;
+  description?: string;
+  properties: { [key: string]: FieldSchema };
+}
+
+export interface TestType {
+  id: string;
+  name: string;
+  resultsSchema: ObjectSchema;
+  neededPermissionToAddResults: string;
+}
+
+export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise<TestType[]> {
+  const response = await authenticated(options.token).get(`/api/v1/test-types`, {
+    cancelToken: options.cancelToken,
+  });
+  return response.data;
+}
+
+export type FilledSchema = { [key: string]: FieldValue };
+
+export interface CreateTestCommand {
+  testTypeId: string;
+  results?: {
+    details: FilledSchema;
+    notes?: string;
+  };
+}
+
+export async function createTest(
+  userId: string,
+  command: CreateTestCommand,
+  options: AuthenticatedHttpOptions
+) {
+  const response = await authenticated(options.token).post(
+    `/api/v1/users/${userId}/tests`,
+    command,
+    {
+      cancelToken: options.cancelToken,
+    }
   );
   return response.data;
 }

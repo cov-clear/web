@@ -29,8 +29,11 @@ import { Profile, Address } from '../api';
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
 import { SharingCode } from './SharingCode';
-import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from './icons';
+import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from '../icons';
 import { useAuthentication } from '../authentication';
+
+import { TestList } from '../testing';
+import { ViewingOtherProfileHeader } from './ViewingOtherProfileHeader';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -97,10 +100,10 @@ export const IdentityPage = () => {
         {isOwnUser ? (
           <Flex as="nav">
             <NavLink as={RouterNavLink} to={`${url}/profile`} variant="tab">
-              <ProfileIcon /> Profile
+              <ProfileIcon mr={1} /> Profile
             </NavLink>
             <NavLink as={RouterNavLink} to={`${url}/tests`} variant="tab">
-              <TestIcon /> Tests
+              <TestIcon mr={1} /> Tests
             </NavLink>
           </Flex>
         ) : null}
@@ -111,32 +114,26 @@ export const IdentityPage = () => {
             </Box>
           </Route>
           <Route path={`${url}/tests`} exact>
-            Tests will be shown here
+            <TestList userId={userId} />
           </Route>
         </Switch>
-        {isOwnUser ? (
-          <Redirect from={url} to={`${url}/profile`} />
-        ) : (
-          <Redirect from={url} to={`${url}/tests`} />
-        )}
+        <Route
+          path={url}
+          exact
+          render={() =>
+            isOwnUser ? (
+              <Redirect exact from={url} to={`${url}/profile`} />
+            ) : (
+              <Redirect exact from={url} to={`${url}/tests`} />
+            )
+          }
+        />
+
         <LinkButton as={Link} to="/scan" variant="fab">
-          <CameraIcon /> Scan
+          <CameraIcon mr={1} /> Scan
         </LinkButton>
       </Container>
     </>
   );
 };
 
-// TODO: the styling on this header is very ad-hoc. Let's move it into the theme.
-const ViewingOtherProfileHeader = () => (
-  <Box sx={{ backgroundColor: 'primary', color: 'background' }}>
-    <Flex px={3} py={2} sx={{ justifyContent: 'space-between', maxWidth: '600px' }} mx="auto">
-      <Heading as="h2" sx={{ lineHeight: 1.8 }}>
-        Viewing profile
-      </Heading>
-      <LinkButton as={Link} to="/scan" sx={{ border: '2px solid', borderColor: 'background' }}>
-        Close
-      </LinkButton>
-    </Flex>
-  </Box>
-);
