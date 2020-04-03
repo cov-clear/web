@@ -102,6 +102,12 @@ const theme = {
       backgroundColor: '#F0F5FF',
     },
   },
+  styles: {
+    ...baseTheme.styles,
+    hr: {
+      borderBottom: '1px solid #DEDEDE',
+    },
+  },
 };
 
 export default theme;

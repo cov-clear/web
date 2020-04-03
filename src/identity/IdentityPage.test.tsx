@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, fireEvent, screen, queryByText } from '@testing-library/react';
+import { wait, render, fireEvent, screen } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
