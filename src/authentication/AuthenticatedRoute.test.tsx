@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { render, wait, screen } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 
 import { useAuthentication } from './context';
 import { AuthenticatedRoute } from './AuthenticatedRoute';
@@ -24,14 +24,14 @@ describe('Authenticated route', () => {
         <Route path="/login" exact>
           <h1>login page</h1>
         </Route>
-      </Router>,
+      </Router>
     );
   });
 
   it('lets you use the route when you are authenticated', async () => {
     mockAuthenticated();
     history.push('/private');
-    await wait(() => expect(screen.queryByText(/private/)).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText(/private/)).not.toBeNull());
     expect(screen.queryByText(/login/)).toBeNull();
     expect(history.location.pathname).toBe('/private');
   });
@@ -39,7 +39,7 @@ describe('Authenticated route', () => {
   it('redirects you to login if you are not authenticated', async () => {
     mockSignedOut();
     history.push('/private');
-    await wait(() => expect(screen.queryByText(/login/)).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText(/login/)).not.toBeNull());
     expect(screen.queryByText(/private/)).toBeNull();
     expect(history.location.pathname).toBe('/login');
     history.goBack();

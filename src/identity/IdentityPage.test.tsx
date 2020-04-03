@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, fireEvent, screen, queryByText } from '@testing-library/react';
+import { waitFor, render, fireEvent, screen, queryByText } from '@testing-library/react';
 
 import { IdentityPage } from './IdentityPage';
 
@@ -63,7 +63,7 @@ describe('Identity page', () => {
         <Route path="/users/:userId">
           <IdentityPage />
         </Route>
-      </Router>,
+      </Router>
     );
   });
 
@@ -74,51 +74,59 @@ describe('Identity page', () => {
     });
 
     it('shows their name and date of birth', async () => {
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('loads and shows their sharing code in a qr code', async () => {
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy();
     });
 
     it('lets you switch to the tests tab', async () => {
-      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       fireEvent.click(screen.getByText(/profile/i));
-      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
     });
 
     it('shows all your tests on the tests tab', async () => {
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
+      await waitFor(() => expect(screen.queryAllByText(/mock test/i).length).toBe(2));
       expect(screen.queryByText(/01\/10\/2005/i)).toBeTruthy();
       expect(screen.queryByText(/01\/11\/2005/i)).toBeTruthy();
     });
 
     it('lets you navigate with browser history', async () => {
-      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+      );
       fireEvent.click(screen.getByText(/tests/i));
-      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       history.goBack();
-      await wait(() => expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
       history.goForward();
-      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
 
     it('lets you go to the scan page', async () => {
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(history.location.pathname).not.toBe('/scan');
       fireEvent.click(screen.getByText(/scan/i));
       expect(history.location.pathname).toBe('/scan');
@@ -142,27 +150,27 @@ describe('Identity page', () => {
 
     it('shows their name and date of birth', async () => {
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('shows a special header that you are looking at another person', async () => {
       history.push('/users/mock-user-2');
-      await wait(() => expect(screen.queryByText(/patient profile/i)).not.toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/patient profile/i)).not.toBeTruthy());
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
     });
 
     it('does not show their QR code', async () => {
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).not.toBeTruthy();
     });
 
     it('starts on the tests tab', async () => {
       history.push('/users/mock-user');
-      await wait(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
     });
   });
 
@@ -173,7 +181,7 @@ describe('Identity page', () => {
     });
 
     it('lets you fill your address with the correct information and then goes to your profile screen', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByText(/first middle last/i)).not.toBeTruthy();
 
@@ -183,7 +191,7 @@ describe('Identity page', () => {
       });
       fireEvent.click(screen.getByText(/register/i));
 
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
         {
           ...aUser(),
@@ -193,96 +201,96 @@ describe('Identity page', () => {
           },
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('does not let you update while it is loading', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.click(screen.getByText(/register/i));
       fireEvent.click(screen.getByText(/register/i));
       fireEvent.click(screen.getByText(/register/i));
       fireEvent.click(screen.getByText(/register/i));
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('lets you skip address line 2', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.click(screen.getByText(/register/i));
 
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
         {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('shows errors for missing line 1', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/line 1/i), {
         target: { value: '  ' },
       });
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/fill line 1/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill line 1/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing city', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/city/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/fill the city/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill the city/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('allows missing region', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/state/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/fill the state/i)).toBeFalsy());
+      await waitFor(() => expect(screen.queryByText(/fill the state/i)).toBeFalsy());
       expect(updateUserMock).toHaveBeenCalled();
     });
 
     it('shows errors for missing postcode', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/postcode/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/fill the postcode/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill the postcode/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('does not currently let you change country', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillAddress();
       fireEvent.change(screen.getByLabelText(/country/i), {
         target: { value: 'Estonia' },
       });
       expect((screen.getByLabelText(/country/i) as HTMLInputElement).value).toBe('United Kingdom');
       fireEvent.click(screen.getByText(/register/i));
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
         {
           ...aUser(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
   });
@@ -294,59 +302,59 @@ describe('Identity page', () => {
     });
 
     it('lets you fill your profile with the correct information and then goes to the next step', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       expect(fetchUserMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByText(/2\/2/i)).not.toBeTruthy();
 
       fillProfileForm();
       fireEvent.click(screen.getByText(/next/i));
 
-      await wait(() => expect(screen.queryByText(/2\/2/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/2\/2/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledWith(
         {
           ...aNewUserWithAProfile(),
           creationTime: expect.any(String),
         },
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('does not let you update while it is loading', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillProfileForm();
       fireEvent.click(screen.getByText(/next/i));
       fireEvent.click(screen.getByText(/next/i));
       fireEvent.click(screen.getByText(/next/i));
       fireEvent.click(screen.getByText(/next/i));
       fireEvent.click(screen.getByText(/next/i));
-      await wait(() => expect(screen.queryByText(/2\/2/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/2\/2/i)).toBeTruthy());
       expect(updateUserMock).toHaveBeenCalledTimes(1);
     });
 
     it('shows errors for missing first name', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillProfileForm();
       fireEvent.change(screen.getByLabelText(/first name/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/next/i));
-      await wait(() => expect(screen.queryByText(/fill your first name/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill your first name/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing last name', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fillProfileForm();
       fireEvent.change(screen.getByLabelText(/last name/i), {
         target: { value: '' },
       });
       fireEvent.click(screen.getByText(/next/i));
-      await wait(() => expect(screen.queryByText(/fill your last name/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill your last name/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing sex', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fireEvent.change(screen.getByLabelText(/first name/i), {
         target: { value: '  First Middle  ' },
       });
@@ -355,19 +363,19 @@ describe('Identity page', () => {
         target: { value: '1950-10-01' },
       });
       fireEvent.click(screen.getByText(/next/i));
-      await wait(() => expect(screen.queryByText(/select your legal sex/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/select your legal sex/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
 
     it('shows errors for missing date of birth', async () => {
-      await wait(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
       fireEvent.change(screen.getByLabelText(/first name/i), {
         target: { value: '  First Middle  ' },
       });
       fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: '  Last  ' } });
       fireEvent.click(screen.getByLabelText(/female/i));
       fireEvent.click(screen.getByText(/next/i));
-      await wait(() => expect(screen.queryByText(/fill your date of birth/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/fill your date of birth/i)).toBeTruthy());
       expect(updateUserMock).not.toHaveBeenCalled();
     });
   });

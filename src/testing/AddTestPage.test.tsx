@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, screen, fireEvent } from '@testing-library/react';
+import { waitFor, render, screen, fireEvent } from '@testing-library/react';
 
 import { AddTestPage } from './AddTestPage';
 
@@ -52,7 +52,7 @@ describe('Test adding page', () => {
   describe('when testing yourself', () => {
     it('lets you add a test result', async () => {
       history.push('/users/mock-user/add-test');
-      await wait(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
       expect(createTestMock).not.toHaveBeenCalled();
       fireEvent.change(screen.queryByLabelText(/test type/i), {
         target: { value: aTestType().id },
@@ -68,7 +68,7 @@ describe('Test adding page', () => {
         target: { value: 'some free text notes' },
       });
       fireEvent.click(screen.queryByText(/save/i));
-      await wait(() => expect(history.location.pathname).toBe('/users/mock-user/tests'));
+      await waitFor(() => expect(history.location.pathname).toBe('/users/mock-user/tests'));
       expect(createTestMock).toHaveBeenCalledTimes(1);
       expect(createTestMock).toHaveBeenCalledWith(
         'mock-user',
@@ -89,7 +89,7 @@ describe('Test adding page', () => {
 
     it('does not let you select non-permitted test types', async () => {
       history.push('/users/mock-user/add-test');
-      await wait(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
       expect(screen.queryByText(/proper mock test/i)).toBeTruthy();
       expect(screen.queryByText(/simple mock test/i)).toBeTruthy();
       expect(screen.queryByText(/non-permitted mock test/i)).toBeFalsy();
@@ -104,34 +104,34 @@ describe('Test adding page', () => {
         Promise.resolve([aTestType(), aNonPermittedTestType()])
       );
       history.push('/users/mock-user/add-test');
-      await wait(() => expect(screen.queryByText(/boolean/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/boolean/i)).toBeTruthy());
       expect(screen.queryByText(/test type/i)).not.toBeTruthy();
     });
 
     it('shows descriptions of properties if they exist', async () => {
       history.push('/users/mock-user/add-test');
-      await wait(() => expect(screen.queryByText(/this is a description/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/this is a description/i)).toBeTruthy());
     });
   });
 
   describe('when testing someone else', () => {
     it('shows you a special header to show you are looking at a patient', async () => {
       history.push('/users/mock-user/add-test');
-      await wait(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
       expect(screen.queryByText(/patient profile/i)).not.toBeTruthy();
       history.push('/users/mock-patient/add-test');
-      await wait(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
     });
 
     it('asks you to confirm their identity and then submits the test', async () => {
       history.push('/users/mock-patient/add-test');
-      await wait(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
       fireEvent.change(screen.queryByLabelText(/test type/i), {
         target: { value: aSimpleTestType() },
       });
       fireEvent.click(screen.queryByLabelText(/boolean field/i));
       fireEvent.click(screen.queryByText(/save/i));
-      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(createTestMock).not.toHaveBeenCalled();
       expect(history.location.pathname).toBe('/users/mock-patient/add-test/confirm');
       expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
