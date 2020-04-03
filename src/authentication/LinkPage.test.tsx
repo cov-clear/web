@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { render, wait } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 import { LinkPage } from './LinkPage';
 
@@ -49,14 +49,14 @@ describe('Link page', () => {
     });
 
     it('exchanges the link for the token and saves the token', async () => {
-      await wait(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
+      await waitFor(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
       expect(saveToken).toHaveBeenCalledTimes(1);
       expect(authenticate).toHaveBeenCalledWith(linkId, expect.anything());
       expect(authenticate).toHaveBeenCalledTimes(1);
     });
 
     it('replaces the route with the user page, removing it from history', async () => {
-      await wait(() =>
+      await waitFor(() =>
         expect(history.location.pathname).toBe('/users/f99c9790-f137-404f-9bf1-243d6e3e6f3e')
       );
       history.goBack();
@@ -71,7 +71,7 @@ describe('Link page', () => {
     });
 
     it('should redirect to the login page', async () => {
-      await wait(() => {
+      await waitFor(() => {
         expect(history.location.pathname).toBe('/login');
         expect(history.location.search).toBe('?invalid=true');
       });
