@@ -103,6 +103,15 @@ describe('Identity page', () => {
       expect(screen.queryByText(/1 Nov 2005/i)).toBeTruthy();
     });
 
+    it('lets you navigate to the test detail view', async () => {
+      await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
+      fireEvent.click(screen.getByText(/tests/i));
+      await wait(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
+      fireEvent.click(screen.queryByText(/1 Oct 2005/i)!);
+      expect(history.location.pathname).toBe(`/tests/${aTest().id}`);
+    });
+
     it('prompts you to go to the adding tests flow if you are permitted to run a test', async () => {
       await wait(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));

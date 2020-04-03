@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge } from 'theme-ui';
+import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
@@ -7,6 +7,8 @@ import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
+const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
+
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
@@ -23,20 +25,27 @@ export const TestList = ({ userId }: { userId: string }) => {
         <Box as="ul" sx={{ listStyleType: 'none' }} px={0}>
           {tests.map(test => {
             return (
-              <Flex
-                key={test.id}
-                py={3}
-                as="li"
-                sx={{ justifyContent: 'space-between', borderBottom: '1px solid #DEDEDE' }}
-              >
-                <Box>
-                  <Heading as="h3">{format(new Date(test.creationTime), 'd MMM yyyy')}</Heading>
-                  <Badge mt={2} variant="primary">
-                    Test interpretation will be here
-                  </Badge>
-                </Box>
-                <Caret sx={{ alignSelf: 'center' }} />
-              </Flex>
+              <Box key={test.id} as="li">
+                <LinkFlex
+                  as={Link}
+                  to={`/tests/${test.id}`}
+                  py={3}
+                  sx={{
+                    justifyContent: 'space-between',
+                    borderBottom: '1px solid #DEDEDE',
+                    color: 'inherit',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Box>
+                    <Heading as="h3">{format(new Date(test.creationTime), 'd MMM yyyy')}</Heading>
+                    <Badge mt={2} variant="primary">
+                      Test interpretation will be here
+                    </Badge>
+                  </Box>
+                  <Caret sx={{ alignSelf: 'center' }} />
+                </LinkFlex>
+              </Box>
             );
           })}
         </Box>
