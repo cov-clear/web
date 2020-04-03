@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, fireEvent, screen } from '@testing-library/react';
+import { waitFor, render, fireEvent, screen } from '@testing-library/react';
 import QRReader from 'react-qr-reader';
 
 import { ScanPage } from './ScanPage';
@@ -46,7 +46,7 @@ describe('Identity page', () => {
     render(
       <Router history={history}>
         <ScanPage />
-      </Router>,
+      </Router>
     );
   });
 
@@ -81,4 +81,3 @@ describe('Identity page', () => {
     expect(screen.queryByText(/incorrect/i)).not.toBeTruthy();
   });
 });
-
