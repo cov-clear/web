@@ -1,23 +1,48 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { RouteProps, Redirect, Route } from 'react-router-dom';
-import { useAuthentication } from './context';
 
-const AuthenticatedRouteRedirecter = ({ children }: { children: React.ReactNode }) => {
-  const { token } = useAuthentication();
+import { useAuthentication } from './context';
+import { NotFoundPage } from '../staticPages';
+
+interface AuthenticatedRouteRedirecterProps {
+  requiredPermission?: string;
+}
+
+const AuthenticatedRouteRedirecter: FC<AuthenticatedRouteRedirecterProps> = ({
+  requiredPermission,
+  children,
+}) => {
+  const { token, hasPermission } = useAuthentication();
   const authenticated = !!token;
 
   if (!authenticated) {
     return <Redirect to="/login" />;
   }
 
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    return <NotFoundPage />;
+  }
+
   return <>{children}</>;
 };
 
-export const AuthenticatedRoute = ({ children, ...rest }: RouteProps) => {
+interface AuthenticatedRouteProps extends RouteProps {
+  requiredPermission?: string;
+}
+
+export const AuthenticatedRoute: FC<AuthenticatedRouteProps> = ({
+  requiredPermission,
+  children,
+  ...rest
+}) => {
   return (
     <Route
       {...rest}
-      render={() => <AuthenticatedRouteRedirecter>{children}</AuthenticatedRouteRedirecter>}
+      render={() => (
+        <AuthenticatedRouteRedirecter requiredPermission={requiredPermission}>
+          {children}
+        </AuthenticatedRouteRedirecter>
+      )}
     />
   );
 };
