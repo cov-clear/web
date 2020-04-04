@@ -134,7 +134,7 @@ describe('Test adding page', () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(createTestMock).not.toHaveBeenCalled();
       expect(history.location.pathname).toBe('/users/mock-patient/add-test/confirm');
-      expect(screen.queryByText(/01\/10\/1950/i)).toBeTruthy();
+      expect(screen.queryByText(/1 Oct 1950/i)).toBeTruthy();
       expect(screen.queryByText(/56 Shoreditch High st/i)).toBeTruthy();
       expect(screen.queryAllByText(/London/i).length).toBe(2);
       expect(screen.queryByText(/E16JJ/i)).toBeTruthy();

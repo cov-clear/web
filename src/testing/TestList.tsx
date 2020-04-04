@@ -1,40 +1,51 @@
 import React from 'react';
-import { Flex, Box, Spinner, Text, Button, ButtonProps } from 'theme-ui';
+import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { Plus as PlusIcon } from '../icons';
+import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
+const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
 
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
-  const { permittedTestTypes, testTypes, loading: loadingTestTypes } = useTestTypes();
+  const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
 
   if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;
   }
 
-  // TODO: finish implementing design for this
   return (
     <>
       {!tests.length ? (
         <Text mt={4}>No tests yet.</Text>
       ) : (
         <Box as="ul" sx={{ listStyleType: 'none' }} px={0}>
-          {tests.map((test) => {
-            const testType = testTypes.find(({ id }) => id === test.testTypeId)!;
+          {tests.map(test => {
             return (
-              <Flex
-                key={test.id}
-                py={3}
-                as="li"
-                sx={{ justifyContent: 'space-between', borderBottom: '1px solid #DEDEDE' }}
-              >
-                <Text>{testType.name}</Text>
-                <Text>{format(new Date(test.creationTime), 'dd/MM/yyyy')}</Text>
-              </Flex>
+              <Box key={test.id} as="li">
+                <LinkFlex
+                  as={Link}
+                  to={`/tests/${test.id}`}
+                  py={3}
+                  sx={{
+                    justifyContent: 'space-between',
+                    borderBottom: '1px solid #DEDEDE',
+                    color: 'inherit',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Box>
+                    <Heading as="h3">{format(new Date(test.creationTime), 'd MMM yyyy')}</Heading>
+                    <Badge mt={2} variant="primary">
+                      Test interpretation will be here
+                    </Badge>
+                  </Box>
+                  <Caret sx={{ alignSelf: 'center' }} />
+                </LinkFlex>
+              </Box>
             );
           })}
         </Box>

@@ -38,7 +38,7 @@ export const ConfirmIdentity = ({
       <Heading as="h1" mb={3}>
         {firstName} {lastName}
       </Heading>
-      <Text mb={4}>Date of birth: {format(new Date(dateOfBirth), 'dd/MM/yyyy')}</Text>
+      <Text mb={4}>Date of birth: {format(new Date(dateOfBirth), 'd MMM yyyy')}</Text>
       {text(address1)}
       {text(address2)}
       {text(city)}

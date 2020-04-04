@@ -95,3 +95,17 @@ export const Warning = (props: any) => (
     />
   </AnyBox>
 );
+
+export const Caret = (props: any) => (
+  <AnyBox
+    as="svg"
+    {...props}
+    width="13"
+    height="18"
+    viewBox="0 0 13 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M1 1L11 9L1 17" stroke="#DEDEDE" strokeWidth="1.5" />
+  </AnyBox>
+);
