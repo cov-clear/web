@@ -97,6 +97,21 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
   return response.data;
 }
 
+export type Role = 'TRUSTED_PATIENT' | 'CLINICIAN';
+
+export interface CreateUserCommand {
+  email: string;
+  roles: Role[];
+}
+
+export async function createUsers(
+  command: CreateUserCommand[],
+  options: AuthenticatedHttpOptions
+): Promise<User[]> {
+  const response = await authenticated(options.token).post('/api/v1/users', command);
+  return response.data;
+}
+
 export async function fetchCountries(options: AuthenticatedHttpOptions): Promise<Country[]> {
   const response = await authenticated(options.token).get('/api/v1/countries', {
     cancelToken: options.cancelToken,

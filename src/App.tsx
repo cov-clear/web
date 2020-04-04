@@ -16,9 +16,11 @@ import { NotFoundPage } from './staticPages';
 import { ScanPage } from './scanning';
 import { IdentityPage } from './identity';
 import { AddTestPage, TestDetailPage } from './testing';
+import { BulkUserCreationPage } from './admin';
 
 const App = () => {
   const { userId } = useAuthentication();
+
   return (
     <Switch>
       <Route
@@ -50,7 +52,7 @@ const App = () => {
         <ScanPage />
       </AuthenticatedRoute>
       <AuthenticatedRoute path="/admin/create-users" exact requiredPermission="BULK_CREATE_USERS">
-        Create users
+        <BulkUserCreationPage />
       </AuthenticatedRoute>
       <Route path="*">
         <NotFoundPage />
