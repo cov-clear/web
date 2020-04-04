@@ -21,6 +21,11 @@ describe('Authenticated route', () => {
         <AuthenticatedRoute path="/private" exact>
           <h1>private page</h1>
         </AuthenticatedRoute>
+
+        <AuthenticatedRoute path="/protected" requiredPermission="MOCK_PERMISSION" exact>
+          <h1>protected page</h1>
+        </AuthenticatedRoute>
+
         <Route path="/login" exact>
           <h1>login page</h1>
         </Route>
@@ -46,11 +51,26 @@ describe('Authenticated route', () => {
     expect(history.location.pathname).toBe('/');
   });
 
-  function mockAuthenticated() {
+  it('displays not found page when user does not have the required permission', async () => {
+    mockAuthenticated([]);
+    history.push('/protected');
+    await waitFor(() => expect(screen.getByText(/doesn't exist/)).toBeInTheDocument());
+    expect(screen.queryByText(/protected/)).toBeNull();
+  });
+
+  it('displays protected content when user does has the required permission', async () => {
+    mockAuthenticated(['MOCK_PERMISSION']);
+    history.push('/protected');
+    await waitFor(() => expect(screen.getByText(/protected/)).toBeInTheDocument());
+    expect(screen.queryByText(/doesn't exist/)).toBeNull();
+  });
+
+  function mockAuthenticated(permissions: string[] = []) {
     useAuthenticationMock.mockImplementation(() => ({
       token: 'fake token',
       authenticate: jest.fn(),
       signOut: jest.fn(),
+      hasPermission: (permission: string) => permissions.includes(permission),
     }));
   }
 
@@ -59,6 +79,7 @@ describe('Authenticated route', () => {
       token: null,
       authenticate: jest.fn(),
       signOut: jest.fn(),
+      hasPermission: () => false,
     }));
   }
 });
