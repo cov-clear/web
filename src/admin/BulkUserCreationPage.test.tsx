@@ -59,7 +59,7 @@ describe('Bulk user creation page', () => {
     expect(mockPost).not.toHaveBeenCalled();
     fireEvent.click(button);
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/api/v1/users', [
+      expect(mockPost).toHaveBeenCalledWith('/api/v1/admin/users', [
         { email: 'jane.doe@example.com', roles: ['DOCTOR'] },
         { email: 'john.doe@gmail.com', roles: ['DOCTOR'] },
         { email: 'jake.doe@yahoo.com', roles: ['DOCTOR'] },
@@ -73,7 +73,7 @@ describe('Bulk user creation page', () => {
     fireEvent.change(roleSelect, { target: { value: 'USER' } });
     fireEvent.click(button);
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/api/v1/users', [
+      expect(mockPost).toHaveBeenCalledWith('/api/v1/admin/users', [
         { email: 'invalid-email', roles: ['USER'] },
         { email: 'another!invalid', roles: ['USER'] },
       ]);

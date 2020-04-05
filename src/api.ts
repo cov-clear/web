@@ -106,7 +106,7 @@ export async function createUsers(
   command: CreateUserCommand[],
   options: AuthenticatedHttpOptions
 ): Promise<User[]> {
-  const response = await authenticated(options.token).post('/api/v1/users', command);
+  const response = await authenticated(options.token).post('/api/v1/admin/users', command);
   return response.data;
 }
 
