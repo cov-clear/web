@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { wait, render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
 import { TestDetailPage } from './TestDetailPage';
 
@@ -41,7 +41,7 @@ describe('Test detail page', () => {
 
   it('shows when the test was taken', async () => {
     history.push('/tests/mock-test');
-    await wait(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
+    await waitFor(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
     expect(screen.queryByText(/1 oct 2005/i)).toBeTruthy();
     expect(fetchTestMock).toHaveBeenCalledWith(
       'mock-test',
@@ -51,19 +51,19 @@ describe('Test detail page', () => {
 
   it('shows the test type taken', async () => {
     history.push('/tests/mock-test');
-    await wait(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
+    await waitFor(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
     expect(screen.queryByText(/Mock test/i)).toBeTruthy();
   });
 
   it('shows the notes of the test', async () => {
     history.push('/tests/mock-test');
-    await wait(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
+    await waitFor(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
     expect(screen.queryByText(/some notes/i)).toBeTruthy();
   });
 
   it('shows the results of the test', async () => {
     history.push('/tests/mock-test');
-    await wait(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
+    await waitFor(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
     expect(screen.queryByText(/a positive value/i)).toBeTruthy();
     expect(screen.queryByText(/yes/i)).toBeTruthy();
     expect(screen.queryByText(/a string value/i)).toBeTruthy();
