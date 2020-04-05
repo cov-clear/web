@@ -16,7 +16,7 @@ export default function useBulkUserCreation(): {
   const [error, setError] = useState(null as NullableError);
   const [createdUsers, setCreatedUsers] = useState([] as User[]);
 
-  const create = async (command: CreateUserCommand[]): Promise<void> => {
+  const create = async (command: CreateUserCommand[]) => {
     if (token) {
       setError(null);
       setLoading(true);
