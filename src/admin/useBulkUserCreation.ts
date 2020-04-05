@@ -33,5 +33,10 @@ export default function useBulkUserCreation(): {
     }
   };
 
-  return { create, loading, error, createdUsers };
+  return {
+    create,
+    loading,
+    error: error ? new Error(`Failed to create users: ${error.message}`) : null,
+    createdUsers,
+  };
 }

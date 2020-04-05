@@ -68,7 +68,7 @@ describe('Bulk user creation page', () => {
     expect(getByText(/successfully created/i)).toBeInTheDocument();
 
     mockPost.mockClear();
-    mockPost.mockRejectedValueOnce(new Error('Something went wrong.'));
+    mockPost.mockRejectedValueOnce(new Error('Some creation error.'));
     fireEvent.change(input, { target: { value: 'invalid-email,another!invalid' } });
     fireEvent.change(roleSelect, { target: { value: 'USER' } });
     fireEvent.click(button);
@@ -78,20 +78,18 @@ describe('Bulk user creation page', () => {
         { email: 'another!invalid', roles: ['USER'] },
       ]);
     });
-    expect(getByText('Something went wrong.')).toBeInTheDocument();
+    expect(getByText(/some creation error/i)).toBeInTheDocument();
   });
 
   it('shows error message when loading roles fails', async () => {
     mockGet.mockImplementationOnce((url) =>
-      Promise.reject(
-        new Error(url === '/api/v1/roles' ? 'Failed to load roles.' : 'Some other error.')
-      )
+      Promise.reject(new Error(url === '/api/v1/roles' ? 'Some role error.' : 'Some other error.'))
     );
 
     const { getByText } = render(<BulkUserCreationPage />);
 
     await waitFor(() => {
-      expect(getByText('Failed to load roles.')).toBeInTheDocument();
+      expect(getByText(/some role error/i)).toBeInTheDocument();
     });
   });
 
