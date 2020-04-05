@@ -7,7 +7,10 @@ import { User } from '../api';
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
-jest.mock('axios', () => ({ create: () => ({ get: mockGet, post: mockPost }) }));
+jest.mock('axios', () => ({
+  ...jest.requireActual('axios'),
+  create: () => ({ get: mockGet, post: mockPost }),
+}));
 jest.mock('../authentication/context');
 
 describe('Bulk user creation page', () => {
