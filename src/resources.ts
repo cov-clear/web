@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import http from 'axios';
+import http, { CancelToken } from 'axios';
 import { useAuthentication } from './authentication';
 
 import {
@@ -16,27 +16,31 @@ import {
 
 function useAuthenticatedHttpResource<ResourceT>(
   initialState: ResourceT,
-  fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>,
+  fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>
 ) {
   const [resource, setResource] = useState<ResourceT>(initialState);
   const [loading, setLoading] = useState(false);
   const { token } = useAuthentication();
 
-  useEffect(() => {
-    const cancelToken = http.CancelToken.source();
-    const load = async () => {
+  const loadResource = useCallback(
+    async (cancelToken?: CancelToken) => {
       if (token) {
         setLoading(true);
-        const response = await fetcher({ token, cancelToken: cancelToken.token });
+        const response = await fetcher({ token, cancelToken });
         setResource(response);
         setLoading(false);
       }
-    };
-    load();
-    return () => cancelToken.cancel();
-  }, [fetcher, token]);
+    },
+    [fetcher, token]
+  );
 
-  return { loading, resource, setResource };
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+    loadResource(cancelToken.token);
+    return () => cancelToken.cancel();
+  }, [loadResource]);
+
+  return { loading, resource, setResource, reloadResource: loadResource };
 }
 
 export function useUser(id: string) {
@@ -46,7 +50,7 @@ export function useUser(id: string) {
   ]);
   const { loading, resource: user, setResource: setUser } = useAuthenticatedHttpResource(
     null,
-    userFetcher,
+    userFetcher
   );
 
   const update = useCallback(
@@ -56,7 +60,7 @@ export function useUser(id: string) {
         setUser(updatedUser);
       }
     },
-    [setUser, token],
+    [setUser, token]
   );
 
   return { loading, user, update };
@@ -65,31 +69,61 @@ export function useUser(id: string) {
 export function useCountries() {
   const countryFetcher = useCallback(
     (options: AuthenticatedHttpOptions) => fetchCountries(options),
-    [],
+    []
   );
   const { loading, resource: countries } = useAuthenticatedHttpResource([], countryFetcher);
   return { countries, loading };
 }
 
+const SHARING_CODE_TIMER_INTERVAL = 500;
+
+function getTimeFromNow(date: Date) {
+  return (date.getTime() - new Date().getTime()) / 1000;
+}
+
 export function useSharingCode(userId: string) {
   const codeCreator = useCallback(
     (options: AuthenticatedHttpOptions) => createSharingCodeForUserId(userId, options),
-    [userId],
+    [userId]
   );
-  const { loading, resource: sharingCode } = useAuthenticatedHttpResource(null, codeCreator);
-  return { loading, sharingCode };
+  const {
+    loading,
+    resource: sharingCode,
+    reloadResource: reloadSharingCode,
+  } = useAuthenticatedHttpResource(null, codeCreator);
+  const [timeUntilExpiry, setTimeUntilExpiry] = useState(0);
+  const [originalTimeUntilExpiry, setOriginalTimeUntilExpiry] = useState(0);
+  useEffect(() => {
+    if (sharingCode) {
+      const cancelToken = http.CancelToken.source();
+      const expiryDate = new Date(sharingCode.expiryTime);
+      setOriginalTimeUntilExpiry(getTimeFromNow(expiryDate));
+      const interval = setInterval(() => {
+        const timeLeft = getTimeFromNow(expiryDate);
+        setTimeUntilExpiry(timeLeft);
+        if (timeLeft <= 3) {
+          reloadSharingCode(cancelToken.token);
+        }
+      }, SHARING_CODE_TIMER_INTERVAL);
+      return () => {
+        clearInterval(interval);
+        cancelToken.cancel();
+      };
+    }
+  }, [reloadSharingCode, sharingCode]);
+  return { loading, sharingCode, timeUntilExpiry, originalTimeUntilExpiry };
 }
 
 export function useTestTypes() {
   const { hasPermission } = useAuthentication();
   const testTypeFetcher = useCallback(
     (options: AuthenticatedHttpOptions) => fetchTestTypes(options),
-    [],
+    []
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter((type) =>
-    hasPermission(type.neededPermissionToAddResults),
+  const permittedTestTypes = testTypes.filter(type =>
+    hasPermission(type.neededPermissionToAddResults)
   );
 
   return {
@@ -102,7 +136,7 @@ export function useTestTypes() {
 export function useTests(userId: string) {
   const testFetcher = useCallback(
     (options: AuthenticatedHttpOptions) => fetchTests(userId, options),
-    [userId],
+    [userId]
   );
   const { loading, resource: tests } = useAuthenticatedHttpResource([], testFetcher);
   return { tests, loading };
@@ -111,7 +145,7 @@ export function useTests(userId: string) {
 export function useTest(testId: string) {
   const testFetcher = useCallback(
     (options: AuthenticatedHttpOptions) => fetchTest(testId, options),
-    [testId],
+    [testId]
   );
   const { loading, resource: test } = useAuthenticatedHttpResource(null, testFetcher);
   return { loading, test };
