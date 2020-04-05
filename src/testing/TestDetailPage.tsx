@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { useTest } from '../resources';
 import { FieldValue } from '../api';
 
+import { InterpretationBadge } from './InterpretationBadge';
+
 export const TestDetailPage = () => {
   const { testId } = useParams<{ testId: string }>();
   const { test, loading } = useTest(testId);
@@ -26,13 +28,16 @@ export const TestDetailPage = () => {
   });
   return (
     <Container variant="page">
-      <Heading as="h1" mb={5}>
+      <Heading as="h1" mb={2}>
         Test result
       </Heading>
-      <Text mb={5}>Test date: {format(new Date(test!.creationTime), 'd MMM yyyy')}</Text>
+      <Text mb={2}>Test date: {format(new Date(test!.creationTime), 'd MMM yyyy')}</Text>
+      {test.resultsInterpretations?.map((interpretation, index) => (
+        <InterpretationBadge key={index} interpretation={interpretation} mr={2} />
+      ))}
       {test?.results ? (
         <>
-          <Text>Details</Text>
+          <Text mt={5}>Details</Text>
           <Divider mb={3} />
           <Flex>
             <Box sx={{ display: 'grid', gridGap: 2 }}>

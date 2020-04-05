@@ -136,12 +136,14 @@ describe('Identity page', () => {
       expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
     });
 
-    it('shows all your tests on the tests tab', async () => {
+    it('shows all your tests on the tests tab with their interpretations', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
       fireEvent.click(screen.getByText(/tests/i));
       await waitFor(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
       expect(screen.queryByText(/1 Nov 2005/i)).toBeTruthy();
+      expect(screen.queryByText(/interpretation 1/i)).toBeInTheDocument();
+      expect(screen.queryByText(/interpretation 2/i)).toBeInTheDocument();
     });
 
     it('lets you navigate to the test detail view', async () => {
@@ -529,8 +531,12 @@ function aTest(): Test {
   return {
     id: 'mock-test',
     userId: 'mock-id',
-    testTypeId: 'mock-test-type',
+    testType: aTestType(),
     creationTime: new Date('2005-10-01').toISOString(),
+    resultsInterpretations: [
+      { name: 'Interpretation 1', theme: 'MUTED' },
+      { name: 'Interpretation 2', theme: 'NEGATIVE' },
+    ],
   };
 }
 
@@ -538,7 +544,7 @@ function anotherTest(): Test {
   return {
     id: 'mock-test-2',
     userId: 'mock-id',
-    testTypeId: 'mock-test-type',
+    testType: aTestType(),
     creationTime: new Date('2005-11-01').toISOString(),
   };
 }
