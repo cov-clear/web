@@ -4,8 +4,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import { Role, CreateUserCommand } from '../api';
-import useBulkUserCreation from './hooks/useBulkUserCreation';
-import useRoles from './hooks/useRoles';
+import useBulkUserCreation from './useBulkUserCreation';
+import useRoles from './useRoles';
 
 const AnyBox = Box as any;
 

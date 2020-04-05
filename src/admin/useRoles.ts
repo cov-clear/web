@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { useAuthentication } from '../../authentication';
-import { Role, fetchRoles } from '../../api';
+import { useAuthentication } from '../authentication';
+import { Role, fetchRoles } from '../api';
 
 type NullableError = Error | null;
 

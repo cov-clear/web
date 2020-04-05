@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAuthentication } from '../../authentication';
-import { User, CreateUserCommand, createUsers } from '../../api';
+import { useAuthentication } from '../authentication';
+import { User, CreateUserCommand, createUsers } from '../api';
 
 type NullableError = Error | null;
 
