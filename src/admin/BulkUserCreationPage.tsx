@@ -48,7 +48,10 @@ const BulkUserCreationPage: FC = () => {
         Create users
       </Heading>
 
-      <Text mb={4}>Users with the emails will be created with the selected role.</Text>
+      <Text mb={4}>
+        Creates users with the specified emails and assigns the selected role to them. If a user
+        with a given email already exists, the selected role will be assigned to them.
+      </Text>
 
       <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit} mb={4}>
         <Box>
