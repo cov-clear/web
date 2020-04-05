@@ -152,12 +152,18 @@ export interface TestResults {
   creationTime: string;
 }
 
+export interface ResultInterpretation {
+  name: string;
+  theme: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MUTED';
+}
+
 export interface Test {
   id: string;
   userId: string;
-  testTypeId: string;
+  testType: TestType;
   creationTime: string;
   results?: TestResults;
+  resultsInterpretations?: ResultInterpretation[];
 }
 
 export async function fetchTest(testId: string, options: AuthenticatedHttpOptions): Promise<Test> {
