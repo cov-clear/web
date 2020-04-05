@@ -5,6 +5,13 @@ const baseTheme = system;
 const normalWeight = 400;
 const semibold = 600;
 
+const commonBadgeStyles = {
+  fontWeight: normalWeight,
+  paddingLeft: 2,
+  paddingRight: 2,
+  border: '1px solid',
+};
+
 const theme = {
   ...baseTheme,
   space: [0, 4, 8, 16, 24, 40, 64, 128, 256, 512],
@@ -93,13 +100,23 @@ const theme = {
     },
   },
   badges: {
-    primary: {
-      fontWeight: normalWeight,
-      paddingLeft: 2,
-      paddingRight: 2,
+    neutral: {
+      ...commonBadgeStyles,
       color: '#2F54EB',
-      border: '1px solid #2F54EB', // TODO: integrate these colors into the design system
+      borderColor: '#2F54EB',
       backgroundColor: '#F0F5FF',
+    },
+    negative: {
+      ...commonBadgeStyles,
+      color: '#EB2F96',
+      borderColor: '#EB2F96',
+      backgroundColor: '#FFF0F6',
+    },
+    muted: {
+      ...commonBadgeStyles,
+      color: '#8F8F8F',
+      borderColor: '#8F8F8F',
+      backgroundColor: 'background',
     },
   },
   styles: {
