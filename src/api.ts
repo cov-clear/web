@@ -152,9 +152,11 @@ export interface TestResults {
   creationTime: string;
 }
 
+export type ResultInterpretationTheme = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MUTED';
+
 export interface ResultInterpretation {
   name: string;
-  theme: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MUTED';
+  theme: ResultInterpretationTheme;
 }
 
 export interface Test {
