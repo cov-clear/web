@@ -53,6 +53,13 @@ describe('Test detail page', () => {
     expect(screen.queryByText(/Mock test/i)).toBeTruthy();
   });
 
+  it('shows the interpretations of the test', async () => {
+    history.push('/tests/mock-test');
+    await waitFor(() => expect(screen.queryByText(/test result/i)).toBeInTheDocument());
+    expect(screen.queryByText(/interpretation 1/i)).toBeInTheDocument();
+    expect(screen.queryByText(/interpretation 2/i)).toBeInTheDocument();
+  });
+
   it('shows the notes of the test', async () => {
     history.push('/tests/mock-test');
     await waitFor(() => expect(screen.queryByText(/test result/i)).toBeTruthy());
@@ -87,6 +94,10 @@ function aTest(): Test {
         num: 42,
       },
     },
+    resultsInterpretations: [
+      { name: 'Interpretation 1', theme: 'MUTED' },
+      { name: 'Interpretation 2', theme: 'NEGATIVE' },
+    ],
   };
 }
 

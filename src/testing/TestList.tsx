@@ -1,10 +1,12 @@
 import React from 'react';
-import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, Badge, FlexProps } from 'theme-ui';
+import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
+
+import { InterpretationBadge } from './InterpretationBadge';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
@@ -38,10 +40,12 @@ export const TestList = ({ userId }: { userId: string }) => {
                   }}
                 >
                   <Box>
-                    <Heading as="h3">{format(new Date(test.creationTime), 'd MMM yyyy')}</Heading>
-                    <Badge mt={2} variant="primary">
-                      Test interpretation will be here
-                    </Badge>
+                    <Heading as="h3" mb={2}>
+                      {format(new Date(test.creationTime), 'd MMM yyyy')}
+                    </Heading>
+                    {test.resultsInterpretations?.map((interpretation, index) => (
+                      <InterpretationBadge key={index} interpretation={interpretation} mr={2} />
+                    ))}
                   </Box>
                   <Caret sx={{ alignSelf: 'center' }} />
                 </LinkFlex>
