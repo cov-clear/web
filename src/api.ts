@@ -97,11 +97,9 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
   return response.data;
 }
 
-export type Role = 'TRUSTED_PATIENT' | 'CLINICIAN';
-
 export interface CreateUserCommand {
   email: string;
-  roles: Role[];
+  roles: Role['name'][];
 }
 
 export async function createUsers(
@@ -252,5 +250,15 @@ export async function createTest(
       cancelToken: options.cancelToken,
     }
   );
+  return response.data;
+}
+
+export interface Role {
+  name: string;
+  permissions: string[];
+}
+
+export async function fetchRoles({ token }: AuthenticatedHttpOptions): Promise<Role[]> {
+  const response = await authenticated(token).get('/api/v1/roles');
   return response.data;
 }

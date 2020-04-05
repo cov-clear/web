@@ -5,27 +5,40 @@ import * as yup from 'yup';
 
 import { Role, CreateUserCommand } from '../api';
 import useBulkUserCreation from './hooks/useBulkUserCreation';
+import useRoles from './hooks/useRoles';
 
 const AnyBox = Box as any;
 
-const ROLES: Role[] = ['TRUSTED_PATIENT', 'CLINICIAN'];
-
 const BulkUserCreationPage: FC = () => {
-  const { create, loading, error, createdUsers } = useBulkUserCreation();
+  const {
+    create,
+    loading: creatingUsers,
+    error: errorCreatingUsers,
+    createdUsers,
+  } = useBulkUserCreation();
+  const { roles, loading: loadingRoles, error: errorLoadingRoles } = useRoles();
 
-  const form = useFormik<{ emailsString: string; role: Role }>({
+  const form = useFormik<{ emailsString: string; role: Role['name'] }>({
     initialValues: {
+      role: roles[0]?.name || '',
       emailsString: '',
-      role: 'TRUSTED_PATIENT',
     },
+    enableReinitialize: true,
     validationSchema: yup.object().shape({
-      emailsString: yup.string().required(),
       role: yup.string().required(),
+      emailsString: yup.string().required(),
     }),
-    onSubmit: ({ emailsString, role }) => {
+    onSubmit: ({ role, emailsString }) => {
       const emails = getEmails(emailsString);
       const command: CreateUserCommand[] = emails.map((email) => ({ email, roles: [role] }));
-      create(command);
+
+      if (
+        window.confirm(
+          `Are you sure you want to create ${command.length} user(s) with role ${role}?`
+        )
+      ) {
+        create(command);
+      }
     },
   });
 
@@ -41,9 +54,9 @@ const BulkUserCreationPage: FC = () => {
         <Box>
           <Label htmlFor="role">Role *</Label>
           <Select id="role" {...form.getFieldProps('role')}>
-            {ROLES.map((role) => (
-              <option key={role} value={role}>
-                {role}
+            {roles.map(({ name }) => (
+              <option key={name} value={name}>
+                {name}
               </option>
             ))}
           </Select>
@@ -58,7 +71,11 @@ const BulkUserCreationPage: FC = () => {
           />
         </Box>
 
-        <Button variant="block" type="submit" disabled={loading || !form.isValid}>
+        <Button
+          variant="block"
+          type="submit"
+          disabled={loadingRoles || creatingUsers || !form.isValid}
+        >
           Create
         </Button>
       </AnyBox>
@@ -67,7 +84,9 @@ const BulkUserCreationPage: FC = () => {
         <Alert variant="success">{createdUsers.length} user(s) successfully created.</Alert>
       )}
 
-      {error && <Alert variant="error">{error.message}</Alert>}
+      {errorLoadingRoles && <Alert variant="error">{errorLoadingRoles.message}</Alert>}
+
+      {errorCreatingUsers && <Alert variant="error">{errorCreatingUsers.message}</Alert>}
     </Container>
   );
 };
