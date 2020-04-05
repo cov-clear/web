@@ -258,7 +258,9 @@ export interface Role {
   permissions: string[];
 }
 
-export async function fetchRoles({ token }: AuthenticatedHttpOptions): Promise<Role[]> {
-  const response = await authenticated(token).get('/api/v1/roles');
+export async function fetchRoles(options: AuthenticatedHttpOptions): Promise<Role[]> {
+  const response = await authenticated(options.token).get('/api/v1/roles', {
+    cancelToken: options.cancelToken,
+  });
   return response.data;
 }
