@@ -2,6 +2,7 @@ import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
 import { act, waitFor, render, fireEvent, screen } from '@testing-library/react';
+import MockDate from 'mockdate';
 
 import { IdentityPage } from './IdentityPage';
 
@@ -31,8 +32,6 @@ const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof us
 const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.MockedFunction<
   typeof createSharingCodeForUserId
 >;
-
-const RealDate = Date;
 
 describe('Identity page', () => {
   let history: History;
@@ -71,7 +70,7 @@ describe('Identity page', () => {
   });
 
   afterEach(() => {
-    global.Date = RealDate;
+    MockDate.reset();
     jest.useRealTimers();
   });
 
@@ -108,14 +107,14 @@ describe('Identity page', () => {
       });
       expect(createSharingCodeForUserIdMock).toHaveBeenCalledTimes(1);
       await act(async () => {
-        mockDate(secondsFromNow(29).toISOString());
+        MockDate.set(secondsFromNow(29));
         jest.advanceTimersToNextTimer();
         await nextTick();
       });
       expect(createSharingCodeForUserIdMock).toHaveBeenCalledTimes(2);
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code-2/i)).toBeInTheDocument();
       await act(async () => {
-        mockDate(secondsFromNow(10).toISOString());
+        MockDate.set(secondsFromNow(10));
         jest.advanceTimersToNextTimer();
         await nextTick();
       });
@@ -570,16 +569,8 @@ function aNonPermittedTestType(): TestType {
   };
 }
 
-function mockDate(isoDate: string) {
-  global.Date = class extends RealDate {
-    constructor() {
-      super(isoDate);
-    }
-  } as any;
-}
-
 function secondsFromNow(seconds: number): Date {
-  const time = new RealDate();
+  const time = new Date();
   time.setSeconds(time.getSeconds() + seconds);
   return time;
 }
