@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import http, { CancelToken } from 'axios';
+import http from 'axios';
 import { useAuthentication } from './authentication';
-
 import {
   fetchUser,
   updateUser,
@@ -13,35 +12,7 @@ import {
   fetchTest,
   AuthenticatedHttpOptions,
 } from './api';
-
-function useAuthenticatedHttpResource<ResourceT>(
-  initialState: ResourceT,
-  fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>
-) {
-  const [resource, setResource] = useState<ResourceT>(initialState);
-  const [loading, setLoading] = useState(false);
-  const { token } = useAuthentication();
-
-  const loadResource = useCallback(
-    async (cancelToken?: CancelToken) => {
-      if (token) {
-        setLoading(true);
-        const response = await fetcher({ token, cancelToken });
-        setResource(response);
-        setLoading(false);
-      }
-    },
-    [fetcher, token]
-  );
-
-  useEffect(() => {
-    const cancelToken = http.CancelToken.source();
-    loadResource(cancelToken.token);
-    return () => cancelToken.cancel();
-  }, [loadResource]);
-
-  return { loading, resource, setResource, reloadResource: loadResource };
-}
+import { useAuthenticatedHttpResource } from './common';
 
 export function useUser(id: string) {
   const { token } = useAuthentication();
@@ -122,7 +93,7 @@ export function useTestTypes() {
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter(type =>
+  const permittedTestTypes = testTypes.filter((type) =>
     hasPermission(type.neededPermissionToAddResults)
   );
 
