@@ -23,7 +23,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
   error: NullableError;
   resource: ResourceT;
   setResource: (resource: ResourceT) => void;
-  reloadResource: () => void;
+  reloadResource: (cancelToken?: CancelToken) => void;
 } {
   const [resource, setResource] = useState<ResourceT>(initialState);
   const [loading, setLoading] = useState(false);
