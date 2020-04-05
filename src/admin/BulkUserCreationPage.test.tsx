@@ -42,9 +42,9 @@ describe('Bulk user creation page', () => {
 
     mockPost.mockResolvedValueOnce({
       data: [
-        anUser('jane.doe@example.com'),
-        anUser('john.doe@gmail.com'),
-        anUser('johnny.doe@yahoo.com'),
+        aUser('jane.doe@example.com'),
+        aUser('john.doe@gmail.com'),
+        aUser('johnny.doe@yahoo.com'),
       ],
     });
     fireEvent.click(button);
@@ -96,7 +96,7 @@ describe('Bulk user creation page', () => {
     (useAuthentication as jest.Mock).mockReturnValue({ token: 'some-token' });
   }
 
-  function anUser(email: User['email']): User {
+  function aUser(email: User['email']): User {
     return {
       email,
       id: email,
