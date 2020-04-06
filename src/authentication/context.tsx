@@ -17,24 +17,17 @@ const authenticationContext = createContext<AuthenticationContext>({
 const { Provider: ContextProvider } = authenticationContext;
 
 const LOCAL_STORAGE_KEY = 'token';
-const useLocalStorage = process.env.NODE_ENV !== 'production';
 
 export const Provider = ({ children }: { children?: ReactNode }) => {
-  const [token, setToken] = useState<Token | null>(
-    useLocalStorage ? localStorage.getItem(LOCAL_STORAGE_KEY) : null
-  );
+  const [token, setToken] = useState<Token | null>(localStorage.getItem(LOCAL_STORAGE_KEY));
 
   const signOut = useCallback(() => {
-    if (useLocalStorage) {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    }
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
     setToken(null);
   }, []);
 
   const authenticate = useCallback(token => {
-    if (useLocalStorage) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, token);
-    }
+    localStorage.setItem(LOCAL_STORAGE_KEY, token);
     setToken(token);
   }, []);
 
