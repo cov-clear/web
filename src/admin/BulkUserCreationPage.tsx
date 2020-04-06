@@ -84,12 +84,12 @@ const BulkUserCreationPage: FC = () => {
       </AnyBox>
 
       {createdUsers.length > 0 && (
-        <Alert variant="success">{createdUsers.length} user(s) successfully created.</Alert>
+        <Alert variant="success" mb={2}>{createdUsers.length} user(s) successfully created.</Alert>
       )}
 
-      {errorLoadingRoles && <Alert variant="error">{errorLoadingRoles.message}</Alert>}
+      {errorLoadingRoles && <Alert variant="error" mb={2}>{errorLoadingRoles.message}</Alert>}
 
-      {errorCreatingUsers && <Alert variant="error">{errorCreatingUsers.message}</Alert>}
+      {errorCreatingUsers && <Alert variant="error" mb={2}>{errorCreatingUsers.message}</Alert>}
     </Container>
   );
 };
