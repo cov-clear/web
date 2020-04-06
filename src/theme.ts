@@ -98,6 +98,12 @@ const theme = {
       paddingLeft: 4,
       paddingRight: 4,
     },
+    success: {
+      background: '#52c41a', // Primary green from https://ant.design/docs/spec/colors
+    },
+    error: {
+      background: '#f5222d', // Primary red from https://ant.design/docs/spec/colors
+    },
   },
   badges: {
     neutral: {

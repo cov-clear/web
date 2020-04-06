@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import http, { CancelToken } from 'axios';
 import { useAuthentication } from './authentication';
-
 import {
   fetchUser,
   updateUser,
@@ -14,21 +13,38 @@ import {
   AuthenticatedHttpOptions,
 } from './api';
 
-function useAuthenticatedHttpResource<ResourceT>(
+type NullableError = Error | null;
+
+export function useAuthenticatedHttpResource<ResourceT>(
   initialState: ResourceT,
   fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>
-) {
+): {
+  loading: boolean;
+  error: NullableError;
+  resource: ResourceT;
+  setResource: (resource: ResourceT) => void;
+  reloadResource: (cancelToken?: CancelToken) => void;
+} {
   const [resource, setResource] = useState<ResourceT>(initialState);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null as NullableError);
   const { token } = useAuthentication();
 
   const loadResource = useCallback(
     async (cancelToken?: CancelToken) => {
       if (token) {
+        setError(null);
         setLoading(true);
-        const response = await fetcher({ token, cancelToken });
-        setResource(response);
-        setLoading(false);
+        try {
+          const response = await fetcher({ token, cancelToken });
+          setResource(response);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setError(new Error('Authentication failed. Please try logging in again.'));
       }
     },
     [fetcher, token]
@@ -40,7 +56,13 @@ function useAuthenticatedHttpResource<ResourceT>(
     return () => cancelToken.cancel();
   }, [loadResource]);
 
-  return { loading, resource, setResource, reloadResource: loadResource };
+  return {
+    loading,
+    error,
+    resource,
+    setResource,
+    reloadResource: loadResource,
+  };
 }
 
 export function useUser(id: string) {
@@ -122,7 +144,7 @@ export function useTestTypes() {
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter(type =>
+  const permittedTestTypes = testTypes.filter((type) =>
     hasPermission(type.neededPermissionToAddResults)
   );
 

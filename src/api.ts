@@ -97,6 +97,19 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
   return response.data;
 }
 
+export interface CreateUserCommand {
+  email: string;
+  roles: Role['name'][];
+}
+
+export async function createUsers(
+  command: CreateUserCommand[],
+  options: AuthenticatedHttpOptions
+): Promise<User[]> {
+  const response = await authenticated(options.token).post('/api/v1/admin/users', command);
+  return response.data;
+}
+
 export async function fetchCountries(options: AuthenticatedHttpOptions): Promise<Country[]> {
   const response = await authenticated(options.token).get('/api/v1/countries', {
     cancelToken: options.cancelToken,
@@ -237,5 +250,17 @@ export async function createTest(
       cancelToken: options.cancelToken,
     }
   );
+  return response.data;
+}
+
+export interface Role {
+  name: string;
+  permissions: string[];
+}
+
+export async function fetchRoles(options: AuthenticatedHttpOptions): Promise<Role[]> {
+  const response = await authenticated(options.token).get('/api/v1/roles', {
+    cancelToken: options.cancelToken,
+  });
   return response.data;
 }
