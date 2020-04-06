@@ -355,6 +355,13 @@ describe('Identity page', () => {
         expect.anything()
       );
     });
+
+    it('redirects to how it works after filling address', async () => {
+      await waitFor(() => expect(screen.queryByText(/enter your details/i)).toBeTruthy());
+      fillAddress();
+      fireEvent.click(screen.getByText(/register/i));
+      await waitFor(() => expect(history.location.pathname).toBe('/how-it-works'));
+    });
   });
 
   describe('when filling profile', () => {
@@ -582,5 +589,5 @@ function secondsFromNow(seconds: number): Date {
 }
 
 function nextTick() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }

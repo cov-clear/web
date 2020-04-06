@@ -20,6 +20,7 @@ import {
   Redirect,
   Link,
   LinkProps,
+  useHistory,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 
@@ -49,6 +50,7 @@ export const IdentityPage = () => {
     url,
     params: { userId },
   } = useRouteMatch();
+  const history = useHistory();
   const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
   const isOwnUser = userId === authenticatedUserId;
@@ -61,8 +63,9 @@ export const IdentityPage = () => {
     return updateUser({ ...user!, profile });
   }
 
-  function createAddress(address: Address) {
-    return updateUser({ ...user!, address });
+  async function createAddress(address: Address) {
+    await updateUser({ ...user!, address });
+    return history.push('/how-it-works');
   }
 
   if (!user.profile) {
@@ -136,4 +139,3 @@ export const IdentityPage = () => {
     </>
   );
 };
-

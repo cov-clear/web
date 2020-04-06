@@ -16,6 +16,7 @@ import { NotFoundPage } from './staticPages';
 import { ScanPage } from './scanning';
 import { IdentityPage } from './identity';
 import { AddTestPage, TestDetailPage } from './testing';
+import { HowItWorksPage } from './help';
 import { BulkUserCreationPage } from './admin';
 
 const App = () => {
@@ -51,9 +52,14 @@ const App = () => {
       <AuthenticatedRoute path="/scan" exact>
         <ScanPage />
       </AuthenticatedRoute>
+      <AuthenticatedRoute path="/how-it-works" exact>
+        <HowItWorksPage />
+      </AuthenticatedRoute>
+
       <AuthenticatedRoute path="/admin/create-users" exact requiredPermission="BULK_CREATE_USERS">
         <BulkUserCreationPage />
       </AuthenticatedRoute>
+
       <Route path="*">
         <NotFoundPage />
       </Route>
