@@ -87,53 +87,5 @@ export const IdentityPage = () => {
     );
   }
 
-  return (
-    <>
-      {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-      <Container variant="page" pt={isOwnUser ? undefined : 4}>
-        <Heading as="h1" mb={5}>
-          {user.profile.firstName} {user.profile.lastName}
-        </Heading>
-        <Text mb={4}>
-          Date of birth: {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
-        </Text>
-        {isOwnUser ? (
-          <Flex as="nav">
-            <NavLink as={RouterNavLink} to={`${url}/profile`} variant="tab">
-              <ProfileIcon mr={1} /> Profile
-            </NavLink>
-            <NavLink as={RouterNavLink} to={`${url}/tests`} variant="tab">
-              <TestIcon mr={1} /> Tests
-            </NavLink>
-          </Flex>
-        ) : null}
-        <Switch>
-          <Route path={`${url}/profile`} exact>
-            <Box mt={6}>
-              <SharingCode userId={userId} />
-            </Box>
-          </Route>
-          <Route path={`${url}/tests`} exact>
-            <TestList userId={userId} />
-          </Route>
-        </Switch>
-        <Route
-          path={url}
-          exact
-          render={() =>
-            isOwnUser ? (
-              <Redirect exact from={url} to={`${url}/profile`} />
-            ) : (
-              <Redirect exact from={url} to={`${url}/tests`} />
-            )
-          }
-        />
-
-        <LinkButton as={Link} to="/scan" variant="fab">
-          <CameraIcon mr={1} /> Scan
-        </LinkButton>
-      </Container>
-    </>
-  );
+  return <Redirect to="/404" />;
 };
-
