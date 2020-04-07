@@ -214,7 +214,7 @@ describe('Identity page', () => {
         return Promise.reject(error);
       });
       expect(signOut).not.toHaveBeenCalled();
-      fireEvent.click(screen.getByText(/tests/i));
+      fireEvent.click(getTestResultsLink());
       await waitFor(() => expect(signOut).toHaveBeenCalled());
     });
   });
