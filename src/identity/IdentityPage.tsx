@@ -16,8 +16,6 @@ import {
   NavLink as RouterNavLink,
   NavLinkProps as RouterNavLinkProps,
   Redirect,
-  Link,
-  LinkProps,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 
