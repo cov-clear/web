@@ -23,11 +23,12 @@ describe('Test adding page', () => {
   beforeEach(() => {
     history = createMemoryHistory();
     fetchUserMock.mockImplementation(() => Promise.resolve(aUser()));
+    const signOut = jest.fn();
     useAuthenticationMock.mockImplementation(() => ({
       token: 'mock-token',
       userId: 'mock-user',
       authenticate: jest.fn(),
-      signOut: jest.fn(),
+      signOut,
       hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestTypesMock.mockImplementation(() =>

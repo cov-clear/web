@@ -19,12 +19,13 @@ describe('Test detail page', () => {
   let history: History;
 
   beforeEach(() => {
+    const signOut = jest.fn();
     history = createMemoryHistory();
     useAuthenticationMock.mockImplementation(() => ({
       token: 'mock-token',
       userId: 'mock-user',
       authenticate: jest.fn(),
-      signOut: jest.fn(),
+      signOut,
       hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestMock.mockImplementation(() => Promise.resolve(aTest()));
