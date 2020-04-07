@@ -3,29 +3,32 @@ import { useParams } from 'react-router-dom';
 import { Container, Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
 import { format } from 'date-fns';
 
-import { useTest } from '../resources';
+import { useTest, useTestTypes } from '../resources';
 import { FieldValue } from '../api';
-
 import { InterpretationBadge } from './InterpretationBadge';
 
 export const TestDetailPage = () => {
   const { testId } = useParams<{ testId: string }>();
+  const { testTypes } = useTestTypes();
   const { test, loading } = useTest(testId);
   if (loading || !test) {
     return <Spinner variant="spinner.main" />;
   }
-  const testResults = test?.results
-    ? Object.entries(test.testType.resultsSchema.properties).map(([key, value]) => {
-        return {
-          label: value.title,
-          value: test?.results?.details[key],
-        };
-      })
-    : [];
+  const testType = testTypes.find(type => type.id === test?.testType.id);
+  const testResults =
+    test?.results && testType
+      ? Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
+          return {
+            label: value.title,
+            value: test?.results?.details[key],
+          };
+        })
+      : [];
   testResults.unshift({
     label: 'Test type',
-    value: test.testType.name,
+    value: testType?.name,
   });
+
   return (
     <Container variant="page">
       <Heading as="h1" mb={2}>
