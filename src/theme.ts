@@ -125,6 +125,14 @@ const theme = {
       backgroundColor: 'background',
     },
   },
+  forms: {
+    input: {
+      borderColor: '#D9D9D9',
+    },
+    label: {
+      color: '#262626',
+    },
+  },
   styles: {
     ...baseTheme.styles,
     hr: {
