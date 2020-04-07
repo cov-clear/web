@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import http, { CancelToken } from 'axios';
 import { useAuthentication } from './authentication';
 import {
@@ -25,6 +25,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
   setResource: (resource: ResourceT) => void;
   reloadResource: (cancelToken?: CancelToken) => void;
 } {
+  const isMountedRef = useRef(true);
   const [resource, setResource] = useState<ResourceT>(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null as NullableError);
@@ -33,18 +34,19 @@ export function useAuthenticatedHttpResource<ResourceT>(
   const loadResource = useCallback(
     async (cancelToken?: CancelToken) => {
       if (token) {
-        setError(null);
-        setLoading(true);
+        isMountedRef.current && setError(null);
+        isMountedRef.current && setLoading(true);
         try {
           const response = await fetcher({ token, cancelToken });
-          setResource(response);
+          isMountedRef.current && setResource(response);
         } catch (error) {
-          setError(error);
+          isMountedRef.current && setError(error);
         } finally {
-          setLoading(false);
+          isMountedRef.current && setLoading(false);
         }
       } else {
-        setError(new Error('Authentication failed. Please try logging in again.'));
+        isMountedRef.current &&
+          setError(new Error('Authentication failed. Please try logging in again.'));
       }
     },
     [fetcher, token]
@@ -53,7 +55,14 @@ export function useAuthenticatedHttpResource<ResourceT>(
   useEffect(() => {
     const cancelToken = http.CancelToken.source();
     loadResource(cancelToken.token);
-    return () => cancelToken.cancel();
+    return () => {
+      /*
+        TODO: The cancel token functionality is not working (not cancelling requests),
+        so consider looking into it or removing it overall and keeping only the ref approach
+      */
+      cancelToken.cancel();
+      isMountedRef.current = false;
+    };
   }, [loadResource]);
 
   return {
