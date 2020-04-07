@@ -61,7 +61,7 @@ export const ScanPage = () => {
         <Heading as="h1" mb={3} sx={error ? { color: 'red' } : {}}>
           {error ? error : 'Scanning'}
         </Heading>
-        <Text mb={3}>Point your camera at the person's QR code</Text>
+        <Text mb={3}>Point your camera at the person's sharing code</Text>
         {loading ? <Spinner mx="auto" sx={{ display: 'block' }} /> : null}
       </Box>
     </Container>

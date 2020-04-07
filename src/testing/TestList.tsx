@@ -16,13 +16,15 @@ export const TestList = ({ userId }: { userId: string }) => {
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
 
   if (loadingTests || loadingTestTypes) {
-    return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;
+    return <Spinner mx="auto" mt={6} sx={{ display: 'block' }} />;
   }
 
   return (
     <>
       {!tests.length ? (
-        <Text mt={4}>No tests yet.</Text>
+        <Text variant='muted' my={5} sx={{ textAlign: 'center' }}>
+          Test results will appear here.
+        </Text>
       ) : (
         <Box as="ul" sx={{ listStyleType: 'none' }} px={0}>
           {tests.map(test => {
