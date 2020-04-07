@@ -56,7 +56,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
           setError(new Error('Authentication failed. Please try logging in again.'));
       }
     },
-    [fetcher, token, signOut]
+    [fetcher, signOut, token]
   );
 
   useEffect(() => {

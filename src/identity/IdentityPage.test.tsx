@@ -225,7 +225,7 @@ describe('Identity page', () => {
         token: userApi.mockToken,
         userId: 'mock-user-2',
         authenticate: jest.fn(),
-        signOut: jest.fn(),
+        signOut,
         hasPermission: () => false,
       }));
       userApi.updateUser(aUser(), { token: userApi.mockToken });
