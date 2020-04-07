@@ -8,8 +8,6 @@ import {
   Flex,
   Container,
   NavLinkProps,
-  ButtonProps,
-  Button,
 } from 'theme-ui';
 import {
   useRouteMatch,
@@ -18,8 +16,6 @@ import {
   NavLink as RouterNavLink,
   NavLinkProps as RouterNavLinkProps,
   Redirect,
-  Link,
-  LinkProps,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 
@@ -29,7 +25,7 @@ import { Profile, Address } from '../api';
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
 import { SharingCode } from './SharingCode';
-import { Test as TestIcon, Profile as ProfileIcon, Camera as CameraIcon } from '../icons';
+import { Test as TestIcon, Profile as ProfileIcon } from '../icons';
 import { useAuthentication } from '../authentication';
 
 import { TestList } from '../testing';
@@ -42,7 +38,6 @@ const Small = ({ children }: { children: React.ReactNode }) => (
 );
 
 const NavLink = ThemeUiNavLink as React.FC<NavLinkProps & RouterNavLinkProps>;
-const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 
 export const IdentityPage = () => {
   const {
@@ -91,19 +86,29 @@ export const IdentityPage = () => {
     <>
       {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
       <Container variant="page" pt={isOwnUser ? undefined : 4}>
-        <Heading as="h1" mb={5}>
+        <Heading as="h1" mb={3}>
           {user.profile.firstName} {user.profile.lastName}
         </Heading>
-        <Text mb={4}>
+        <Text mb={5}>
           Date of birth: {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
         </Text>
         {isOwnUser ? (
           <Flex as="nav">
-            <NavLink as={RouterNavLink} to={`${url}/profile`} variant="tab">
-              <ProfileIcon mr={1} /> Profile
+            <NavLink
+              as={RouterNavLink}
+              to={`${url}/tests`}
+              variant="tab"
+              data-testid="test-result-link"
+            >
+              <TestIcon mr={1} /> Results
             </NavLink>
-            <NavLink as={RouterNavLink} to={`${url}/tests`} variant="tab">
-              <TestIcon mr={1} /> Tests
+            <NavLink
+              as={RouterNavLink}
+              to={`${url}/profile`}
+              variant="tab"
+              data-testid="share-access-link"
+            >
+              <ProfileIcon mr={1} /> Share
             </NavLink>
           </Flex>
         ) : null}
@@ -128,12 +133,7 @@ export const IdentityPage = () => {
             )
           }
         />
-
-        <LinkButton as={Link} to="/scan" variant="fab">
-          <CameraIcon mr={1} /> Scan
-        </LinkButton>
       </Container>
     </>
   );
 };
-

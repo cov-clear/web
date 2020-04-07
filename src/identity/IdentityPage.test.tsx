@@ -125,21 +125,23 @@ describe('Identity page', () => {
       await waitFor(() =>
         expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
-      fireEvent.click(screen.getByText(/tests/i));
-      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
+      fireEvent.click(getTestResultsLink());
+      await waitFor(() =>
+        expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
-      fireEvent.click(screen.getByText(/profile/i));
+      fireEvent.click(getShareAccessLink());
       await waitFor(() =>
         expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
+      expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
     });
 
     it('shows all your tests on the tests tab with their interpretations', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
-      fireEvent.click(screen.getByText(/tests/i));
+      fireEvent.click(getTestResultsLink());
       await waitFor(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
       expect(screen.queryByText(/1 Nov 2005/i)).toBeTruthy();
       expect(screen.queryByText(/interpretation 1/i)).toBeInTheDocument();
@@ -149,7 +151,7 @@ describe('Identity page', () => {
     it('lets you navigate to the test detail view', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
-      fireEvent.click(screen.getByText(/tests/i));
+      fireEvent.click(getTestResultsLink());
       await waitFor(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
       fireEvent.click(screen.queryByText(/1 Oct 2005/i)!);
       expect(history.location.pathname).toBe(`/tests/${aTest().id}`);
@@ -158,13 +160,13 @@ describe('Identity page', () => {
     it('prompts you to go to the adding tests flow if you are permitted to run a test', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       fetchTestsMock.mockImplementation(() => Promise.resolve([aTest(), anotherTest()]));
-      fireEvent.click(screen.getByText(/tests/i));
+      fireEvent.click(getTestResultsLink());
       await waitFor(() => expect(screen.queryByText(/1 Oct 2005/i)).toBeTruthy());
       expect(screen.queryByText(/add new test/i)).toBeNull();
 
       fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
-      fireEvent.click(screen.getByText(/profile/i));
-      fireEvent.click(screen.getByText(/tests/i));
+      fireEvent.click(getShareAccessLink());
+      fireEvent.click(getTestResultsLink());
       await waitFor(() => expect(screen.queryByText(/add new test/i)).toBeTruthy());
       fireEvent.click(screen.getByText(/add new test/i));
       expect(history.location.pathname).toBe('/users/mock-user/add-test');
@@ -174,23 +176,27 @@ describe('Identity page', () => {
       await waitFor(() =>
         expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
       );
-      fireEvent.click(screen.getByText(/tests/i));
-      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      fireEvent.click(getTestResultsLink());
+      await waitFor(() =>
+        expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
       history.goBack();
       await waitFor(() =>
         expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/no tests yet/i)).toBeFalsy();
+      expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
       history.goForward();
-      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
+      );
       expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
     });
 
     it('lets you go to the scan page', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(history.location.pathname).not.toBe('/scan');
-      fireEvent.click(screen.getByText(/scan/i));
+      fireEvent.click(screen.getByText(/scan another user/i));
       expect(history.location.pathname).toBe('/scan');
     });
   });
@@ -232,7 +238,9 @@ describe('Identity page', () => {
 
     it('starts on the tests tab', async () => {
       history.push('/users/mock-user');
-      await waitFor(() => expect(screen.queryByText(/no tests yet/i)).toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
+      );
     });
   });
 
@@ -442,6 +450,14 @@ describe('Identity page', () => {
     });
   });
 });
+
+function getTestResultsLink() {
+  return screen.getByTestId('test-result-link');
+}
+
+function getShareAccessLink() {
+  return screen.getByTestId('share-access-link');
+}
 
 function fillProfileForm() {
   fireEvent.change(screen.getByLabelText(/first name/i), {
