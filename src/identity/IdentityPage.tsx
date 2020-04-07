@@ -94,10 +94,20 @@ export const IdentityPage = () => {
         </Text>
         {isOwnUser ? (
           <Flex as="nav">
-            <NavLink as={RouterNavLink} to={`${url}/tests`} variant="tab">
+            <NavLink
+              as={RouterNavLink}
+              to={`${url}/tests`}
+              variant="tab"
+              data-testid="test-result-link"
+            >
               <TestIcon mr={1} /> Results
             </NavLink>
-            <NavLink as={RouterNavLink} to={`${url}/profile`} variant="tab">
+            <NavLink
+              as={RouterNavLink}
+              to={`${url}/profile`}
+              variant="tab"
+              data-testid="share-access-link"
+            >
               <ProfileIcon mr={1} /> Share
             </NavLink>
           </Flex>
