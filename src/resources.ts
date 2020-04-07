@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import http, { CancelToken } from 'axios';
+import http, { CancelToken, AxiosError } from 'axios';
 import { useAuthentication } from './authentication';
 import {
   fetchUser,
@@ -15,6 +15,10 @@ import {
 
 type NullableError = Error | null;
 
+function isAuthenticationError(error: AxiosError) {
+  return error.isAxiosError && error.response?.status === 401;
+}
+
 export function useAuthenticatedHttpResource<ResourceT>(
   initialState: ResourceT,
   fetcher: (options: AuthenticatedHttpOptions) => Promise<ResourceT>
@@ -29,7 +33,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
   const [resource, setResource] = useState<ResourceT>(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null as NullableError);
-  const { token } = useAuthentication();
+  const { token, signOut } = useAuthentication();
 
   const loadResource = useCallback(
     async (cancelToken?: CancelToken) => {
@@ -40,6 +44,9 @@ export function useAuthenticatedHttpResource<ResourceT>(
           const response = await fetcher({ token, cancelToken });
           isMountedRef.current && setResource(response);
         } catch (error) {
+          if (isAuthenticationError(error)) {
+            return signOut();
+          }
           isMountedRef.current && setError(error);
         } finally {
           isMountedRef.current && setLoading(false);
@@ -49,7 +56,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
           setError(new Error('Authentication failed. Please try logging in again.'));
       }
     },
-    [fetcher, token]
+    [fetcher, signOut, token]
   );
 
   useEffect(() => {
@@ -153,7 +160,7 @@ export function useTestTypes() {
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter((type) =>
+  const permittedTestTypes = testTypes.filter(type =>
     hasPermission(type.neededPermissionToAddResults)
   );
 
