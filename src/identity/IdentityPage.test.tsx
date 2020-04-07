@@ -18,6 +18,7 @@ import {
   TestType,
 } from '../api';
 import { useAuthentication } from '../authentication';
+import { AxiosError } from 'axios';
 
 jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
 
@@ -36,9 +37,11 @@ const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.Mocked
 describe('Identity page', () => {
   let history: History;
   let userApi: MockUserApi;
+  let signOut: jest.MockedFunction<() => any>;
   let rerender: any;
 
   beforeEach(() => {
+    signOut = jest.fn();
     history = createMemoryHistory();
     userApi = new MockUserApi();
     fetchUserMock.mockImplementation(userApi.fetchUser.bind(userApi));
@@ -47,7 +50,7 @@ describe('Identity page', () => {
       token: userApi.mockToken,
       userId: 'mock-user',
       authenticate: jest.fn(),
-      signOut: jest.fn(),
+      signOut,
       hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestsMock.mockImplementation(() => Promise.resolve([]));
@@ -198,6 +201,21 @@ describe('Identity page', () => {
       expect(history.location.pathname).not.toBe('/scan');
       fireEvent.click(screen.getByText(/scan another user/i));
       expect(history.location.pathname).toBe('/scan');
+    });
+
+    it('signs you out if you get a 401', async () => {
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      fetchTestsMock.mockImplementation(() => {
+        const error = new Error() as AxiosError;
+        error.response = {
+          status: 401,
+        } as any;
+        error.isAxiosError = true;
+        return Promise.reject(error);
+      });
+      expect(signOut).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByText(/tests/i));
+      await waitFor(() => expect(signOut).toHaveBeenCalled());
     });
   });
 
