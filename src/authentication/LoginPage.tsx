@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Container, Label, Input, Button, Text, Heading, Box, Alert } from 'theme-ui';
+import {
+  Container,
+  Label,
+  Input,
+  Button,
+  Text,
+  Heading,
+  Box,
+  Alert,
+  Link as ThemeUiLink,
+} from 'theme-ui';
 
 import { createMagicLink } from '../api';
-import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
-  const [developmentCode, setDevelopmentCode] = useState('');
 
   const submitted = !!email;
 
   async function handleLogin({ email }: { email: string }) {
-    const result = await createMagicLink(email);
+    await createMagicLink(email);
     setEmail(email);
-    if (result.code) {
-      setDevelopmentCode(result.code.value);
-    }
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -43,12 +48,14 @@ export const LoginPage = () => {
           <LoginForm onComplete={handleLogin} />
         </>
       )}
-      {developmentCode ? (
-        <Text mt={7}>
-          Development only: <Link to={`/link/${developmentCode}`}>Click here</Link> to sign in
-          immediately
-        </Text>
-      ) : null}
+      <ThemeUiLink
+        href="https://cov-clear.com/privacy/"
+        mt={2}
+        py={3}
+        sx={{ display: 'block', width: '100%', textAlign: 'center' }}
+      >
+        Privacy
+      </ThemeUiLink>
     </Container>
   );
 };
