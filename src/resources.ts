@@ -16,7 +16,7 @@ import {
 type NullableError = Error | null;
 
 function isAuthenticationError(error: AxiosError) {
-  return error.isAxiosError && error.response?.status === 401;
+  return error?.isAxiosError && error?.response?.status === 401;
 }
 
 export function useAuthenticatedHttpResource<ResourceT>(
@@ -56,7 +56,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
           setError(new Error('Authentication failed. Please try logging in again.'));
       }
     },
-    [fetcher, signOut, token]
+    [fetcher, token]
   );
 
   useEffect(() => {
