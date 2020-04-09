@@ -1,7 +1,7 @@
-/index.html
+/*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   X-Content-Type-Options: nosniff
   Referrer-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'none'; report-uri https://covclear.report-uri.com/r/d/csp/enforce
+  Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'none'; style-src 'unsafe-inline' 'self'; report-uri https://covclear.report-uri.com/r/d/csp/enforce
 
