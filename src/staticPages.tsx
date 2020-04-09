@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import { Heading, Button, ButtonProps, Image, Container } from 'theme-ui';
+import { Heading, Button, ButtonProps, Image } from 'theme-ui';
 
 import balloonIllustration from './illustrations/balloons.svg';
 
 const NavButton = Button as React.FC<ButtonProps & LinkProps>;
 export const NotFoundPage = () => (
-  <Container variant="page">
+  <>
     <Heading as="h1" mb={5}>
       This page doesn't exist
     </Heading>
@@ -14,5 +14,5 @@ export const NotFoundPage = () => (
     <NavButton as={Link} variant="block" to="/">
       Go to the start page
     </NavButton>
-  </Container>
+  </>
 );

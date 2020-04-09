@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import {
-  Container,
-  Label,
-  Input,
-  Button,
-  Text,
-  Heading,
-  Box,
-  Alert,
-  Link as ThemeUiLink,
-} from 'theme-ui';
+import { Label, Input, Button, Text, Heading, Box, Alert, Link as ThemeUiLink } from 'theme-ui';
 
 import { createMagicLink } from '../api';
 
@@ -29,7 +19,7 @@ export const LoginPage = () => {
   const invalidLink = urlParams.get('invalid');
 
   return (
-    <Container variant="page">
+    <>
       {invalidLink && !submitted && (
         <Alert variant="secondary" mb={4}>
           That link wasn't valid, please request a new one.
@@ -56,7 +46,7 @@ export const LoginPage = () => {
       >
         Privacy
       </ThemeUiLink>
-    </Container>
+    </>
   );
 };
 

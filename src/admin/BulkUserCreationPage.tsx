@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Box, Label, Heading, Container, Button, Text, Textarea, Alert, Select } from 'theme-ui';
+import { Box, Label, Heading, Button, Text, Textarea, Alert, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -43,7 +43,7 @@ const BulkUserCreationPage: FC = () => {
   });
 
   return (
-    <Container variant="page">
+    <>
       <Heading as="h1" mb={4}>
         Create users
       </Heading>
@@ -84,13 +84,23 @@ const BulkUserCreationPage: FC = () => {
       </AnyBox>
 
       {createdUsers.length > 0 && (
-        <Alert variant="success" mb={2}>{createdUsers.length} user(s) successfully created.</Alert>
+        <Alert variant="success" mb={2}>
+          {createdUsers.length} user(s) successfully created.
+        </Alert>
       )}
 
-      {errorLoadingRoles && <Alert variant="error" mb={2}>{errorLoadingRoles.message}</Alert>}
+      {errorLoadingRoles && (
+        <Alert variant="error" mb={2}>
+          {errorLoadingRoles.message}
+        </Alert>
+      )}
 
-      {errorCreatingUsers && <Alert variant="error" mb={2}>{errorCreatingUsers.message}</Alert>}
-    </Container>
+      {errorCreatingUsers && (
+        <Alert variant="error" mb={2}>
+          {errorCreatingUsers.message}
+        </Alert>
+      )}
+    </>
   );
 };
 

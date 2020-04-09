@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Select, Label, Container } from 'theme-ui';
+import { Heading, Select, Label, Box } from 'theme-ui';
 
 import { CreateTestCommand, createTest } from '../api';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
@@ -22,7 +22,7 @@ export const AddTestPage = () => {
   const { token, userId: ownUserId } = useAuthentication();
   const isOwnUser = userId === ownUserId;
   const { permittedTestTypes } = useTestTypes();
-  const selectedTestType = permittedTestTypes.find(type => type.id === selectedTestTypeId);
+  const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
   const confirmPageMatch = useRouteMatch(`${url}/confirm`);
 
   useEffect(() => {
@@ -59,9 +59,9 @@ export const AddTestPage = () => {
     return (
       <>
         {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-        <Container variant="page" pt={isOwnUser ? undefined : 4}>
+        <Box pt={isOwnUser ? undefined : 4}>
           <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
-        </Container>
+        </Box>
       </>
     );
   }
@@ -69,7 +69,7 @@ export const AddTestPage = () => {
   return (
     <>
       {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-      <Container variant="page" pt={isOwnUser ? undefined : 4}>
+      <Box pt={isOwnUser ? undefined : 4}>
         <Heading as="h1" mb={5}>
           Enter new test result
         </Heading>
@@ -79,11 +79,11 @@ export const AddTestPage = () => {
             <Select
               id="test-type"
               value={selectedTestTypeId}
-              onChange={event => setSelectedTestTypeId(event.target.value)}
+              onChange={(event) => setSelectedTestTypeId(event.target.value)}
               required
               mb={4}
             >
-              {permittedTestTypes.map(type => (
+              {permittedTestTypes.map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
                 </option>
@@ -98,7 +98,7 @@ export const AddTestPage = () => {
             onComplete={handleSubmit}
           />
         ) : null}
-      </Container>
+      </Box>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Container, Heading, Box, Spinner } from 'theme-ui';
+import { Text, Heading, Box, Spinner } from 'theme-ui';
 import QrReader from 'react-qr-reader';
 import { useHistory } from 'react-router-dom';
 import { createAccessPass } from '../api';
@@ -39,7 +39,7 @@ export const ScanPage = () => {
   }, [error]);
 
   return (
-    <Container sx={{ maxWidth: '600px' }}>
+    <Box sx={{ maxWidth: '600px' }}>
       <QrReader
         delay={100}
         style={{ width: '100%' }}
@@ -64,6 +64,6 @@ export const ScanPage = () => {
         <Text mb={3}>Point your camera at the person's sharing code</Text>
         {loading ? <Spinner mx="auto" sx={{ display: 'block' }} /> : null}
       </Box>
-    </Container>
+    </Box>
   );
 };

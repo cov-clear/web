@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
+import { Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
 import { format } from 'date-fns';
 
 import { useTest, useTestTypes } from '../resources';
@@ -14,7 +14,7 @@ export const TestDetailPage = () => {
   if (loading || !test) {
     return <Spinner variant="spinner.main" />;
   }
-  const testType = testTypes.find(type => type.id === test?.testType.id);
+  const testType = testTypes.find((type) => type.id === test?.testType.id);
   const testResults =
     test?.results && testType
       ? Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
@@ -30,7 +30,7 @@ export const TestDetailPage = () => {
   });
 
   return (
-    <Container variant="page">
+    <>
       <Heading as="h1" mb={2}>
         Test result
       </Heading>
@@ -65,7 +65,7 @@ export const TestDetailPage = () => {
           {test.results.notes}
         </>
       ) : null}
-    </Container>
+    </>
   );
 };
 
