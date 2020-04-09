@@ -22,44 +22,51 @@ const App = () => {
   const { userId } = useAuthentication();
 
   return (
-    <Container variant="page">
-      <Switch>
-        <Route
-          path="/"
-          exact
-          render={() => {
-            if (userId) {
-              return <Redirect to={`/users/${userId}`} />;
-            }
-            return <Redirect to="/login" />;
-          }}
-        />
-        <Route path="/login" exact>
-          <LoginPage />
-        </Route>
-        <Route path="/link/:linkId" exact>
-          <LinkPage />
-        </Route>
-        <AuthenticatedRoute path="/users/:userId/add-test">
-          <AddTestPage />
-        </AuthenticatedRoute>
-        <AuthenticatedRoute path="/users/:userId">
-          <IdentityPage />
-        </AuthenticatedRoute>
-        <AuthenticatedRoute path="/tests/:testId" exact>
-          <TestDetailPage />
-        </AuthenticatedRoute>
-        <AuthenticatedRoute path="/scan" exact>
-          <ScanPage />
-        </AuthenticatedRoute>
-        <AuthenticatedRoute path="/admin/create-users" exact requiredPermission="BULK_CREATE_USERS">
-          <BulkUserCreationPage />
-        </AuthenticatedRoute>
-        <Route path="*">
-          <NotFoundPage />
-        </Route>
-      </Switch>
-    </Container>
+    <Switch>
+      <AuthenticatedRoute path="/scan" exact>
+        <ScanPage />
+      </AuthenticatedRoute>
+
+      <Container variant="page">
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={() => {
+              if (userId) {
+                return <Redirect to={`/users/${userId}`} />;
+              }
+              return <Redirect to="/login" />;
+            }}
+          />
+          <Route path="/login" exact>
+            <LoginPage />
+          </Route>
+          <Route path="/link/:linkId" exact>
+            <LinkPage />
+          </Route>
+          <AuthenticatedRoute path="/users/:userId/add-test">
+            <AddTestPage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/users/:userId">
+            <IdentityPage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/tests/:testId" exact>
+            <TestDetailPage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute
+            path="/admin/create-users"
+            exact
+            requiredPermission="BULK_CREATE_USERS"
+          >
+            <BulkUserCreationPage />
+          </AuthenticatedRoute>
+          <Route path="*">
+            <NotFoundPage />
+          </Route>
+        </Switch>
+      </Container>
+    </Switch>
   );
 };
 
