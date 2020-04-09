@@ -77,7 +77,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
           id="identity-dateOfBirth"
           type="date"
           {...form.getFieldProps('dateOfBirth')}
-          sx={{ minHeight: '42px' }}
+          sx={{ minHeight: '42px', fontFamily: 'inherit' }}
         />
         {fieldError('dateOfBirth')}
       </Box>
