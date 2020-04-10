@@ -1,6 +1,18 @@
-import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { ThemeProvider } from 'theme-ui';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import {
+  ThemeProvider,
+  Container,
+  NavLink,
+  Heading,
+  Flex,
+  Label,
+  Input,
+  Text,
+  Button,
+  Link,
+  Spinner,
+} from 'theme-ui';
 
 import {
   LoginPage,
@@ -36,6 +48,9 @@ const App = () => {
       <Route path="/login" exact>
         <LoginPage />
       </Route>
+      <Route path="/demo-smartid" exact>
+        <DemoSmartId />
+      </Route>
       <Route path="/link/:linkId" exact>
         <LinkPage />
       </Route>
@@ -58,6 +73,59 @@ const App = () => {
         <NotFoundPage />
       </Route>
     </Switch>
+  );
+};
+
+const DemoSmartId = () => {
+  const [id, setId] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const { userId } = useAuthentication();
+  const history = useHistory();
+  useEffect(() => {
+    if (submitted) {
+      const timeout = setTimeout(() => {
+        history.push(`/users/${userId}`);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [history, submitted, userId]);
+  return (
+    <Container variant="page">
+      <Heading mb={6} as="h1">
+        Sign in
+      </Heading>
+      {submitted ? (
+        <>
+          <Text>Make sure the code you received matches the code you see here:</Text>
+          <Heading sx={{ fontSize: 7, textAlign: 'center' }} mt={4}>
+            1337
+          </Heading>
+          <Spinner mt={4} mx="auto" sx={{ display: 'block' }} />
+        </>
+      ) : (
+        <>
+          <Flex as="nav" mb={4}>
+            <NavLink variant="tab" className="active">
+              Smart-ID
+            </NavLink>
+            <NavLink variant="tab">Mobiil-ID</NavLink>
+          </Flex>
+          <Label htmlFor="id-code">ID code</Label>
+          <Input id="id-code" value={id} onChange={({ target: { value } }) => setId(value)} />
+          <Button mt={3} variant="block" onClick={() => setSubmitted(true)}>
+            Submit
+          </Button>
+          <Link
+            href="https://cov-clear.com/privacy/"
+            mt={2}
+            py={3}
+            sx={{ display: 'block', width: '100%', textAlign: 'center' }}
+          >
+            Privacy
+          </Link>
+        </>
+      )}
+    </Container>
   );
 };
 

@@ -1,5 +1,59 @@
 import http, { CancelToken } from 'axios';
 
+const fakeTestTypes = [
+  {
+    "id":"a3c6cfa3-7b54-4701-80e1-4a36ebf39fe8",
+    "name":"COVID19 Take Home Antibody Test",
+    "neededPermissionToAddResults":"ADD_TAKE_HOME_TEST_RESULT",
+    "resultsSchema":{
+      "type":"object",
+      "title":"Euro ELISA assay",
+      "properties":{
+        "c":{
+          "type":"boolean",
+          "title":"Control",
+          "description":"Indicator if sample doesn't show COVID-19"
+        },
+        "igg":{
+          "type":"boolean",
+          "title":"IgG",
+          "description":"Indicator if sample shows IgG positive"
+        },
+        "igm":{
+          "type":"boolean",
+          "title":"IgM",
+          "description":"Indicator if sample shows IgM positive"
+        }
+      }
+    },
+  },
+  {
+    "id":"b3c6cfa3-7b54-4701-80e1-4a36ebf39fe8",
+    "name":"PCR",
+    "neededPermissionToAddResults":"ADD_TAKE_HOME_TEST_RESULT",
+    "resultsSchema":{
+      "type":"object",
+      "title":"COVID-19 Take Home Test",
+      "properties":{
+        "c":{
+          "type":"boolean",
+          "title":"Control",
+          "description":"Indicator if sample doesn't show COVID-19"
+        },
+        "igg":{
+          "type":"boolean",
+          "title":"IgG",
+          "description":"Indicator if sample shows IgG positive"
+        },
+        "igm":{
+          "type":"boolean",
+          "title":"IgM",
+          "description":"Indicator if sample shows IgM positive"
+        }
+      }
+    },
+  }
+] as TestType[];
 const authenticated = (token: Token) =>
   http.create({
     timeout: 3000,
@@ -182,20 +236,98 @@ export interface Test {
 }
 
 export async function fetchTest(testId: string, options: AuthenticatedHttpOptions): Promise<Test> {
-  const response = await authenticated(options.token).get(`/api/v1/tests/${testId}`, {
-    cancelToken: options.cancelToken,
-  });
-  return response.data;
+  return [...firstFakeTests, ...secondFakeTests].flat().find(({id}) => id === testId);
 }
+
+const firstFakeTests: Test[] = [
+  {
+    id: '1',
+    userId: '',
+    testType: fakeTestTypes[1],
+    creationTime: new Date('2020-04-01').toISOString(),
+    results: {
+      details: {},
+      testerUserId: '1',
+      notes: '',
+      creationTime: new Date('2020-04-01').toISOString(),
+    },
+    resultsInterpretations: [{
+      theme: 'POSITIVE',
+      name: 'Virus not found'
+    }],
+  },
+];
+const secondFakeTests: Test[] = [
+  {
+    id: '2',
+    userId: '',
+    testType: fakeTestTypes[0],
+    creationTime: new Date('2020-04-10').toISOString(),
+    results: {
+      details: {
+        c: true,
+        igg: true,
+        igm: true,
+      },
+      testerUserId: '1',
+      notes: '',
+      creationTime: new Date('2020-04-10').toISOString(),
+    },
+    resultsInterpretations: [
+      {
+        theme: 'POSITIVE',
+        name: 'IgG antibodies found'
+      },
+      {
+        theme: 'POSITIVE',
+        name: 'IgM antibodies found'
+      },
+    ],
+  },
+  {
+    id: '3',
+    userId: '',
+    testType: fakeTestTypes[1],
+    creationTime: new Date('2020-04-03').toISOString(),
+    results: {
+      details: {},
+      testerUserId: '1',
+      notes: '',
+      creationTime: new Date('2020-04-03').toISOString(),
+    },
+    resultsInterpretations: [{
+      theme: 'MUTED',
+      name: 'Virus not found'
+    }],
+  },
+  {
+    id: '3',
+    userId: '',
+    testType: fakeTestTypes[1],
+    creationTime: new Date('2020-03-20').toISOString(),
+    results: {
+      details: {},
+      testerUserId: '1',
+      notes: '',
+      creationTime: new Date('2020-03-20').toISOString(),
+    },
+    resultsInterpretations: [{
+      theme: 'NEGATIVE',
+      name: 'Virus found'
+    }],
+  },
+];
 
 export async function fetchTests(
   userId: string,
   options: AuthenticatedHttpOptions
 ): Promise<Test[]> {
-  const response = await authenticated(options.token).get(`/api/v1/users/${userId}/tests`, {
-    cancelToken: options.cancelToken,
-  });
-  return response.data;
+  const user = await fetchUser(userId, options);
+  if (user.profile?.firstName?.toLowerCase().startsWith('t')) {
+    return firstFakeTests;
+  } else {
+    return secondFakeTests;
+  }
 }
 
 export type FieldType = 'boolean' | 'string' | 'number' | 'integer' | 'null';
@@ -221,11 +353,9 @@ export interface TestType {
   neededPermissionToAddResults: string;
 }
 
+
 export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise<TestType[]> {
-  const response = await authenticated(options.token).get(`/api/v1/test-types`, {
-    cancelToken: options.cancelToken,
-  });
-  return response.data;
+  return fakeTestTypes;
 }
 
 export type FilledSchema = { [key: string]: FieldValue };

@@ -13,7 +13,8 @@ const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
 
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
-  const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
+  const { loading: loadingTestTypes } = useTestTypes();
+  const permittedTestTypes = [];
 
   if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={6} sx={{ display: 'block' }} />;
