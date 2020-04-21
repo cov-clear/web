@@ -1,2 +1,2 @@
-/api/*  https://cov-clear.herokuapp.com/api/:splat  200
+/api/* 50fd9723-prodcovclearbacke-b729-1330285155.eu-west-1.elb.amazonaws.com/api/:splat  200
 /* /index.html 200
