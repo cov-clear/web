@@ -1,0 +1,15 @@
+---
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend
+  namespace: [[env]]
+  labels:
+    app: frontend
+    environment: [[env]]
+spec:
+  maxUnavailable: 30%
+  selector:
+    matchLabels:
+      app: frontend
