@@ -1,0 +1,58 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: [[env]]
+  labels:
+    app: frontend
+    environment: [[env]]
+spec:
+  replicas: 2
+  minReadySeconds: 5
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 60
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 34%
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        environment: [[env]]
+    spec:
+      terminationGracePeriodSeconds: 15
+      serviceAccountName: frontend
+      containers:
+        - name: frontend 
+          image: covclear/web:[[docker_tag]]
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            httpGet:
+              path: /index.html
+              port: http
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            httpGet:
+              path: /index.html
+              port: http
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 250m
+              memory: 512Mi
