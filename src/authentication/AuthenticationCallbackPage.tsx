@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Spinner } from 'theme-ui';
-import { useParams, useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import http from 'axios';
 import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
@@ -34,7 +34,7 @@ export const AuthenticationCallbackPage = () => {
     authenticateWithMethod();
 
     return () => cancelToken.cancel();
-  }, [authenticate, history, queryParams]);
+  }, [saveToken, history, queryParams]);
 
   return <Spinner variant="spinner.main" />;
 };
