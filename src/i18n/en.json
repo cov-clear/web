@@ -13,6 +13,7 @@
   "bulkUserCreation.error.generic": "Failed to create users: {{ message }}",
   "roles.error": "Failed to get roles: {{ message }}",
   "loginPage.heading": "Sign in",
+  "loginPage.estonian.button": "Sign in via Estonian ID",
   "loginPage.invalidLink": "That link wasn't valid, please request a new one.",
   "loginPage.description.notSubmitted": "We’ll send you a secure sign in link to your email",
   "loginPage.description.submitted": "We sent an email to {{ email }} with a secure link to sign you in.",

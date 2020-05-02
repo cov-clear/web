@@ -1,7 +1,8 @@
 import React from 'react';
+import { Message } from 'retranslate';
+import { Container, Heading, Button } from 'theme-ui';
 import { useState } from 'react';
 import { createIdAuthenticationSession } from '../api';
-import { Container, Heading, Button } from 'theme-ui';
 
 export const EstonianIdLoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -15,10 +16,10 @@ export const EstonianIdLoginPage = () => {
   return (
     <Container variant="page">
       <Heading as="h1" mb={5}>
-        Sign in
+        <Message>loginPage.heading</Message>
       </Heading>
       <Button variant="block" onClick={handleLogin} disabled={loading}>
-        Sign in via Estonian ID
+        <Message>loginPage.estonian.button</Message>
       </Button>
     </Container>
   );
