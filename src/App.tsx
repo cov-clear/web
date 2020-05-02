@@ -5,6 +5,7 @@ import { Provider as TranslationProvider } from 'retranslate';
 
 import {
   LoginPage,
+  EstonianIdLoginPage,
   AuthenticationCallbackPage,
   Provider as AuthenticationProvider,
   AuthenticatedRoute,
@@ -37,6 +38,9 @@ const App = () => {
       />
       <Route path="/login" exact>
         <LoginPage />
+      </Route>
+      <Route path="/estonian-id-login" exact>
+        <EstonianIdLoginPage />
       </Route>
       <Route path="/authentication-callback" exact>
         <AuthenticationCallbackPage />
