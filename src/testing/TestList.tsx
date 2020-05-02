@@ -2,6 +2,7 @@ import React from 'react';
 import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { Message } from 'retranslate';
 
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
@@ -22,12 +23,12 @@ export const TestList = ({ userId }: { userId: string }) => {
   return (
     <>
       {!tests.length ? (
-        <Text variant='muted' my={5} sx={{ textAlign: 'center' }}>
-          Test results will appear here.
+        <Text variant="muted" my={5} sx={{ textAlign: 'center' }}>
+          <Message>testList.description</Message>
         </Text>
       ) : (
         <Box as="ul" sx={{ listStyleType: 'none' }} px={0}>
-          {tests.map(test => {
+          {tests.map((test) => {
             return (
               <Box key={test.id} as="li">
                 <LinkFlex
@@ -43,6 +44,7 @@ export const TestList = ({ userId }: { userId: string }) => {
                 >
                   <Box>
                     <Heading as="h3" mb={2}>
+                      {/* TODO: Add Estonian date formatting */}
                       {format(new Date(test.creationTime), 'd MMM yyyy')}
                     </Heading>
                     {test.resultsInterpretations?.map((interpretation, index) => (
@@ -58,7 +60,7 @@ export const TestList = ({ userId }: { userId: string }) => {
       )}
       {permittedTestTypes.length ? (
         <LinkButton as={Link} to={`/users/${userId}/add-test`} variant="block" mt={4}>
-          <PlusIcon mr={1} /> Add new test result
+          <PlusIcon mr={1} /> <Message>testList.button</Message>
         </LinkButton>
       ) : null}
     </>

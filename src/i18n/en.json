@@ -56,5 +56,22 @@
   "viewingOtherProfileHeader.button": "Close",
   "scanPage.error.incorrectCode": "Incorrect code",
   "scanPage.heading": "Scanning",
-  "scanPage.description": "Point your camera at the person's sharing code"
+  "scanPage.description": "Point your camera at the person's sharing code",
+  "addTestForm.notes.label": "Additional notes",
+  "addTestForm.button": "Save",
+  "addTestPage.heading": "Enter new test result",
+  "addTestPage.testType.label": "Test type",
+  "confirmIdentity.alert.title": "Confirm identity",
+  "confirmIdentity.alert.description": "Check the patient's photo ID to confirm these details are correct",
+  "confirmIdentity.dateOfBirth": "Date of birth",
+  "confirmIdentity.button": "Confirm patient's identity",
+  "testDetailPage.results.label": "Test type",
+  "testDetailPage.heading": "Test result",
+  "testDetailPage.date": "Test date",
+  "testDetailPage.resultDetails": "Details",
+  "testDetailPage.notes": "Notes",
+  "testDetailPage.yes": "Yes",
+  "testDetailPage.no": "No",
+  "testList.description": "Test results will appear here.",
+  "testList.button": "Add new test result"
 }
