@@ -4,7 +4,7 @@ import { ThemeProvider } from 'theme-ui';
 import { Provider as TranslationProvider } from 'retranslate';
 
 import {
-  LoginPage,
+  MagicLinkLoginPage,
   EstonianIdLoginPage,
   AuthenticationCallbackPage,
   Provider as AuthenticationProvider,
@@ -37,7 +37,7 @@ const App = () => {
         }}
       />
       <Route path="/login" exact>
-        <LoginPage />
+        <MagicLinkLoginPage />
       </Route>
       <Route path="/estonian-id-login" exact>
         <EstonianIdLoginPage />
