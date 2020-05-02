@@ -14,7 +14,7 @@ export const EstonianIdLoginPage = () => {
 
   return (
     <Container variant="page">
-      <Heading as="h1" mb={3}>
+      <Heading as="h1" mb={5}>
         Sign in
       </Heading>
       <Button variant="block" onClick={handleLogin} disabled={loading}>
