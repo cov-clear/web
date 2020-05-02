@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { Spinner } from 'theme-ui';
 import { useParams, useHistory } from 'react-router-dom';
 import http from 'axios';
-import { authenticate as exchangeLinkForToken } from '../api';
+import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
 import { decode } from './token';
 
 export const LinkPage = () => {
   const { linkId } = useParams();
-  const { authenticate } = useAuthentication();
+  const { authenticate: saveToken } = useAuthentication();
   const history = useHistory();
 
   useEffect(() => {
@@ -17,10 +17,10 @@ export const LinkPage = () => {
     async function authenticateWithLink() {
       if (linkId) {
         try {
-          const token = await exchangeLinkForToken(linkId, {
+          const token = await authenticate(AuthenticationMethod.MAGIC_LINK, linkId, {
             cancelToken: cancelToken.token,
           });
-          authenticate(token);
+          saveToken(token);
           const { userId } = decode(token);
           history.replace(`/users/${userId}`);
         } catch (error) {
