@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { EstonianIdLoginPage } from './EstonianIdLoginPage';
 
 import { createIdAuthenticationSession } from '../api';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
 const createIdAuthenticationSessionMock = createIdAuthenticationSession as jest.MockedFunction<
@@ -15,7 +16,7 @@ describe('Estonian ID login page', () => {
     // jsdom does not implement navigation, except for hash change, so we have to mock and edit window.location with this workaround
     delete window.location;
     window.location = ({ assign: jest.fn() } as any) as Location;
-    render(<EstonianIdLoginPage />);
+    renderWrapped(<EstonianIdLoginPage />);
     createIdAuthenticationSessionMock.mockImplementation(() =>
       Promise.resolve({
         redirectUrl: 'https://example.com/redirect',
