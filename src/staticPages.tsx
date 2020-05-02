@@ -3,16 +3,21 @@ import { Link, LinkProps } from 'react-router-dom';
 import { Heading, Button, ButtonProps, Image, Container } from 'theme-ui';
 
 import balloonIllustration from './illustrations/balloons.svg';
+import { Message, useTranslations } from 'retranslate';
 
 const NavButton = Button as React.FC<ButtonProps & LinkProps>;
-export const NotFoundPage = () => (
-  <Container variant="page">
-    <Heading as="h1" mb={5}>
-      This page doesn't exist
-    </Heading>
-    <Image src={balloonIllustration} alt="A woman flying away with a bundle of balloons" mb={2} />
-    <NavButton as={Link} variant="block" to="/">
-      Go to the start page
-    </NavButton>
-  </Container>
-);
+export const NotFoundPage = () => {
+  const { translate } = useTranslations();
+
+  return (
+    <Container variant="page">
+      <Heading as="h1" mb={5}>
+        <Message>notFoundPage.heading</Message>
+      </Heading>
+      <Image src={balloonIllustration} alt={translate('notFoundPage.imageAltText')} mb={2} />
+      <NavButton as={Link} variant="block" to="/">
+        <Message>notFoundPage.button</Message>
+      </NavButton>
+    </Container>
+  );
+};
