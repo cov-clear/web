@@ -4,6 +4,7 @@ import QrReader from 'react-qr-reader';
 import { useHistory } from 'react-router-dom';
 import { createAccessPass } from '../api';
 import { useAuthentication } from '../authentication';
+import { useTranslations, Message } from 'retranslate';
 
 const uuidValidationRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -12,6 +13,7 @@ const errorClearTimeout = 5000;
 export const ScanPage = () => {
   const history = useHistory();
   const { userId, token } = useAuthentication();
+  const { translate } = useTranslations();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +26,7 @@ export const ScanPage = () => {
         setLoading(false);
         history.push(`/users/${accessPass.userId}`);
       } else {
-        setError('Incorrect code');
+        setError(translate('scanPage.error.incorrectCode'));
       }
     }
   }
@@ -59,9 +61,11 @@ export const ScanPage = () => {
         }}
       >
         <Heading as="h1" mb={3} sx={error ? { color: 'red' } : {}}>
-          {error ? error : 'Scanning'}
+          {error ? error : <Message>scanPage.heading</Message>}
         </Heading>
-        <Text mb={3}>Point your camera at the person's sharing code</Text>
+        <Text mb={3}>
+          <Message>scanPage.description</Message>
+        </Text>
         {loading ? <Spinner mx="auto" sx={{ display: 'block' }} /> : null}
       </Box>
     </Container>

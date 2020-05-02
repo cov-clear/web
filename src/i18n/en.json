@@ -53,5 +53,8 @@
   "sharingCode.description": "Let another user scan your code to securely share your results",
   "sharingCode.button": "Scan another user",
   "viewingOtherProfileHeader.heading": "Patient profile",
-  "viewingOtherProfileHeader.button": "Close"
+  "viewingOtherProfileHeader.button": "Close",
+  "scanPage.error.incorrectCode": "Incorrect code",
+  "scanPage.heading": "Scanning",
+  "scanPage.description": "Point your camera at the person's sharing code"
 }
