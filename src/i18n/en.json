@@ -11,5 +11,15 @@
   "bulkUserCreationPage.success": "{{ number }} user(s) successfully created.",
   "bulkUserCreation.error.authentication": "Authentication failed. Please try logging in again.",
   "bulkUserCreation.error.generic": "Failed to create users: {{ message }}",
-  "roles.error": "Failed to get roles: {{ message }}"
+  "roles.error": "Failed to get roles: {{ message }}",
+  "loginPage.heading": "Sign in",
+  "loginPage.invalidLink": "That link wasn't valid, please request a new one.",
+  "loginPage.description.notSubmitted": "We’ll send you a secure sign in link to your email",
+  "loginPage.description.submitted": "We sent an email to {{ email }} with a secure link to sign you in.",
+  "loginPage.privacy": "Privacy",
+  "loginPage.form.email.label": "Your email",
+  "loginPage.form.email.placeholder": "e.g. john.smith@email.com",
+  "loginPage.form.email.required": "Please fill your email address",
+  "loginPage.form.email.invalid": "Please check your email address",
+  "loginPage.form.button": "Send magic link"
 }

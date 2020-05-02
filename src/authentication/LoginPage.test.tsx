@@ -1,21 +1,22 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { LoginPage } from './LoginPage';
 
 import { createMagicLink } from '../api';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
 const createMagicLinkMock = createMagicLink as jest.MockedFunction<typeof createMagicLink>;
 
 describe('Login page', () => {
   beforeEach(() => {
-    render(<LoginPage />);
+    renderWrapped(<LoginPage />);
     createMagicLinkMock.mockImplementation(() =>
       Promise.resolve({
         creationTime: new Date().toISOString(),
         active: true,
-      }),
+      })
     );
   });
 
