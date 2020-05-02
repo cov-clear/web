@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import { LinkPage } from './LinkPage';
 
-import { authenticate } from '../api';
+import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
 
 jest.mock('../api');
@@ -31,6 +31,7 @@ describe('Link page', () => {
       authenticate: saveToken,
       token: null,
       signOut: jest.fn(),
+      hasPermission: () => false,
     }));
 
     render(
@@ -51,7 +52,11 @@ describe('Link page', () => {
     it('exchanges the link for the token and saves the token', async () => {
       await waitFor(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
       expect(saveToken).toHaveBeenCalledTimes(1);
-      expect(authenticate).toHaveBeenCalledWith(linkId, expect.anything());
+      expect(authenticate).toHaveBeenCalledWith(
+        AuthenticationMethod.MAGIC_LINK,
+        linkId,
+        expect.anything()
+      );
       expect(authenticate).toHaveBeenCalledTimes(1);
     });
 
