@@ -18,6 +18,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { format } from 'date-fns';
+import { Message } from 'retranslate';
 
 import { useUser } from '../resources';
 import { Profile, Address } from '../api';
@@ -64,7 +65,7 @@ export const IdentityPage = () => {
     return (
       <Container variant="page">
         <Heading as="h1" mb={5}>
-          Enter your details <Small>1/2</Small>
+          <Message>identityPage.heading</Message> <Small>1/2</Small>
         </Heading>
         <ProfileForm onComplete={createProfile} />
       </Container>
@@ -75,7 +76,7 @@ export const IdentityPage = () => {
     return (
       <Container variant="page">
         <Heading as="h1" mb={5}>
-          Enter your details <Small>2/2</Small>
+          <Message>identityPage.heading</Message> <Small>2/2</Small>
         </Heading>
         <AddressForm onComplete={createAddress} />
       </Container>
@@ -90,7 +91,9 @@ export const IdentityPage = () => {
           {user.profile.firstName} {user.profile.lastName}
         </Heading>
         <Text mb={5}>
-          Date of birth: {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
+          {/* TODO: Add Estonian date formatting */}
+          <Message>identityPage.dateOfBirth</Message>:{' '}
+          {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
         </Text>
         {isOwnUser ? (
           <Flex as="nav">
@@ -100,7 +103,7 @@ export const IdentityPage = () => {
               variant="tab"
               data-testid="test-result-link"
             >
-              <TestIcon mr={1} /> Results
+              <TestIcon mr={1} /> <Message>identityPage.results</Message>
             </NavLink>
             <NavLink
               as={RouterNavLink}
@@ -108,7 +111,7 @@ export const IdentityPage = () => {
               variant="tab"
               data-testid="share-access-link"
             >
-              <ProfileIcon mr={1} /> Share
+              <ProfileIcon mr={1} /> <Message>identityPage.share</Message>
             </NavLink>
           </Flex>
         ) : null}

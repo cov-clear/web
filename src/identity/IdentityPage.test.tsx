@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { act, waitFor, render, fireEvent, screen } from '@testing-library/react';
+import { act, waitFor, fireEvent, screen } from '@testing-library/react';
 import MockDate from 'mockdate';
 
 import { IdentityPage } from './IdentityPage';
@@ -19,6 +19,7 @@ import {
 } from '../api';
 import { useAuthentication } from '../authentication';
 import { AxiosError } from 'axios';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
 
@@ -63,7 +64,7 @@ describe('Identity page', () => {
       throw new Error('Unknown user');
     });
 
-    rerender = render(
+    rerender = renderWrapped(
       <Router history={history}>
         <Route path="/users/:userId">
           <IdentityPage />
@@ -616,5 +617,5 @@ function secondsFromNow(seconds: number): Date {
 }
 
 function nextTick() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }

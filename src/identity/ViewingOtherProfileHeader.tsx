@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Flex, Heading, Button, ButtonProps } from 'theme-ui';
 import { Link, LinkProps } from 'react-router-dom';
 import { useAuthentication } from '../authentication';
+import { Message } from 'retranslate';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 // TODO: the styling on this header is very ad-hoc. Let's move it into the theme.
@@ -12,14 +13,14 @@ export const ViewingOtherProfileHeader = () => {
     <Box sx={{ backgroundColor: 'primary', color: 'background' }}>
       <Flex px={3} py={2} sx={{ justifyContent: 'space-between', maxWidth: '600px' }} mx="auto">
         <Heading as="h2" sx={{ lineHeight: 1.8 }}>
-          Patient profile
+          <Message>viewingOtherProfileHeader.heading</Message>
         </Heading>
         <LinkButton
           as={Link}
           to={`/users/${userId}`}
           sx={{ border: '2px solid', borderColor: 'background' }}
         >
-          Close
+          <Message>viewingOtherProfileHeader.button</Message>
         </LinkButton>
       </Flex>
     </Box>

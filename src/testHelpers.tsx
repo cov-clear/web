@@ -5,9 +5,15 @@ import { Provider as TranslationProvider } from 'retranslate';
 import { messages } from './i18n/messages';
 
 export function renderWrapped(element: ReactElement): RenderResult {
-  return render(
+  const wrap = (element: ReactElement): JSX.Element => (
     <TranslationProvider messages={messages} fallbackLanguage="en">
       {element}
     </TranslationProvider>
   );
+  const renderResult = render(wrap(element));
+
+  return {
+    ...renderResult,
+    rerender: (newElement: ReactElement): void => renderResult.rerender(wrap(newElement)),
+  };
 }
