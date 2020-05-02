@@ -1,8 +1,12 @@
 import http, { CancelToken } from 'axios';
 
+const HTTP_TIMEOUT = 3000;
+
+const unAuthenticated = () => http.create({ timeout: HTTP_TIMEOUT });
+
 const authenticated = (token: Token) =>
   http.create({
-    timeout: 3000,
+    timeout: HTTP_TIMEOUT,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -26,7 +30,7 @@ export async function createMagicLink(
   email: string,
   options?: HttpOptions
 ): Promise<MagicLinkResult> {
-  const response = await http.post(
+  const response = await unAuthenticated().post(
     '/api/v1/auth/magic-links',
     { email },
     { cancelToken: options?.cancelToken }
@@ -34,10 +38,32 @@ export async function createMagicLink(
   return response.data;
 }
 
-export async function authenticate(authCode: string, options?: HttpOptions): Promise<Token> {
-  const response = await http.post(
+export interface IdAuthenticationSession {
+  redirectUrl: string;
+}
+
+export async function createIdAuthenticationSession(
+  options?: HttpOptions
+): Promise<IdAuthenticationSession> {
+  const response = await unAuthenticated().post('/api/v1/auth/sessions', {
+    cancelToken: options?.cancelToken,
+  });
+  return response.data;
+}
+
+export enum AuthenticationMethod {
+  MAGIC_LINK = 'MAGIC_LINK',
+  ESTONIAN_ID = 'ESTONIAN_ID',
+}
+
+export async function authenticate(
+  method: AuthenticationMethod,
+  authCode: string,
+  options?: HttpOptions
+): Promise<Token> {
+  const response = await unAuthenticated().post(
     '/api/v1/auth/login',
-    { authCode },
+    { method, authCode },
     { cancelToken: options?.cancelToken }
   );
   return response.data.token;
@@ -85,11 +111,6 @@ export interface Address {
   countryCode: string;
 }
 
-export interface Country {
-  code: string;
-  name: string;
-}
-
 export async function updateUser(user: User, options: AuthenticatedHttpOptions): Promise<User> {
   const response = await authenticated(options.token).patch(`/api/v1/users/${user.id}`, user, {
     cancelToken: options.cancelToken,
@@ -98,7 +119,10 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
 }
 
 export interface CreateUserCommand {
-  email: string;
+  authenticationDetails: {
+    method: AuthenticationMethod;
+    identifier: string;
+  };
   roles: Role['name'][];
 }
 
@@ -108,6 +132,11 @@ export async function createUsers(
 ): Promise<User[]> {
   const response = await authenticated(options.token).post('/api/v1/admin/users', command);
   return response.data;
+}
+
+export interface Country {
+  code: string;
+  name: string;
 }
 
 export async function fetchCountries(options: AuthenticatedHttpOptions): Promise<Country[]> {
