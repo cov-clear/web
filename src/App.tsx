@@ -5,7 +5,7 @@ import { Provider as TranslationProvider } from 'retranslate';
 
 import {
   LoginPage,
-  LinkPage,
+  AuthenticationCallbackPage,
   Provider as AuthenticationProvider,
   AuthenticatedRoute,
   useAuthentication,
@@ -38,8 +38,8 @@ const App = () => {
       <Route path="/login" exact>
         <LoginPage />
       </Route>
-      <Route path="/link/:linkId" exact>
-        <LinkPage />
+      <Route path="/authentication-callback" exact>
+        <AuthenticationCallbackPage />
       </Route>
       <AuthenticatedRoute path="/users/:userId/add-test">
         <AddTestPage />

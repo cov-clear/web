@@ -1,4 +1,4 @@
 export * from './LoginPage';
-export * from './LinkPage';
+export * from './AuthenticationCallbackPage';
 export * from './context';
 export * from './AuthenticatedRoute';

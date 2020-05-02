@@ -3,7 +3,7 @@ import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
 import { render, waitFor } from '@testing-library/react';
 
-import { LinkPage } from './LinkPage';
+import { AuthenticationCallbackPage } from './AuthenticationCallbackPage';
 
 import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
@@ -22,7 +22,7 @@ describe('Link page', () => {
   let history: History;
   let saveToken: (token: string) => any;
 
-  const linkId = 'i-am-a-link';
+  const authCode = 'i-am-an-auth-code';
 
   beforeEach(() => {
     history = createMemoryHistory();
@@ -36,8 +36,8 @@ describe('Link page', () => {
 
     render(
       <Router history={history}>
-        <Route path="/link/:linkId">
-          <LinkPage />
+        <Route path="/authentication-callback" exact>
+          <AuthenticationCallbackPage />
         </Route>
       </Router>
     );
@@ -46,21 +46,35 @@ describe('Link page', () => {
   describe('when a valid token is supplied', () => {
     beforeEach(() => {
       authenticateMock.mockImplementation(() => Promise.resolve(mockToken));
-      history.push(`/link/${linkId}`);
     });
 
-    it('exchanges the link for the token and saves the token', async () => {
+    it('exchanges the auth code for the token and saves the token when using magic link', async () => {
+      history.push(`/authentication-callback?method=MAGIC_LINK&authCode=${authCode}`);
       await waitFor(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
       expect(saveToken).toHaveBeenCalledTimes(1);
       expect(authenticate).toHaveBeenCalledWith(
         AuthenticationMethod.MAGIC_LINK,
-        linkId,
+        authCode,
+        expect.anything()
+      );
+      expect(authenticate).toHaveBeenCalledTimes(1);
+    });
+
+    it('exchanges the session token for the token and saves the token when using estonian id auth', async () => {
+      const sessionToken = 'i-am-a-session-token';
+      history.push(`/authentication-callback?method=ESTONIAN_ID&session_token=${sessionToken}`);
+      await waitFor(() => expect(saveToken).toHaveBeenCalledWith(mockToken));
+      expect(saveToken).toHaveBeenCalledTimes(1);
+      expect(authenticate).toHaveBeenCalledWith(
+        AuthenticationMethod.ESTONIAN_ID,
+        sessionToken,
         expect.anything()
       );
       expect(authenticate).toHaveBeenCalledTimes(1);
     });
 
     it('replaces the route with the user page, removing it from history', async () => {
+      history.push(`/authentication-callback?method=MAGIC_LINK&authCode=${authCode}`);
       await waitFor(() =>
         expect(history.location.pathname).toBe('/users/f99c9790-f137-404f-9bf1-243d6e3e6f3e')
       );
@@ -72,7 +86,7 @@ describe('Link page', () => {
   describe('when an invalid token is supplied', () => {
     beforeEach(() => {
       authenticateMock.mockImplementation(() => Promise.reject());
-      history.push(`/link/${linkId}`);
+      history.push(`/authentication-callback?method=MAGIC_LINK&authCode=${authCode}`);
     });
 
     it('should redirect to the login page', async () => {
