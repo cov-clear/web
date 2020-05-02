@@ -6,10 +6,12 @@ import * as yup from 'yup';
 import { Role, CreateUserCommand } from '../api';
 import useBulkUserCreation from './useBulkUserCreation';
 import useRoles from './useRoles';
+import { Message, useTranslations } from 'retranslate';
 
 const AnyBox = Box as any;
 
 const BulkUserCreationPage: FC = () => {
+  const { translate } = useTranslations();
   const {
     create,
     loading: creatingUsers,
@@ -33,9 +35,7 @@ const BulkUserCreationPage: FC = () => {
       const command: CreateUserCommand[] = emails.map((email) => ({ email, roles: [role] }));
 
       if (
-        window.confirm(
-          `Are you sure you want to create ${command.length} user(s) with role ${role}?`
-        )
+        window.confirm(translate('bulkUserCreationPage.confirm', { number: command.length, role }))
       ) {
         create(command);
       }
@@ -45,17 +45,18 @@ const BulkUserCreationPage: FC = () => {
   return (
     <Container variant="page">
       <Heading as="h1" mb={4}>
-        Create users
+        <Message>bulkUserCreationPage.heading</Message>
       </Heading>
 
       <Text mb={4}>
-        Creates users with the specified emails and assigns the selected role to them. If a user
-        with a given email already exists, the selected role will be assigned to them.
+        <Message>bulkUserCreationPage.description</Message>
       </Text>
 
       <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit} mb={4}>
         <Box>
-          <Label htmlFor="role">Role *</Label>
+          <Label htmlFor="role">
+            <Message>bulkUserCreationPage.role.label</Message> *
+          </Label>
           <Select id="role" {...form.getFieldProps('role')}>
             {roles.map(({ name }) => (
               <option key={name} value={name}>
@@ -66,7 +67,9 @@ const BulkUserCreationPage: FC = () => {
         </Box>
 
         <Box>
-          <Label htmlFor="emails">Emails (separated by comma) *</Label>
+          <Label htmlFor="emails">
+            <Message>bulkUserCreationPage.emails.label</Message> *
+          </Label>
           <Textarea
             id="emails"
             {...form.getFieldProps('emailsString')}
@@ -79,17 +82,27 @@ const BulkUserCreationPage: FC = () => {
           type="submit"
           disabled={loadingRoles || creatingUsers || !form.isValid}
         >
-          Create
+          <Message>bulkUserCreationPage.button</Message>
         </Button>
       </AnyBox>
 
       {createdUsers.length > 0 && (
-        <Alert variant="success" mb={2}>{createdUsers.length} user(s) successfully created.</Alert>
+        <Alert variant="success" mb={2}>
+          <Message params={{ number: createdUsers.length }}>bulkUserCreationPage.success</Message>
+        </Alert>
       )}
 
-      {errorLoadingRoles && <Alert variant="error" mb={2}>{errorLoadingRoles.message}</Alert>}
+      {errorLoadingRoles && (
+        <Alert variant="error" mb={2}>
+          {errorLoadingRoles.message}
+        </Alert>
+      )}
 
-      {errorCreatingUsers && <Alert variant="error" mb={2}>{errorCreatingUsers.message}</Alert>}
+      {errorCreatingUsers && (
+        <Alert variant="error" mb={2}>
+          {errorCreatingUsers.message}
+        </Alert>
+      )}
     </Container>
   );
 };

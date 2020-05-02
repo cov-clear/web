@@ -4,6 +4,7 @@ import { render, waitFor, fireEvent } from '@testing-library/react';
 import { BulkUserCreationPage } from '.';
 import { useAuthentication } from '../authentication/context';
 import { User } from '../api';
+import { renderWrapped } from '../testHelpers';
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
@@ -32,7 +33,7 @@ describe('Bulk user creation page', () => {
       })
     );
 
-    const { getByLabelText, getByText } = render(<BulkUserCreationPage />);
+    const { getByLabelText, getByText } = renderWrapped(<BulkUserCreationPage />);
 
     const input = getByLabelText(/emails/i);
     const button = getByText('Create');
@@ -86,7 +87,7 @@ describe('Bulk user creation page', () => {
       Promise.reject(new Error(url === '/api/v1/roles' ? 'Some role error.' : 'Some other error.'))
     );
 
-    const { getByText } = render(<BulkUserCreationPage />);
+    const { getByText } = renderWrapped(<BulkUserCreationPage />);
 
     await waitFor(() => {
       expect(getByText(/some role error/i)).toBeInTheDocument();

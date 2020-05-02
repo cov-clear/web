@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuthentication } from '../authentication';
 import { User, CreateUserCommand, createUsers } from '../api';
+import { useTranslations } from 'retranslate';
 
 type NullableError = Error | null;
 
@@ -11,6 +12,7 @@ export default function useBulkUserCreation(): {
   createdUsers: User[];
 } {
   const { token } = useAuthentication();
+  const { translate } = useTranslations();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null as NullableError);
@@ -29,14 +31,16 @@ export default function useBulkUserCreation(): {
         setLoading(false);
       }
     } else {
-      setError(new Error('Authentication failed. Please try logging in again.'));
+      setError(new Error(translate('bulkUserCreation.error.authentication')));
     }
   };
 
   return {
     create,
     loading,
-    error: error ? new Error(`Failed to create users: ${error.message}`) : null,
+    error: error
+      ? new Error(translate('bulkUserCreation.error.generic', { message: error.message }))
+      : null,
     createdUsers,
   };
 }
