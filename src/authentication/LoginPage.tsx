@@ -14,6 +14,7 @@ import {
 } from 'theme-ui';
 
 import { createMagicLink } from '../api';
+import { Message, useTranslations } from 'retranslate';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -32,29 +33,33 @@ export const LoginPage = () => {
     <Container variant="page">
       {invalidLink && !submitted && (
         <Alert variant="secondary" mb={4}>
-          That link wasn't valid, please request a new one.
+          <Message>loginPage.invalidLink</Message>
         </Alert>
       )}
       <Heading as="h1" mb={3}>
-        Sign in
+        <Message>loginPage.heading</Message>
       </Heading>
       {submitted ? (
         <Text>
-          We sent an email to <strong>{email}</strong> with a secure link to sign you in.
+          <Message params={{ email: <strong>{email}</strong> }}>
+            loginPage.description.submitted
+          </Message>
         </Text>
       ) : (
         <>
-          <Text mb={6}>We’ll send you a secure sign in link to your email</Text>
+          <Text mb={6}>
+            <Message>loginPage.description.notSubmitted</Message>
+          </Text>
           <LoginForm onComplete={handleLogin} />
         </>
       )}
       <ThemeUiLink
-        href="https://cov-clear.com/privacy/"
+        href="https://cov-clear.com/privacy/" // TODO: Add link to Estonian privacy page
         mt={2}
         py={3}
         sx={{ display: 'block', width: '100%', textAlign: 'center' }}
       >
-        Privacy
+        <Message>loginPage.privacy</Message>
       </ThemeUiLink>
     </Container>
   );
@@ -67,6 +72,7 @@ const LoginForm = ({
 }: {
   onComplete: ({ email }: { email: string }) => Promise<any>;
 }) => {
+  const { translate } = useTranslations();
   const form = useFormik({
     initialValues: {
       email: '',
@@ -75,8 +81,8 @@ const LoginForm = ({
       email: yup
         .string()
         .trim()
-        .email('Please check your email address')
-        .required('Please fill your email address'),
+        .email(translate('loginPage.form.email.invalid'))
+        .required(translate('loginPage.form.email.required')),
     }),
     onSubmit: ({ email }) => onComplete({ email: email.trim() }),
   });
@@ -84,17 +90,19 @@ const LoginForm = ({
   return (
     <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
       <Box>
-        <Label htmlFor="cov-email">Your email</Label>
+        <Label htmlFor="cov-email">
+          <Message>loginPage.form.email.label</Message>
+        </Label>
         <Input
           id="cov-email"
           type="email"
           {...form.getFieldProps('email')}
-          placeholder="e.g. john.smith@email.com"
+          placeholder={translate('loginPage.form.email.placeholder')}
         />
         {form.touched.email && form.errors.email ? <Text>{form.errors.email}</Text> : null}
       </Box>
       <Button type="submit" variant="block" disabled={form.isSubmitting} mt={2}>
-        Send magic link
+        <Message>loginPage.form.button</Message>
       </Button>
     </AnyBox>
   );

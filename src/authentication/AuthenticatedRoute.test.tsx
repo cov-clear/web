@@ -1,8 +1,9 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { render, waitFor, screen } from '@testing-library/react';
+import { waitFor, screen } from '@testing-library/react';
 
+import { renderWrapped } from '../testHelpers';
 import { useAuthentication } from './context';
 import { AuthenticatedRoute } from './AuthenticatedRoute';
 
@@ -16,7 +17,7 @@ describe('Authenticated route', () => {
     history = createMemoryHistory();
     mockAuthenticated();
 
-    render(
+    renderWrapped(
       <Router history={history}>
         <AuthenticatedRoute path="/private" exact>
           <h1>private page</h1>

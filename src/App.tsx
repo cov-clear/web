@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider } from 'theme-ui';
+import { Provider as TranslationProvider } from 'retranslate';
 
 import {
   LoginPage,
@@ -10,6 +11,7 @@ import {
   useAuthentication,
 } from './authentication';
 
+import { messages } from './i18n/messages';
 import theme from './theme';
 import { NotFoundPage } from './staticPages';
 
@@ -65,9 +67,11 @@ const ConfiguredApp = () => {
   return (
     <AuthenticationProvider>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <TranslationProvider messages={messages} fallbackLanguage="en">
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </TranslationProvider>
       </ThemeProvider>
     </AuthenticationProvider>
   );

@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { Flex, Box, Radio, Label, Input, Button, Text } from 'theme-ui';
 
 import { Profile, Sex } from '../api';
+import { Message, useTranslations } from 'retranslate';
 
 const AnyBox = Box as any;
 
@@ -15,6 +16,7 @@ interface ProfileFormFields {
 }
 
 export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => Promise<any> }) => {
+  const { translate } = useTranslations();
   const form = useFormik<ProfileFormFields>({
     initialValues: {
       firstName: '',
@@ -23,22 +25,16 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       sex: '',
     },
     validationSchema: yup.object().shape({
-      firstName: yup
-        .string()
-        .trim()
-        .required('Please fill your first names'),
-      lastName: yup
-        .string()
-        .trim()
-        .required('Please fill your last name'),
+      firstName: yup.string().trim().required(translate('profileForm.firstName.required')),
+      lastName: yup.string().trim().required(translate('profileForm.lastName.required')),
       dateOfBirth: yup
         .date()
-        .required('Please fill your date of birth')
-        .max(new Date(), 'Please check your date of birth'),
+        .required(translate('profileForm.dateOfBirth.required'))
+        .max(new Date(), translate('profileForm.dateOfBirth.invalid')),
       sex: yup
         .string()
         .oneOf([Sex.MALE, Sex.FEMALE])
-        .required('Please select your legal sex'),
+        .required(translate('profileForm.sex.required')),
     }),
     onSubmit: ({ firstName, lastName, dateOfBirth, sex }) =>
       onComplete({
@@ -55,13 +51,17 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
   return (
     <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>
       <Box>
-        <Label htmlFor="identity-first-name">First name(s)</Label>
+        <Label htmlFor="identity-first-name">
+          <Message>profileForm.firstName.label</Message>
+        </Label>
         <Input id="identity-first-name" type="text" {...form.getFieldProps('firstName')} />
         {fieldError('firstName')}
       </Box>
 
       <Box>
-        <Label htmlFor="identity-last-name">Last name</Label>
+        <Label htmlFor="identity-last-name">
+          <Message>profileForm.lastName.label</Message>
+        </Label>
         <Input
           name="name"
           id="identity-last-name"
@@ -72,7 +72,9 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
       </Box>
 
       <Box>
-        <Label htmlFor="identity-dateOfBirth">Date of birth</Label>
+        <Label htmlFor="identity-dateOfBirth">
+          <Message>profileForm.dateOfBirth.label</Message>
+        </Label>
         <Input
           id="identity-dateOfBirth"
           type="date"
@@ -84,7 +86,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
 
       <Box>
         <Label mb={1} htmlFor="identity-sex-female">
-          Sex
+          <Message>profileForm.sex.label</Message>
         </Label>
         <Flex>
           <Label>
@@ -92,18 +94,18 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
               id="identity-sex-female"
               {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.FEMALE })}
             />
-            Female
+            <Message>profileForm.sex.option.female</Message>
           </Label>
           <Label>
             <Radio {...form.getFieldProps({ name: 'sex', type: 'radio', value: Sex.MALE })} />
-            Male
+            <Message>profileForm.sex.option.male</Message>
           </Label>
         </Flex>
         {fieldError('sex')}
       </Box>
 
       <Button variant="block" type="submit" disabled={form.isSubmitting}>
-        Next
+        <Message>profileForm.button</Message>
       </Button>
     </AnyBox>
   );

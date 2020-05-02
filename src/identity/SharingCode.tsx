@@ -6,6 +6,7 @@ import ReactQRCode from 'qrcode.react';
 
 import { useSharingCode } from '../resources';
 import { Camera as CameraIcon } from '../icons';
+import { Message } from 'retranslate';
 
 const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 
@@ -36,10 +37,12 @@ const QRCode = ({ value }: { value: string }) => {
             <ReactQRCode size={size} value={value} level="M" />
           </Box>
           <Box sx={{ width: '70%', textAlign: 'center' }} mx="auto">
-            <Text my="3">Let another user scan your code to securely share your results</Text>
+            <Text my="3">
+              <Message>sharingCode.description</Message>
+            </Text>
 
             <LinkButton as={Link} to="/scan">
-              <CameraIcon mr={1} /> Scan another user
+              <CameraIcon mr={1} /> <Message>sharingCode.button</Message>
             </LinkButton>
           </Box>
         </>

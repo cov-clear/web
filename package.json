@@ -16,6 +16,7 @@
     "react-qr-reader": "^2.2.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "retranslate": "^1.2.0",
     "theme-ui": "^0.3.1",
     "use-media": "^1.4.0",
     "yup": "^0.28.3"

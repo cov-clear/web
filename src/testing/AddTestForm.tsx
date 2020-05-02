@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text, Label, Input, Checkbox, Button, Textarea } from 'theme-ui';
 import { useFormik } from 'formik';
+import { Message } from 'retranslate';
 
 import { CreateTestCommand, TestType, FilledSchema, ObjectSchema, FieldSchema } from '../api';
 
@@ -8,6 +9,7 @@ const AnyBox = Box as any;
 
 type FormValues = FilledSchema & { notes: string };
 
+// TODO: Translate strings coming from the server
 export const AddTestForm = ({
   testType,
   onComplete,
@@ -59,12 +61,14 @@ export const AddTestForm = ({
           );
         })}
         <Box>
-          <Label htmlFor="test-notes">Additional notes</Label>
+          <Label htmlFor="test-notes">
+            <Message>addTestForm.notes.label</Message>
+          </Label>
           <Textarea id="test-notes" {...form.getFieldProps('notes')} sx={{ resize: 'vertical' }} />
         </Box>
 
         <Button type="submit" variant="block">
-          Save
+          <Message>addTestForm.button</Message>
         </Button>
       </AnyBox>
     </>

@@ -1,14 +1,15 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
-import { createMemoryHistory, History } from 'history';
-import { waitFor, render, fireEvent, screen } from '@testing-library/react';
+import { Router } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
+import { screen } from '@testing-library/react';
 import QRReader from 'react-qr-reader';
+import { createMemoryHistory, History } from 'history';
 
 import { ScanPage } from './ScanPage';
 
-import { createAccessPass, AccessPass } from '../api';
+import { createAccessPass } from '../api';
 import { useAuthentication } from '../authentication';
-import { act } from 'react-dom/test-utils';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
 jest.mock('../authentication');
@@ -43,7 +44,7 @@ describe('Identity page', () => {
       return <div id="mock-qr-code" />;
     });
 
-    render(
+    renderWrapped(
       <Router history={history}>
         <ScanPage />
       </Router>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Box, Spinner, Alert, Text, Button, Heading } from 'theme-ui';
+import { Message } from 'retranslate';
 
 import { useUser, useCountries } from '../resources';
 import { Warning as WarningIcon } from '../icons';
@@ -31,14 +32,22 @@ export const ConfirmIdentity = ({
       <Alert mb={4} variant="warning">
         <WarningIcon mr={3} sx={{ alignSelf: 'flex-start' }} />
         <Box>
-          <Text>Confirm identity</Text>
-          <Text as="small">Check the patient's photo ID to confirm these details are correct</Text>
+          <Text>
+            <Message>confirmIdentity.alert.title</Message>
+          </Text>
+          <Text as="small">
+            <Message>confirmIdentity.alert.description</Message>
+          </Text>
         </Box>
       </Alert>
       <Heading as="h1" mb={3}>
         {firstName} {lastName}
       </Heading>
-      <Text mb={4}>Date of birth: {format(new Date(dateOfBirth), 'd MMM yyyy')}</Text>
+      <Text mb={4}>
+        <Message>confirmIdentity.dateOfBirth</Message>:{' '}
+        {format(new Date(dateOfBirth), 'd MMM yyyy')}
+        {/* TODO: Add Estonian date formatting  */}
+      </Text>
       {text(address1)}
       {text(address2)}
       {text(city)}
@@ -46,7 +55,7 @@ export const ConfirmIdentity = ({
       {text(postcode)}
       {text(country?.name)}
       <Button variant="block" mt={4} onClick={onConfirm} disabled={loading}>
-        Confirm patient's identity
+        <Message>confirmIdentity.button</Message>
       </Button>
     </>
   );

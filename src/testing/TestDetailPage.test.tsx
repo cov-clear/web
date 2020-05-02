@@ -1,12 +1,13 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { TestDetailPage } from './TestDetailPage';
 
 import { fetchTest, Test, TestType, fetchTestTypes } from '../api';
 import { useAuthentication } from '../authentication';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
 jest.mock('../authentication');
@@ -31,7 +32,7 @@ describe('Test detail page', () => {
     fetchTestMock.mockImplementation(() => Promise.resolve(aTest()));
     fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
 
-    render(
+    renderWrapped(
       <Router history={history}>
         <Route path="/tests/:testId">
           <TestDetailPage />

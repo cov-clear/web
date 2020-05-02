@@ -1,12 +1,13 @@
 import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
-import { waitFor, render, screen, fireEvent } from '@testing-library/react';
+import { waitFor, screen, fireEvent } from '@testing-library/react';
 
 import { AddTestPage } from './AddTestPage';
 
 import { fetchUser, fetchTestTypes, User, Sex, TestType, createTest, fetchCountries } from '../api';
 import { useAuthentication } from '../authentication';
+import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
 jest.mock('../authentication');
@@ -41,7 +42,7 @@ describe('Test adding page', () => {
       ])
     );
 
-    render(
+    renderWrapped(
       <Router history={history}>
         <Route path="/users/:userId/add-test">
           <AddTestPage />
