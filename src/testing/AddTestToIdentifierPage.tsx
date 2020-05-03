@@ -58,12 +58,13 @@ export const AddTestToIdentifierPage: FC = () => {
     validationSchema: yup.object().shape({
       identifier: identifierSchemaForMethod[authenticationMethod],
     }),
-    onSubmit: ({ identifier }) => {
+    onSubmit: ({ identifier }, { resetForm }) => {
       const command: CreateUserCommand = {
         authenticationDetails: { method: authenticationMethod, identifier },
       };
 
       create(command);
+      resetForm();
     },
   });
 
