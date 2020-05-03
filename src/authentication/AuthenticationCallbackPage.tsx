@@ -39,7 +39,7 @@ export const AuthenticationCallbackPage = () => {
   return <Spinner variant="spinner.main" />;
 };
 
-const authenticationMethodAuthCodeQueryParameter = {
+const authenticationMethodAuthCodeQueryParameter : Record<AuthenticationMethod, string> = {
   [AuthenticationMethod.ESTONIAN_ID]: 'session_token',
   [AuthenticationMethod.MAGIC_LINK]: 'authCode',
 };
