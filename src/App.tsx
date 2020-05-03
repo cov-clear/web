@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { ThemeProvider } from 'theme-ui';
+import { ThemeProvider, Spinner } from 'theme-ui';
 import { Provider as TranslationProvider } from 'retranslate';
 
 import {
@@ -16,10 +16,15 @@ import { messages } from './i18n/messages';
 import theme from './theme';
 import { NotFoundPage } from './staticPages';
 
-import { ScanPage } from './scanning';
 import { IdentityPage } from './identity';
 import { AddTestPage, TestDetailPage } from './testing';
 import { BulkUserCreationPage } from './admin';
+
+// Includes fairly large dependencies for QR scanning and workers
+const ScanPage = lazy(async () => {
+  const { ScanPage } = await import('./scanning');
+  return { default: ScanPage };
+});
 
 const App = () => {
   const { userId } = useAuthentication();
@@ -73,7 +78,9 @@ const ConfiguredApp = () => {
       <ThemeProvider theme={theme}>
         <TranslationProvider messages={messages} fallbackLanguage="en">
           <BrowserRouter>
-            <App />
+            <Suspense fallback={<Spinner variant="spinner.main" />}>
+              <App />
+            </Suspense>
           </BrowserRouter>
         </TranslationProvider>
       </ThemeProvider>
