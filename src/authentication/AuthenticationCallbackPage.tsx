@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Spinner } from 'theme-ui';
 import { useHistory, useLocation } from 'react-router-dom';
 import http from 'axios';
-import { authenticate, AuthenticationMethod } from '../api';
+import { authenticate, AuthenticationMethod, Token } from '../api';
 import { useAuthentication } from './context';
 import { decode } from './token';
 
@@ -18,16 +18,18 @@ export const AuthenticationCallbackPage = () => {
       const method = AuthenticationMethod[queryParams.get('method') as AuthenticationMethod];
       const authCode = queryParams.get(authenticationMethodAuthCodeQueryParameter[method]);
       if (method && authCode) {
+        let token: Token;
         try {
-          const token = await authenticate(method, authCode, {
+          token = await authenticate(method, authCode, {
             cancelToken: cancelToken.token,
           });
-          saveToken(token);
-          const { userId } = decode(token);
-          history.replace(`/users/${userId}`);
         } catch (error) {
           history.replace(`/login?invalid=true`);
+          return;
         }
+        saveToken(token);
+        const { userId } = decode(token);
+        history.replace(`/users/${userId}`);
       } else {
         history.replace(`/login?invalid=true`);
       }
