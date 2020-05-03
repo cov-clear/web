@@ -32,6 +32,7 @@ const BulkUserCreationPage: FC = () => {
     }),
     onSubmit: ({ role, emailsString }) => {
       const emails = getEmails(emailsString);
+      // TODO: support ESTONIAN_ID authenticaiton method
       const command: CreateUserCommand[] = emails.map((email) => ({
         authenticationDetails: {
           method: AuthenticationMethod.MAGIC_LINK,
