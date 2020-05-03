@@ -28,6 +28,8 @@ export const AuthenticationCallbackPage = () => {
         } catch (error) {
           history.replace(`/login?invalid=true`);
         }
+      } else {
+        history.replace(`/login?invalid=true`);
       }
     }
 
@@ -39,9 +41,9 @@ export const AuthenticationCallbackPage = () => {
   return <Spinner variant="spinner.main" />;
 };
 
-const authenticationMethodAuthCodeQueryParameter : Record<AuthenticationMethod, string> = {
-  [AuthenticationMethod.ESTONIAN_ID]: 'session_token',
-  [AuthenticationMethod.MAGIC_LINK]: 'authCode',
+const authenticationMethodAuthCodeQueryParameter: Record<AuthenticationMethod, string> = {
+  ESTONIAN_ID: 'session_token',
+  MAGIC_LINK: 'authCode',
 };
 
 function useQuery() {
