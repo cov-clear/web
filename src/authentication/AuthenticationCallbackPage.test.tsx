@@ -81,6 +81,14 @@ describe('Link page', () => {
       history.goBack();
       expect(history.location.pathname).toBe('/');
     });
+
+    it('should redirect to the login page if parameters are missing', async () => {
+      history.push(`/authentication-callback?method=MAGIC_LINK&session_token=${authCode}`);
+      await waitFor(() => {
+        expect(history.location.pathname).toBe('/login');
+        expect(history.location.search).toBe('?invalid=true');
+      });
+    });
   });
 
   describe('when an invalid token is supplied', () => {
