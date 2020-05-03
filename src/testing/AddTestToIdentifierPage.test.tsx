@@ -24,6 +24,8 @@ describe(AddTestToIdentifierPage, () => {
     const button = getByText(/add test result/i);
     const identifierInput = getByLabelText(/identification code/i);
 
+    expect(identifierInput).toHaveFocus();
+
     fireEvent.click(button);
     expect(queryByText(/added/i)).not.toBeInTheDocument();
 
@@ -39,6 +41,7 @@ describe(AddTestToIdentifierPage, () => {
     fireEvent.click(button);
 
     await waitFor(() => expect(queryByText(/39210030814 added/i)).toBeInTheDocument());
+    expect((getByLabelText(/identification code/i) as HTMLInputElement).value).toBe('');
 
     scope.done();
   });
