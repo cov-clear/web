@@ -84,7 +84,7 @@ export const AddressForm = ({ onComplete }: { onComplete: (address: Address) => 
       </Box>
 
       <Button variant="block" type="submit" disabled={form.isSubmitting}>
-        <Message>addressForm.register</Message>
+        <Message>addressForm.button</Message>
       </Button>
     </AnyBox>
   );
