@@ -5,21 +5,21 @@ import { useAuthentication } from './context';
 import { NotFoundPage } from '../staticPages';
 
 interface AuthenticatedRouteRedirecterProps {
-  requiredPermission?: string;
+  requiredPermissions?: string[];
 }
 
 const AuthenticatedRouteRedirecter: FC<AuthenticatedRouteRedirecterProps> = ({
-  requiredPermission,
+  requiredPermissions,
   children,
 }) => {
-  const { token, hasPermission } = useAuthentication();
+  const { token, hasPermission: userHasPermission } = useAuthentication();
   const authenticated = !!token;
 
   if (!authenticated) {
     return <Redirect to="/login" />;
   }
 
-  if (requiredPermission && !hasPermission(requiredPermission)) {
+  if (requiredPermissions && !requiredPermissions.every(userHasPermission)) {
     return <NotFoundPage />;
   }
 
@@ -27,11 +27,11 @@ const AuthenticatedRouteRedirecter: FC<AuthenticatedRouteRedirecterProps> = ({
 };
 
 interface AuthenticatedRouteProps extends RouteProps {
-  requiredPermission?: string;
+  requiredPermissions?: string[];
 }
 
 export const AuthenticatedRoute: FC<AuthenticatedRouteProps> = ({
-  requiredPermission,
+  requiredPermissions,
   children,
   ...rest
 }) => {
@@ -39,7 +39,7 @@ export const AuthenticatedRoute: FC<AuthenticatedRouteProps> = ({
     <Route
       {...rest}
       render={() => (
-        <AuthenticatedRouteRedirecter requiredPermission={requiredPermission}>
+        <AuthenticatedRouteRedirecter requiredPermissions={requiredPermissions}>
           {children}
         </AuthenticatedRouteRedirecter>
       )}
