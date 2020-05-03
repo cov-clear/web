@@ -77,10 +77,14 @@
   "testList.description": "Test results will appear here.",
   "testList.button": "Add new test result",
   "addTestToIdentifierPage.heading": "Add a test result",
-  "addTestToIdentifierPage.form.identifier.label.magic_link": "Email address",
-  "addTestToIdentifierPage.form.identifier.label.estonian_id": "Identification code",
-  "addTestToIdentifierPage.form.identifier.placeholder.magic_link": "e.g. john.doe@example.com",
-  "addTestToIdentifierPage.form.identifier.placeholder.estonian_id": "e.g. 39210030814",
+  "addTestToIdentifierPage.form.identifier.label.magicLink": "Email address",
+  "addTestToIdentifierPage.form.identifier.label.estonianId": "Identification code",
+  "addTestToIdentifierPage.form.identifier.placeholder.magicLink": "e.g. john.doe@example.com",
+  "addTestToIdentifierPage.form.identifier.placeholder.estonianId": "e.g. 39210030814",
+  "addTestToIdentifierPage.form.identifier.required.magicLink": "Please fill the email address",
+  "addTestToIdentifierPage.form.identifier.required.estonianId": "Please fill the identification code",
+  "addTestToIdentifierPage.form.identifier.invalid.magicLink": "Please check the email address",
+  "addTestToIdentifierPage.form.identifier.invalid.estonianId": "Please check the identification code",
   "addTestToIdentifierPage.button": "Add test result",
   "addTestToIdentifierPage.success": "Test result for {{ identifier }} added."
 }

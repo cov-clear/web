@@ -27,7 +27,15 @@ describe(AddTestToIdentifierPage, () => {
     fireEvent.click(button);
     expect(queryByText(/added/i)).not.toBeInTheDocument();
 
+    fireEvent.change(identifierInput, { target: { value: '79210030814' } }); // invalid id code
+    fireEvent.click(button);
+    expect(queryByText(/added/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(queryByText(/check the identification code/i)).toBeInTheDocument());
+
     fireEvent.change(identifierInput, { target: { value: '39210030814' } });
+    await waitFor(() =>
+      expect(queryByText(/check the identification code/i)).not.toBeInTheDocument()
+    );
     fireEvent.click(button);
 
     await waitFor(() => expect(queryByText(/39210030814 added/i)).toBeInTheDocument());
