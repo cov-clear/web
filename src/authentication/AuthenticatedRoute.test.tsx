@@ -23,7 +23,11 @@ describe('Authenticated route', () => {
           <h1>private page</h1>
         </AuthenticatedRoute>
 
-        <AuthenticatedRoute path="/protected" requiredPermission="MOCK_PERMISSION" exact>
+        <AuthenticatedRoute
+          path="/protected"
+          requiredPermissions={['A_PERMISSION', 'ANOTHER_PERMISSION']}
+          exact
+        >
           <h1>protected page</h1>
         </AuthenticatedRoute>
 
@@ -52,15 +56,15 @@ describe('Authenticated route', () => {
     expect(history.location.pathname).toBe('/');
   });
 
-  it('displays not found page when user does not have the required permission', async () => {
-    mockAuthenticated([]);
+  it('displays not found page when user is missing any of the required permissions', async () => {
+    mockAuthenticated(['A_PERMISSION']);
     history.push('/protected');
     await waitFor(() => expect(screen.getByText(/doesn't exist/)).toBeInTheDocument());
     expect(screen.queryByText(/protected/)).toBeNull();
   });
 
-  it('displays protected content when user does has the required permission', async () => {
-    mockAuthenticated(['MOCK_PERMISSION']);
+  it('displays protected content when user has all the required permissions', async () => {
+    mockAuthenticated(['A_PERMISSION', 'ANOTHER_PERMISSION']);
     history.push('/protected');
     await waitFor(() => expect(screen.getByText(/protected/)).toBeInTheDocument());
     expect(screen.queryByText(/doesn't exist/)).toBeNull();

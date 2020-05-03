@@ -62,7 +62,11 @@ const App = () => {
       <AuthenticatedRoute path="/scan" exact>
         <ScanPage />
       </AuthenticatedRoute>
-      <AuthenticatedRoute path="/admin/create-users" exact requiredPermission="BULK_CREATE_USERS">
+      <AuthenticatedRoute
+        path="/admin/create-users"
+        exact
+        requiredPermissions={['BULK_CREATE_USERS']}
+      >
         <BulkUserCreationPage />
       </AuthenticatedRoute>
       <Route path="*">
