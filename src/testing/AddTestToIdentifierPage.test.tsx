@@ -9,10 +9,20 @@ import { AddTestToIdentifierPage } from '.';
 jest.mock('../authentication/context');
 
 describe(AddTestToIdentifierPage, () => {
-  it('creates a user for the authentication method from config and the filled identifier', async () => {
-    // TODO: Mock config response when we start calling a config endpoint
+  beforeEach(() => {
     mockToken('some-token');
+    // TODO: Mock config response when we start calling a config endpoint
+  });
 
+  it('focuses identifier input automatically', async () => {
+    const { getByLabelText } = renderWrapped(<AddTestToIdentifierPage />);
+
+    const identifierInput = getByLabelText(/identification code/i);
+
+    expect(identifierInput).toHaveFocus();
+  });
+
+  it('creates a user for the authentication method from config and the filled identifier', async () => {
     const authenticationDetails = { method: 'ESTONIAN_ID', identifier: '39210030814' };
     const scope = nock(/./)
       .post('/api/v1/users', { authenticationDetails })
@@ -24,17 +34,15 @@ describe(AddTestToIdentifierPage, () => {
     const button = getByText(/add test result/i);
     const identifierInput = getByLabelText(/identification code/i);
 
-    expect(identifierInput).toHaveFocus();
-
     fireEvent.click(button);
     expect(queryByText(/added/i)).not.toBeInTheDocument();
 
-    fireEvent.change(identifierInput, { target: { value: '79210030814' } }); // invalid id code
+    fillInput(identifierInput, '79210030814'); // invalid id code
     fireEvent.click(button);
     expect(queryByText(/added/i)).not.toBeInTheDocument();
     await waitFor(() => expect(queryByText(/check the identification code/i)).toBeInTheDocument());
 
-    fireEvent.change(identifierInput, { target: { value: '39210030814' } });
+    fillInput(identifierInput, '39210030814'); // valid id code
     await waitFor(() =>
       expect(queryByText(/check the identification code/i)).not.toBeInTheDocument()
     );
@@ -47,9 +55,6 @@ describe(AddTestToIdentifierPage, () => {
   });
 
   it('shows error when user cannot be created', async () => {
-    // TODO: Mock config response when we start calling a config endpoint
-    mockToken('some-token');
-
     const authenticationDetails = { method: 'ESTONIAN_ID', identifier: '39210030814' };
     const scope = nock(/./)
       .post('/api/v1/users', { authenticationDetails })
@@ -71,5 +76,9 @@ describe(AddTestToIdentifierPage, () => {
 
   function mockToken(token: string): void {
     (useAuthentication as jest.Mock).mockReturnValue({ token });
+  }
+
+  function fillInput(input: HTMLElement, value: string): void {
+    fireEvent.change(input, { target: { value } });
   }
 });
