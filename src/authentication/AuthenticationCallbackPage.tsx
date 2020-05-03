@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Spinner } from 'theme-ui';
 import http from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
-import { authenticate, AuthenticationMethod, Token } from '../api';
+import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
 import { decode } from './token';
 
