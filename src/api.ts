@@ -30,7 +30,7 @@ export async function createMagicLink(
   email: string,
   options?: HttpOptions
 ): Promise<MagicLinkResult> {
-  const response = await unAuthenticated().post(
+  const response = await unauthenticated().post(
     '/api/v1/auth/magic-links',
     { email },
     { cancelToken: options?.cancelToken }
@@ -45,7 +45,7 @@ export interface IdAuthenticationSession {
 export async function createIdAuthenticationSession(
   options?: HttpOptions
 ): Promise<IdAuthenticationSession> {
-  const response = await unAuthenticated().post('/api/v1/auth/sessions', {
+  const response = await unauthenticated().post('/api/v1/auth/sessions', {
     cancelToken: options?.cancelToken,
   });
   return response.data;
@@ -61,7 +61,7 @@ export async function authenticate(
   authCode: string,
   options?: HttpOptions
 ): Promise<Token> {
-  const response = await unAuthenticated().post(
+  const response = await unauthenticated().post(
     '/api/v1/auth/login',
     { method, authCode },
     { cancelToken: options?.cancelToken }
