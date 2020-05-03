@@ -77,11 +77,14 @@ export interface AuthenticatedHttpOptions extends HttpOptions {
 
 export interface User {
   id: string;
-  email: string;
+  authenticationDetails: AuthenticationDetails;
+  email?: string;
   creationTime: string;
   profile?: Profile;
   address?: Address;
 }
+
+export type RestrictedUser = Pick<User, 'id' | 'authenticationDetails'>;
 
 export async function fetchUser(id: string, options: AuthenticatedHttpOptions): Promise<User> {
   const response = await authenticated(options.token).get(`/api/v1/users/${id}`, {
@@ -118,11 +121,25 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
   return response.data;
 }
 
+export interface AuthenticationDetails {
+  method: AuthenticationMethod;
+  identifier: string;
+}
+
+export interface CreateUserCommand {
+  authenticationDetails: AuthenticationDetails;
+}
+
+export async function createUser(
+  command: CreateUserCommand,
+  options: AuthenticatedHttpOptions
+): Promise<RestrictedUser> {
+  const response = await authenticated(options.token).post('/api/v1/users', command);
+  return response.data;
+}
+
 export interface CreateUserWithRolesCommand {
-  authenticationDetails: {
-    method: AuthenticationMethod;
-    identifier: string;
-  };
+  authenticationDetails: AuthenticationDetails;
   roles: Role['name'][];
 }
 

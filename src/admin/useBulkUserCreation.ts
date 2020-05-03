@@ -31,7 +31,7 @@ export default function useBulkUserCreation(): {
         setLoading(false);
       }
     } else {
-      setError(new Error(translate('bulkUserCreation.error.authentication')));
+      setError(new Error(translate('error.authentication')));
     }
   };
 

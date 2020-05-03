@@ -16,6 +16,7 @@ import {
   fetchTestTypes,
   fetchRoles,
   createTest,
+  createUser,
 } from './api';
 
 const ANY_HOST = /./;
@@ -79,6 +80,31 @@ describe('API client', () => {
         .matchHeader('Authorization', 'Bearer some-token')
         .reply(200, responseBody);
       const result = await updateUser(requestBody, { token: 'some-token' });
+      expect(result).toEqual(responseBody);
+    });
+
+    it('creates users', async () => {
+      const requestBody = {
+        authenticationDetails: {
+          method: AuthenticationMethod.ESTONIAN_ID,
+          identifier: '123321',
+        },
+      };
+
+      const responseBody = {
+        id: 'some-id',
+        authenticationDetails: {
+          method: AuthenticationMethod.ESTONIAN_ID,
+          identifier: '123321',
+        },
+      };
+
+      nock(ANY_HOST)
+        .post('/api/v1/users', requestBody)
+        .matchHeader('Authorization', 'Bearer some-token')
+        .reply(201, responseBody);
+
+      const result = await createUser(requestBody, { token: 'some-token' });
       expect(result).toEqual(responseBody);
     });
 
