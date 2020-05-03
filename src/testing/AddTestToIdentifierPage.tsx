@@ -7,11 +7,9 @@ import * as yup from 'yup';
 import { CreateUserCommand, AuthenticationMethod } from '../api';
 import { useConfig } from '../common';
 import { useUserCreation } from './useUserCreation';
+import { validateIdCode } from './validateIdCode';
 
 const AnyBox = Box as any;
-
-// from https://ipsec.pl/data-protection/2012/european-personal-data-regexp-patterns.html
-const ESTONIAN_ID_CODE_REGEX = /^[1-6][0-9]{2}[1,2][0-9][0-9]{2}[0-9]{4}$/;
 
 interface FormFields {
   identifier: string;
@@ -44,9 +42,10 @@ export const AddTestToIdentifierPage: FC = () => {
       .required(translate('addTestToIdentifierPage.form.identifier.required.magicLink')),
     ESTONIAN_ID: yup
       .string()
-      .matches(
-        ESTONIAN_ID_CODE_REGEX,
-        translate('addTestToIdentifierPage.form.identifier.invalid.estonianId')
+      .test(
+        'is-valid-estonian-id',
+        translate('addTestToIdentifierPage.form.identifier.invalid.estonianId'),
+        validateIdCode
       )
       .required(translate('addTestToIdentifierPage.form.identifier.required.estonianId')),
   };
