@@ -1,2 +1,2 @@
-/api/*  https://cov-clear.herokuapp.com/api/:splat  200
+/api/*  https://uk.cov-clear.com/api/:splat  200
 /* /index.html 200
