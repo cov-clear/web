@@ -2,7 +2,7 @@ import http, { CancelToken } from 'axios';
 
 const HTTP_TIMEOUT = 3000;
 
-const unAuthenticated = () => http.create({ timeout: HTTP_TIMEOUT });
+const unauthenticated = () => http.create({ timeout: HTTP_TIMEOUT });
 
 const authenticated = (token: Token) =>
   http.create({
