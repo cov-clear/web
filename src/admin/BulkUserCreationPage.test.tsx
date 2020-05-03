@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { waitFor, fireEvent } from '@testing-library/react';
 
 import { BulkUserCreationPage } from '.';
 import { useAuthentication } from '../authentication/context';
-import { User } from '../api';
+import { User, AuthenticationMethod } from '../api';
 import { renderWrapped } from '../testHelpers';
 
 const mockGet = jest.fn();
@@ -61,9 +61,27 @@ describe('Bulk user creation page', () => {
     fireEvent.click(button);
     await waitFor(() => {
       expect(mockPost).toHaveBeenCalledWith('/api/v1/admin/users', [
-        { email: 'jane.doe@example.com', roles: ['DOCTOR'] },
-        { email: 'john.doe@gmail.com', roles: ['DOCTOR'] },
-        { email: 'jake.doe@yahoo.com', roles: ['DOCTOR'] },
+        {
+          authenticationDetails: {
+            method: AuthenticationMethod.MAGIC_LINK,
+            identifier: 'jane.doe@example.com',
+          },
+          roles: ['DOCTOR'],
+        },
+        {
+          authenticationDetails: {
+            method: AuthenticationMethod.MAGIC_LINK,
+            identifier: 'john.doe@gmail.com',
+          },
+          roles: ['DOCTOR'],
+        },
+        {
+          authenticationDetails: {
+            method: AuthenticationMethod.MAGIC_LINK,
+            identifier: 'jake.doe@yahoo.com',
+          },
+          roles: ['DOCTOR'],
+        },
       ]);
     });
     expect(getByText(/successfully created/i)).toBeInTheDocument();
@@ -75,8 +93,20 @@ describe('Bulk user creation page', () => {
     fireEvent.click(button);
     await waitFor(() => {
       expect(mockPost).toHaveBeenCalledWith('/api/v1/admin/users', [
-        { email: 'invalid-email', roles: ['USER'] },
-        { email: 'another!invalid', roles: ['USER'] },
+        {
+          authenticationDetails: {
+            method: AuthenticationMethod.MAGIC_LINK,
+            identifier: 'invalid-email',
+          },
+          roles: ['USER'],
+        },
+        {
+          authenticationDetails: {
+            method: AuthenticationMethod.MAGIC_LINK,
+            identifier: 'another!invalid',
+          },
+          roles: ['USER'],
+        },
       ]);
     });
     expect(getByText(/some creation error/i)).toBeInTheDocument();

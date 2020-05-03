@@ -16,7 +16,7 @@ import {
 import { createMagicLink } from '../api';
 import { Message, useTranslations } from 'retranslate';
 
-export const LoginPage = () => {
+export const MagicLinkLoginPage = () => {
   const [email, setEmail] = useState('');
 
   const submitted = !!email;

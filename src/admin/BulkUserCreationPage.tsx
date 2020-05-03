@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
+import { Message, useTranslations } from 'retranslate';
 import { Box, Label, Heading, Container, Button, Text, Textarea, Alert, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { Role, CreateUserCommand } from '../api';
+import { Role, CreateUserCommand, AuthenticationMethod } from '../api';
 import useBulkUserCreation from './useBulkUserCreation';
 import useRoles from './useRoles';
-import { Message, useTranslations } from 'retranslate';
 
 const AnyBox = Box as any;
 
@@ -32,7 +32,14 @@ const BulkUserCreationPage: FC = () => {
     }),
     onSubmit: ({ role, emailsString }) => {
       const emails = getEmails(emailsString);
-      const command: CreateUserCommand[] = emails.map((email) => ({ email, roles: [role] }));
+      // TODO: support ESTONIAN_ID authenticaiton method
+      const command: CreateUserCommand[] = emails.map((email) => ({
+        authenticationDetails: {
+          method: AuthenticationMethod.MAGIC_LINK,
+          identifier: email,
+        },
+        roles: [role],
+      }));
 
       if (
         window.confirm(translate('bulkUserCreationPage.confirm', { number: command.length, role }))
