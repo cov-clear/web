@@ -17,11 +17,9 @@ describe('Estonian ID login page', () => {
     delete window.location;
     window.location = ({ assign: jest.fn() } as any) as Location;
     renderWrapped(<EstonianIdLoginPage />);
-    createIdAuthenticationSessionMock.mockImplementation(() =>
-      Promise.resolve({
-        redirectUrl: 'https://example.com/redirect',
-      })
-    );
+    createIdAuthenticationSessionMock.mockResolvedValue({
+      redirectUrl: 'https://example.com/redirect',
+    });
   });
 
   it('creates an authentication session and redirects you to the redirect url', async () => {
