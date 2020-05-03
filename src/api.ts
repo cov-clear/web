@@ -118,7 +118,7 @@ export async function updateUser(user: User, options: AuthenticatedHttpOptions):
   return response.data;
 }
 
-export interface CreateUserCommand {
+export interface CreateUserWithRolesCommand {
   authenticationDetails: {
     method: AuthenticationMethod;
     identifier: string;
@@ -127,7 +127,7 @@ export interface CreateUserCommand {
 }
 
 export async function createUsers(
-  command: CreateUserCommand[],
+  command: CreateUserWithRolesCommand[],
   options: AuthenticatedHttpOptions
 ): Promise<User[]> {
   const response = await authenticated(options.token).post('/api/v1/admin/users', command);

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useAuthentication } from '../authentication';
-import { User, CreateUserCommand, createUsers } from '../api';
+import { User, CreateUserWithRolesCommand, createUsers } from '../api';
 import { useTranslations } from 'retranslate';
 
 type NullableError = Error | null;
 
 export default function useBulkUserCreation(): {
-  create: (users: CreateUserCommand[]) => Promise<void>;
+  create: (users: CreateUserWithRolesCommand[]) => Promise<void>;
   loading: boolean;
   error: NullableError;
   createdUsers: User[];
@@ -18,7 +18,7 @@ export default function useBulkUserCreation(): {
   const [error, setError] = useState(null as NullableError);
   const [createdUsers, setCreatedUsers] = useState([] as User[]);
 
-  const create = async (command: CreateUserCommand[]) => {
+  const create = async (command: CreateUserWithRolesCommand[]) => {
     if (token) {
       setError(null);
       setLoading(true);
