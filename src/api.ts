@@ -310,3 +310,15 @@ export async function fetchRoles(options: AuthenticatedHttpOptions): Promise<Rol
   });
   return response.data;
 }
+
+export enum Language {
+  ENGLISH = 'en',
+  ESTONIAN = 'et',
+}
+
+export interface Config {
+  authenticationMethod: AuthenticationMethod;
+  defaultLanguage: Language;
+}
+
+// TODO: Add config fetching

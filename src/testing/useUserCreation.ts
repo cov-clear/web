@@ -6,7 +6,7 @@ import { useAuthentication } from '../authentication';
 
 type NullableError = Error | null;
 
-export default function useUserCreation(): {
+export function useUserCreation(): {
   create: (command: CreateUserCommand) => Promise<void>;
   creating: boolean;
   createdUser: RestrictedUser | null;

@@ -75,5 +75,12 @@
   "testDetailPage.yes": "Yes",
   "testDetailPage.no": "No",
   "testList.description": "Test results will appear here.",
-  "testList.button": "Add new test result"
+  "testList.button": "Add new test result",
+  "addTestToIdentifierPage.heading": "Add a test result",
+  "addTestToIdentifierPage.form.identifier.label.magic_link": "Email address",
+  "addTestToIdentifierPage.form.identifier.label.estonian_id": "Identification code",
+  "addTestToIdentifierPage.form.identifier.placeholder.magic_link": "e.g. john.doe@example.com",
+  "addTestToIdentifierPage.form.identifier.placeholder.estonian_id": "e.g. 39210030814",
+  "addTestToIdentifierPage.button": "Add test result",
+  "addTestToIdentifierPage.success": "Test result for {{ identifier }} added."
 }
