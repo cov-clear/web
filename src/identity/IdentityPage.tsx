@@ -31,6 +31,7 @@ import { useAuthentication } from '../authentication';
 
 import { TestList } from '../testing';
 import { ViewingOtherProfileHeader } from './ViewingOtherProfileHeader';
+import { useConfig } from '../common';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -47,6 +48,7 @@ export const IdentityPage = () => {
   } = useRouteMatch();
   const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
+  const { addressRequired } = useConfig() || { addressRequired: false };
   const isOwnUser = userId === authenticatedUserId;
 
   if (!user) {
@@ -65,18 +67,20 @@ export const IdentityPage = () => {
     return (
       <Container variant="page">
         <Heading as="h1" mb={5}>
-          <Message>identityPage.heading</Message> <Small>1/2</Small>
+          <Message>identityPage.heading</Message>
+          {addressRequired && <Small>1/2</Small>}
         </Heading>
         <ProfileForm onComplete={createProfile} />
       </Container>
     );
   }
 
-  if (!user.address) {
+  if (!user.address && addressRequired) {
     return (
       <Container variant="page">
         <Heading as="h1" mb={5}>
-          <Message>identityPage.heading</Message> <Small>2/2</Small>
+          <Message>identityPage.heading</Message>
+          {addressRequired && <Small>2/2</Small>}
         </Heading>
         <AddressForm onComplete={createAddress} />
       </Container>

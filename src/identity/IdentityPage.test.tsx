@@ -3,6 +3,7 @@ import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory, History } from 'history';
 import { act, waitFor, fireEvent, screen } from '@testing-library/react';
 import MockDate from 'mockdate';
+import { AxiosError } from 'axios';
 
 import { IdentityPage } from './IdentityPage';
 
@@ -16,21 +17,25 @@ import {
   Sex,
   Test,
   TestType,
+  Language,
+  AuthenticationMethod,
 } from '../api';
 import { useAuthentication } from '../authentication';
-import { AxiosError } from 'axios';
+import { useConfig } from '../common';
 import { renderWrapped } from '../testHelpers';
 
 jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: ${value}`);
 
 jest.mock('../api');
 jest.mock('../authentication');
+jest.mock('../common');
 
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
 const fetchTestsMock = fetchTests as jest.MockedFunction<typeof fetchTests>;
 const fetchTestTypesMock = fetchTestTypes as jest.MockedFunction<typeof fetchTestTypes>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
+const useConfigMock = useConfig as jest.MockedFunction<typeof useConfig>;
 const createSharingCodeForUserIdMock = createSharingCodeForUserId as jest.MockedFunction<
   typeof createSharingCodeForUserId
 >;
@@ -47,6 +52,11 @@ describe('Identity page', () => {
     userApi = new MockUserApi();
     fetchUserMock.mockImplementation(userApi.fetchUser.bind(userApi));
     updateUserMock.mockImplementation(userApi.updateUser.bind(userApi));
+    useConfigMock.mockImplementation(() => ({
+      defaultLanguage: Language.ENGLISH,
+      authenticationMethod: AuthenticationMethod.MAGIC_LINK,
+      addressRequired: true,
+    }));
     useAuthenticationMock.mockImplementation(() => ({
       token: userApi.mockToken,
       userId: 'mock-user',
@@ -260,6 +270,20 @@ describe('Identity page', () => {
       await waitFor(() =>
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
+    });
+  });
+
+  describe('when address is not required', () => {
+    beforeEach(() => {
+      userApi.updateUser(aNewUserWithAProfile(), { token: userApi.mockToken });
+      const originalConfValue = useConfigMock();
+      useConfigMock.mockImplementation(() => ({ ...originalConfValue, addressRequired: false }));
+      history.push('/users/mock-user');
+    });
+
+    it('does not require you to fill address', async () => {
+      await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
+      expect(screen.queryByText(/enter your details/i)).toBeFalsy();
     });
   });
 
