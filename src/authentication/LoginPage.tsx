@@ -1,10 +1,10 @@
 import React from 'react';
+import { Spinner } from 'theme-ui';
 
 import { useConfig } from '../common';
 import { MagicLinkLoginPage } from './MagicLinkLoginPage';
 import { EstonianIdLoginPage } from './EstonianIdLoginPage';
 import { AuthenticationMethod } from '../api';
-import { Spinner } from 'theme-ui';
 
 export const LoginPage = () => {
   const config = useConfig();
