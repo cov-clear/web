@@ -9,8 +9,9 @@
   "bulkUserCreationPage.button": "Create",
   "bulkUserCreationPage.confirm": "Are you sure you want to create {{ number }} user(s) with role {{ role }}?",
   "bulkUserCreationPage.success": "{{ number }} user(s) successfully created.",
-  "bulkUserCreation.error.authentication": "Authentication failed. Please try logging in again.",
   "bulkUserCreation.error.generic": "Failed to create users: {{ message }}",
+  "userCreation.error.generic": "Failed to create user: {{ message }}",
+  "error.authentication": "Authentication failed. Please try logging in again.",
   "roles.error": "Failed to get roles: {{ message }}",
   "loginPage.heading": "Sign in",
   "loginPage.estonian.button": "Sign in via Estonian ID",
@@ -74,5 +75,16 @@
   "testDetailPage.yes": "Yes",
   "testDetailPage.no": "No",
   "testList.description": "Test results will appear here.",
-  "testList.button": "Add new test result"
+  "testList.button": "Add new test result",
+  "addTestToIdentifierPage.heading": "Add a test result",
+  "addTestToIdentifierPage.form.identifier.label.magicLink": "Email address",
+  "addTestToIdentifierPage.form.identifier.label.estonianId": "Identification code",
+  "addTestToIdentifierPage.form.identifier.placeholder.magicLink": "e.g. john.doe@example.com",
+  "addTestToIdentifierPage.form.identifier.placeholder.estonianId": "e.g. 39210030814",
+  "addTestToIdentifierPage.form.identifier.required.magicLink": "Please fill the email address",
+  "addTestToIdentifierPage.form.identifier.required.estonianId": "Please fill the identification code",
+  "addTestToIdentifierPage.form.identifier.invalid.magicLink": "Please check the email address",
+  "addTestToIdentifierPage.form.identifier.invalid.estonianId": "Please check the identification code",
+  "addTestToIdentifierPage.button": "Add test result",
+  "addTestToIdentifierPage.success": "Test result for {{ identifier }} added."
 }

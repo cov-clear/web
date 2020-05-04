@@ -17,7 +17,7 @@ import theme from './theme';
 import { NotFoundPage } from './staticPages';
 
 import { IdentityPage } from './identity';
-import { AddTestPage, TestDetailPage } from './testing';
+import { AddTestPage, TestDetailPage, AddTestToIdentifierPage } from './testing';
 import { BulkUserCreationPage } from './admin';
 
 // Includes fairly large dependencies for QR scanning and workers
@@ -61,6 +61,13 @@ const App = () => {
       </AuthenticatedRoute>
       <AuthenticatedRoute path="/scan" exact>
         <ScanPage />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute
+        path="/add-test"
+        exact
+        requiredPermissions={['CREATE_USERS']} // TODO: Add 'CREATE_TESTS_WITHOUT_ACCESS_PASS' when test adding is there
+      >
+        <AddTestToIdentifierPage />
       </AuthenticatedRoute>
       <AuthenticatedRoute
         path="/admin/create-users"

@@ -8,6 +8,7 @@
     "axios": "^0.19.2",
     "date-fns": "^2.11.1",
     "formik": "^2.1.4",
+    "isikukood": "^1.2.3",
     "jwt-decode": "^2.2.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.1",

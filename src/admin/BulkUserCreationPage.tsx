@@ -4,7 +4,7 @@ import { Box, Label, Heading, Container, Button, Text, Textarea, Alert, Select }
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { Role, CreateUserCommand, AuthenticationMethod } from '../api';
+import { Role, CreateUserWithRolesCommand, AuthenticationMethod } from '../api';
 import useBulkUserCreation from './useBulkUserCreation';
 import useRoles from './useRoles';
 
@@ -32,8 +32,8 @@ const BulkUserCreationPage: FC = () => {
     }),
     onSubmit: ({ role, emailsString }) => {
       const emails = getEmails(emailsString);
-      // TODO: support ESTONIAN_ID authenticaiton method
-      const command: CreateUserCommand[] = emails.map((email) => ({
+      // TODO: support ESTONIAN_ID authentication method
+      const command: CreateUserWithRolesCommand[] = emails.map((email) => ({
         authenticationDetails: {
           method: AuthenticationMethod.MAGIC_LINK,
           identifier: email,
