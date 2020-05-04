@@ -1,17 +1,24 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { MagicLinkLoginPage } from './MagicLinkLoginPage';
+import { LoginPage } from './LoginPage';
 
-import { createMagicLink } from '../api';
+import { createMagicLink, AuthenticationMethod, Language } from '../api';
+import { useConfig } from '../common';
 import { renderWrapped } from '../testHelpers';
 
 jest.mock('../api');
+jest.mock('../common');
 const createMagicLinkMock = createMagicLink as jest.MockedFunction<typeof createMagicLink>;
+const useConfigMock = useConfig as jest.MockedFunction<typeof useConfig>;
 
 describe('Magic link login page', () => {
   beforeEach(() => {
-    renderWrapped(<MagicLinkLoginPage />);
+    useConfigMock.mockImplementation(() => ({
+      authenticationMethod: AuthenticationMethod.MAGIC_LINK,
+      defaultLanguage: Language.ENGLISH,
+    }));
+    renderWrapped(<LoginPage />);
     createMagicLinkMock.mockImplementation(() =>
       Promise.resolve({
         creationTime: new Date().toISOString(),
