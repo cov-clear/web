@@ -1,17 +1,20 @@
 import React from 'react';
-import { waitFor, waitForElementToBeRemoved, fireEvent, findByText } from '@testing-library/react';
+import { waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import nock from 'nock';
 
 import { useAuthentication } from '../authentication/context';
+import { useConfig } from '../common/useConfig';
 import { renderWrapped } from '../testHelpers';
 import { AddTestToIdentifierPage } from '.';
+import { Config, Language, AuthenticationMethod } from '../api';
 
 jest.mock('../authentication/context');
+jest.mock('../common/useConfig');
 
 describe(AddTestToIdentifierPage, () => {
   beforeEach(() => {
+    mockConfigForEstonianIdMethodAndEnglish();
     mockToken('some-token');
-    // TODO: Mock config response when we start calling a config endpoint
   });
 
   it('focuses identifier input', async () => {
@@ -71,6 +74,14 @@ describe(AddTestToIdentifierPage, () => {
 
   function mockToken(token: string): void {
     (useAuthentication as jest.Mock).mockReturnValue({ token });
+  }
+
+  function mockConfigForEstonianIdMethodAndEnglish(): void {
+    // TODO: Mock config response on API level when we start calling a config endpoint
+    (useConfig as jest.Mock<Config>).mockReturnValue({
+      authenticationMethod: AuthenticationMethod.ESTONIAN_ID,
+      defaultLanguage: Language.ENGLISH,
+    });
   }
 
   function fillInput(input: HTMLElement, value: string): void {

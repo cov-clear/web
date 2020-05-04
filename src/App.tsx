@@ -19,6 +19,8 @@ import { NotFoundPage } from './staticPages';
 import { IdentityPage } from './identity';
 import { AddTestPage, TestDetailPage, AddTestToIdentifierPage } from './testing';
 import { BulkUserCreationPage } from './admin';
+import { useConfig } from './common';
+import { Language } from './api';
 
 // Includes fairly large dependencies for QR scanning and workers
 const ScanPage = lazy(async () => {
@@ -84,10 +86,16 @@ const App = () => {
 };
 
 const ConfiguredApp = () => {
+  const { defaultLanguage } = useConfig();
+
   return (
     <AuthenticationProvider>
       <ThemeProvider theme={theme}>
-        <TranslationProvider messages={messages} fallbackLanguage="en">
+        <TranslationProvider
+          messages={messages}
+          language={defaultLanguage}
+          fallbackLanguage={Language.ENGLISH}
+        >
           <BrowserRouter>
             <Suspense fallback={<Spinner variant="spinner.main" />}>
               <App />
