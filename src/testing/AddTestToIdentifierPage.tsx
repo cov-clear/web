@@ -1,13 +1,23 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Message, useTranslations } from 'retranslate';
-import { Box, Label, Heading, Container, Button, Alert, Input, Text } from 'theme-ui';
+import { Box, Label, Heading, Container, Button, Alert, Input, Text, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { CreateUserCommand, AuthenticationMethod } from '../api';
+import {
+  CreateUserCommand,
+  AuthenticationMethod,
+  AuthenticationDetails,
+  Test,
+  createTest,
+  createUser as getOrCreateUser,
+} from '../api';
 import { useConfig } from '../common';
 import { useUserCreation } from './useUserCreation';
 import { validateIdCode } from './validateIdCode';
+import { useTestTypes } from '../resources';
+import { useAuthentication } from '../identity';
+import { getInitialValues, TestFields } from './TestFields';
 
 const AnyBox = Box as any;
 
@@ -18,12 +28,22 @@ interface FormFields {
 export const AddTestToIdentifierPage: FC = () => {
   const { authenticationMethod } = useConfig();
   const { translate } = useTranslations();
-  const {
-    create,
-    creating: creatingUsers,
-    error: errorCreatingUser,
-    createdUser,
-  } = useUserCreation();
+  const { permittedTestTypes } = useTestTypes();
+  const { token } = useAuthentication();
+  const [selectedTestTypeId, setSelectedTestTypeId] = useState('');
+
+  useEffect(() => {
+    if (!selectedTestTypeId && permittedTestTypes.length) {
+      setSelectedTestTypeId(permittedTestTypes[0].id);
+    }
+  }, [permittedTestTypes, selectedTestTypeId]);
+
+  const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
+
+  async function addTestForAuthDetails(test: Test, authenticationDetails: AuthenticationDetails) {
+    const user = await getOrCreateUser({ authenticationDetails }, { token: token! });
+    await createTest(user.id, test, { token: token! });
+  }
 
   const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
     MAGIC_LINK: 'addTestToIdentifierPage.form.identifier.placeholder.magicLink',
@@ -50,19 +70,21 @@ export const AddTestToIdentifierPage: FC = () => {
       .required(translate('addTestToIdentifierPage.form.identifier.required.estonianId')),
   };
 
-  const form = useFormik<FormFields>({
+  const form = useFormik({
     initialValues: {
+      ...(selectedTestType ? getInitialValues(selectedTestType.resultsSchema) : {}),
       identifier: '',
     },
+    enableReinitialize: true,
     validationSchema: yup.object().shape({
       identifier: identifierSchemaForMethod[authenticationMethod],
     }),
-    onSubmit: ({ identifier }, { resetForm }) => {
+    onSubmit: async ({ identifier }, { resetForm }) => {
       const command: CreateUserCommand = {
         authenticationDetails: { method: authenticationMethod, identifier },
       };
 
-      create(command);
+      await create(command);
       resetForm();
     },
   });
@@ -89,6 +111,29 @@ export const AddTestToIdentifierPage: FC = () => {
           />
           {fieldError('identifier')}
         </Box>
+
+        {permittedTestTypes.length > 1 ? (
+          <>
+            <Label htmlFor="test-type">
+              <Message>addTestPage.testType.label</Message>
+            </Label>
+            <Select
+              id="test-type"
+              value={selectedTestTypeId}
+              onChange={(event) => setSelectedTestTypeId(event.target.value)}
+              required
+              mb={4}
+            >
+              {permittedTestTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </Select>
+          </>
+        ) : null}
+
+        {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
         <Button variant="block" type="submit" disabled={creatingUsers || !form.isValid}>
           <Message>addTestToIdentifierPage.button</Message>
