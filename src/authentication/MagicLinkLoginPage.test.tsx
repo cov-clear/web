@@ -17,6 +17,7 @@ describe('Magic link login page', () => {
     useConfigMock.mockImplementation(() => ({
       authenticationMethod: AuthenticationMethod.MAGIC_LINK,
       defaultLanguage: Language.ENGLISH,
+      addressRequired: false,
     }));
     renderWrapped(<LoginPage />);
     createMagicLinkMock.mockImplementation(() =>
