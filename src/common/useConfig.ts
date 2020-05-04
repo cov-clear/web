@@ -6,6 +6,7 @@ export function useConfig(): Config {
     authenticationMethod: isEstonianDeployment()
       ? AuthenticationMethod.ESTONIAN_ID
       : AuthenticationMethod.MAGIC_LINK,
+    addressRequired: !isEstonianDeployment(),
     defaultLanguage: isEstonianDeployment() ? Language.ESTONIAN : Language.ENGLISH,
   };
 }

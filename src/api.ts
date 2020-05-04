@@ -318,6 +318,7 @@ export enum Language {
 
 export interface Config {
   authenticationMethod: AuthenticationMethod;
+  addressRequired: boolean;
   defaultLanguage: Language;
 }
 
