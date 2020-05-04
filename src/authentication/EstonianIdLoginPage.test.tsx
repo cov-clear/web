@@ -21,6 +21,7 @@ describe('Estonian ID login page', () => {
     useConfigMock.mockImplementation(() => ({
       authenticationMethod: AuthenticationMethod.ESTONIAN_ID,
       defaultLanguage: Language.ENGLISH,
+      addressRequired: false,
     }));
     renderWrapped(<LoginPage />);
     createIdAuthenticationSessionMock.mockResolvedValue({
