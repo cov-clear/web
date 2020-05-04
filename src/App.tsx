@@ -4,8 +4,7 @@ import { ThemeProvider, Spinner } from 'theme-ui';
 import { Provider as TranslationProvider } from 'retranslate';
 
 import {
-  MagicLinkLoginPage,
-  EstonianIdLoginPage,
+  LoginPage,
   AuthenticationCallbackPage,
   Provider as AuthenticationProvider,
   AuthenticatedRoute,
@@ -44,10 +43,7 @@ const App = () => {
         }}
       />
       <Route path="/login" exact>
-        <MagicLinkLoginPage />
-      </Route>
-      <Route path="/estonian-id-login" exact>
-        <EstonianIdLoginPage />
+        <LoginPage />
       </Route>
       <Route path="/authentication-callback" exact>
         <AuthenticationCallbackPage />
