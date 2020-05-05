@@ -12,6 +12,7 @@ import {
   fetchTest,
   AuthenticatedHttpOptions,
 } from './api';
+import { useTranslations } from 'retranslate';
 
 type NullableError = Error | null;
 
@@ -33,6 +34,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null as NullableError);
   const { token, signOut } = useAuthentication();
+  const { translate } = useTranslations();
 
   const loadResource = useCallback(
     async (cancelToken?: CancelToken) => {
@@ -53,7 +55,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
           }
         }
       } else {
-        setError(new Error('Authentication failed. Please try logging in again.'));
+        setError(new Error(translate('error.authentication')));
       }
     },
     [fetcher, signOut, token]
@@ -155,7 +157,7 @@ export function useTestTypes() {
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter(type =>
+  const permittedTestTypes = testTypes.filter((type) =>
     hasPermission(type.neededPermissionToAddResults)
   );
 
