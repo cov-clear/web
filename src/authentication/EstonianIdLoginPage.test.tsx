@@ -1,5 +1,7 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
+import { Router, Route } from 'react-router-dom';
 
 import { LoginPage } from './LoginPage';
 import { createIdAuthenticationSession, AuthenticationMethod, Language } from '../api';
@@ -14,7 +16,9 @@ const createIdAuthenticationSessionMock = createIdAuthenticationSession as jest.
 const useConfigMock = useConfig as jest.MockedFunction<typeof useConfig>;
 
 describe('Estonian ID login page', () => {
-  beforeEach(() => {
+  let history;
+  beforeEach(async () => {
+    history = createMemoryHistory();
     // jsdom does not implement navigation, except for hash change, so we have to mock and edit window.location with this workaround
     delete window.location;
     window.location = ({ assign: jest.fn() } as any) as Location;
@@ -23,10 +27,24 @@ describe('Estonian ID login page', () => {
       defaultLanguage: Language.ENGLISH,
       addressRequired: false,
     }));
-    renderWrapped(<LoginPage />);
+    renderWrapped(
+      <Router history={history}>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+      </Router>
+    );
     createIdAuthenticationSessionMock.mockResolvedValue({
       redirectUrl: 'https://example.com/redirect',
     });
+    history.push('/login');
+    await screen.findAllByText(/sign in/i);
+  });
+
+  it('shows if authentication failed', async () => {
+    expect(screen.queryByText(/authentication failed/i)).toBeFalsy();
+    history.push('/login?invalid=true');
+    await waitFor(() => expect(screen.queryByText(/authentication failed/i)).toBeTruthy());
   });
 
   it('creates an authentication session and redirects you to the redirect url', async () => {
