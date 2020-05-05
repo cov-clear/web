@@ -63,10 +63,6 @@ export function useAuthenticatedHttpResource<ResourceT>(
     const cancelToken = http.CancelToken.source();
     loadResource(cancelToken.token);
     return () => {
-      /*
-        TODO: The cancel token functionality is not working (not cancelling requests),
-        so consider looking into it or removing it overall and keeping only the ref approach
-      */
       cancelToken.cancel();
     };
   }, [loadResource]);
