@@ -1,11 +1,13 @@
 import React from 'react';
 import { Message } from 'retranslate';
-import { Container, Heading, Button } from 'theme-ui';
+import { Container, Heading, Button, Alert } from 'theme-ui';
 import { useState } from 'react';
 import { createIdAuthenticationSession } from '../api';
+import { useLocation } from 'react-router-dom';
 
 export const EstonianIdLoginPage = () => {
   const [loading, setLoading] = useState(false);
+  const urlParams = new URLSearchParams(useLocation().search);
 
   async function handleLogin() {
     setLoading(true);
@@ -13,8 +15,15 @@ export const EstonianIdLoginPage = () => {
     window.location.assign(session.redirectUrl);
   }
 
+  const invalidLink = urlParams.get('invalid');
+
   return (
     <Container variant="page">
+      {invalidLink && (
+        <Alert variant="secondary" mb={4}>
+          <Message>error.authentication</Message>
+        </Alert>
+      )}
       <Heading as="h1" mb={5}>
         <Message>loginPage.heading</Message>
       </Heading>
