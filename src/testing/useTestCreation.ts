@@ -24,8 +24,8 @@ export function useTestCreation(): {
       setError(null);
       setCreating(true);
       try {
-        const user = await createTest(userId, command, { token });
-        setCreatedTest(user);
+        const test = await createTest(userId, command, { token });
+        setCreatedTest(test);
       } catch (error) {
         setError(error);
       } finally {
@@ -39,7 +39,7 @@ export function useTestCreation(): {
   return {
     create,
     creating,
-    createdTest: createdTest,
+    createdTest,
     error: error
       ? new Error(translate('testCreation.error.generic', { message: error.message }))
       : null,

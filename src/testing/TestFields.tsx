@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Box, Text, Label, Input, Checkbox, Textarea, Radio } from 'theme-ui';
 import { FormikContextType, FormikValues } from 'formik';
 import { Message } from 'retranslate';
+import * as yup from 'yup';
 
 import { TestType, ObjectSchema, FieldSchema } from '../api';
 
@@ -11,24 +12,32 @@ interface TestFieldsProps {
 }
 
 export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
+  const fieldError = (key: keyof TestType['resultsSchema']['properties']) =>
+    form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
+
   return (
     <>
       {Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
         if (value.oneOf) {
           return (
             <Box key={key}>
-              {value.title} *
+              {value.title} {testType.resultsSchema.required?.includes(key) && '*'}
               {value.oneOf.map((option) => (
                 <Label key={`${option.const}`}>
                   <Radio
-                    // {...form.getFieldProps(key)}
                     checked={form.getFieldProps(key).value === option.const}
                     value={typeof option.const === 'number' ? option.const : `${option.const}`}
-                    onChange={(event) => form.setFieldValue(key, event.target.value === 'true')}
+                    onChange={({ target }) =>
+                      form.setFieldValue(
+                        key,
+                        typeof option.const === 'boolean' ? target.value === 'true' : target.value
+                      )
+                    }
                   />
                   {option.title}
                 </Label>
               ))}
+              {fieldError(key)}
             </Box>
           );
         }
@@ -47,6 +56,7 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
                   ) : null}
                 </Box>
               </Label>
+              <Text>{fieldError(key)}</Text>
             </Box>
           );
         }
@@ -59,6 +69,7 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
               id={`test-${key}`}
               {...form.getFieldProps(key)}
             />
+            {fieldError(key)}
           </Box>
         );
       })}
@@ -82,11 +93,47 @@ export function getInitialValues(schema: ObjectSchema) {
 }
 
 export function getValidationSchema(schema: ObjectSchema) {
-  // TODO
+  const requiredFields = schema.required || [];
+
+  const entries = Object.entries(schema.properties).map(([key, value]) => {
+    const schema = validationSchema(value, requiredFields.includes(key));
+    return [key, schema];
+  });
+  return Object.fromEntries(entries);
+}
+
+function validationSchema({ type, oneOf }: FieldSchema, required: boolean) {
+  let validation;
+  if (oneOf) {
+    validation = yup.mixed().oneOf(oneOf.map(({ const: value }) => value));
+  } else {
+    switch (type) {
+      case 'boolean':
+        validation = yup.boolean();
+        break;
+      case 'number':
+        validation = yup.number();
+        break;
+      case 'null':
+        validation = yup.string().nullable();
+        break;
+      case 'string': // fallthrough
+      default:
+        validation = yup.string();
+        break;
+    }
+  }
+
+  if (required) {
+    validation = validation.required();
+  }
+
+  return validation;
 }
 
 function initialPropertyValue({ type, oneOf }: FieldSchema) {
   if (oneOf) {
+    // FIXME: What to do here?
     return null;
   }
 

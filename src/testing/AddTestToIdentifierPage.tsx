@@ -10,7 +10,7 @@ import { useUserCreation } from './useUserCreation';
 import { useTestCreation } from './useTestCreation';
 import { validateIdCode } from './validateIdCode';
 import { useTestTypes } from '../resources';
-import { getInitialValues, TestFields, getValidationSchema } from './TestFields';
+import { getInitialValues, getValidationSchema, TestFields } from './TestFields';
 
 const AnyBox = Box as any;
 
@@ -77,13 +77,14 @@ export const AddTestToIdentifierPage: FC = () => {
     enableReinitialize: true,
     validationSchema: yup.object().shape({
       identifier: identifierSchemaForMethod[authenticationMethod],
-      // ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
+      ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
     }),
     onSubmit: async ({ identifier, notes, ...details }, { resetForm }) => {
       const user = await createUser({
         authenticationDetails: { method: authenticationMethod, identifier },
       });
-      if (user?.id) {
+
+      if (user) {
         await createTest(user.id, {
           testTypeId: selectedTestTypeId,
           results: {
@@ -91,9 +92,8 @@ export const AddTestToIdentifierPage: FC = () => {
             notes,
           },
         });
+        resetForm();
       }
-
-      resetForm();
     },
   });
 
