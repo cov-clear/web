@@ -58,7 +58,7 @@ export function useAuthenticatedHttpResource<ResourceT>(
         setError(new Error(translate('error.authentication')));
       }
     },
-    [fetcher, signOut, token]
+    [fetcher, signOut, token, translate]
   );
 
   useEffect(() => {
@@ -157,7 +157,7 @@ export function useTestTypes() {
   );
   const { loading, resource: testTypes } = useAuthenticatedHttpResource([], testTypeFetcher);
 
-  const permittedTestTypes = testTypes.filter((type) =>
+  const permittedTestTypes = testTypes.filter(type =>
     hasPermission(type.neededPermissionToAddResults)
   );
 

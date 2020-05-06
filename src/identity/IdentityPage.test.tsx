@@ -66,8 +66,9 @@ describe('Identity page', () => {
     }));
     fetchTestsMock.mockImplementation(() => Promise.resolve([]));
     fetchTestTypesMock.mockImplementation(() => Promise.resolve([aNonPermittedTestType()]));
-    createSharingCodeForUserIdMock.mockImplementation(async (userId, { token }) => {
+    createSharingCodeForUserIdMock.mockImplementation(async (userId, { token, cancelToken }) => {
       const user = await userApi.fetchUser(userId, { token });
+      cancelToken?.throwIfRequested();
       if (user) {
         return { code: 'mock-sharing-code', expiryTime: secondsFromNow(30).toISOString() };
       }
@@ -641,5 +642,5 @@ function secondsFromNow(seconds: number): Date {
 }
 
 function nextTick() {
-  return new Promise((resolve) => setImmediate(resolve));
+  return new Promise(resolve => setImmediate(resolve));
 }
