@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useTranslations } from 'retranslate';
 
-import { CreateUserCommand, createUser, RestrictedUser } from '../api';
+import { createTest, CreateTestCommand, User, Test } from '../api';
 import { useAuthentication } from '../authentication';
 
 type NullableError = Error | null;
 
-export function useUserCreation(): {
-  create: (command: CreateUserCommand) => Promise<RestrictedUser | null>;
+export function useTestCreation(): {
+  create: (userId: User['id'], command: CreateTestCommand) => Promise<void>;
   creating: boolean;
-  createdUser: RestrictedUser | null;
+  createdTest: Test | null;
   error: NullableError;
 } {
   const { token } = useAuthentication();
@@ -17,16 +17,15 @@ export function useUserCreation(): {
 
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null as NullableError);
-  const [createdUser, setCreatedUser] = useState(null as RestrictedUser | null);
+  const [createdTest, setCreatedTest] = useState(null as Test | null);
 
-  const create = async (command: CreateUserCommand) => {
+  const create = async (userId: User['id'], command: CreateTestCommand) => {
     if (token) {
       setError(null);
       setCreating(true);
       try {
-        const user = await createUser(command, { token });
-        setCreatedUser(user);
-        return user;
+        const user = await createTest(userId, command, { token });
+        setCreatedTest(user);
       } catch (error) {
         setError(error);
       } finally {
@@ -35,15 +34,14 @@ export function useUserCreation(): {
     } else {
       setError(new Error(translate('error.authentication')));
     }
-    return null;
   };
 
   return {
     create,
     creating,
-    createdUser,
+    createdTest: createdTest,
     error: error
-      ? new Error(translate('userCreation.error.generic', { message: error.message }))
+      ? new Error(translate('testCreation.error.generic', { message: error.message }))
       : null,
   };
 }

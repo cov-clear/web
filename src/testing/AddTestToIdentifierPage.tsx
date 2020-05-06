@@ -4,20 +4,13 @@ import { Box, Label, Heading, Container, Button, Alert, Input, Text, Select } fr
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import {
-  CreateUserCommand,
-  AuthenticationMethod,
-  AuthenticationDetails,
-  Test,
-  createTest,
-  createUser as getOrCreateUser,
-} from '../api';
+import { AuthenticationMethod } from '../api';
 import { useConfig } from '../common';
 import { useUserCreation } from './useUserCreation';
+import { useTestCreation } from './useTestCreation';
 import { validateIdCode } from './validateIdCode';
 import { useTestTypes } from '../resources';
-import { useAuthentication } from '../identity';
-import { getInitialValues, TestFields } from './TestFields';
+import { getInitialValues, TestFields, getValidationSchema } from './TestFields';
 
 const AnyBox = Box as any;
 
@@ -29,7 +22,18 @@ export const AddTestToIdentifierPage: FC = () => {
   const { authenticationMethod } = useConfig();
   const { translate } = useTranslations();
   const { permittedTestTypes } = useTestTypes();
-  const { token } = useAuthentication();
+  const {
+    create: createUser,
+    creating: creatingUser,
+    error: errorCreatingUser,
+    createdUser,
+  } = useUserCreation();
+  const {
+    create: createTest,
+    creating: creatingTest,
+    error: errorCreatingTest,
+    createdTest,
+  } = useTestCreation();
   const [selectedTestTypeId, setSelectedTestTypeId] = useState('');
 
   useEffect(() => {
@@ -39,11 +43,6 @@ export const AddTestToIdentifierPage: FC = () => {
   }, [permittedTestTypes, selectedTestTypeId]);
 
   const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
-
-  async function addTestForAuthDetails(test: Test, authenticationDetails: AuthenticationDetails) {
-    const user = await getOrCreateUser({ authenticationDetails }, { token: token! });
-    await createTest(user.id, test, { token: token! });
-  }
 
   const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
     MAGIC_LINK: 'addTestToIdentifierPage.form.identifier.placeholder.magicLink',
@@ -72,19 +71,28 @@ export const AddTestToIdentifierPage: FC = () => {
 
   const form = useFormik({
     initialValues: {
-      ...(selectedTestType ? getInitialValues(selectedTestType.resultsSchema) : {}),
       identifier: '',
+      ...(selectedTestType ? getInitialValues(selectedTestType.resultsSchema) : {}),
     },
     enableReinitialize: true,
     validationSchema: yup.object().shape({
       identifier: identifierSchemaForMethod[authenticationMethod],
+      // ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
     }),
-    onSubmit: async ({ identifier }, { resetForm }) => {
-      const command: CreateUserCommand = {
+    onSubmit: async ({ identifier, notes, ...details }, { resetForm }) => {
+      const user = await createUser({
         authenticationDetails: { method: authenticationMethod, identifier },
-      };
+      });
+      if (user?.id) {
+        await createTest(user.id, {
+          testTypeId: selectedTestTypeId,
+          results: {
+            details,
+            notes,
+          },
+        });
+      }
 
-      await create(command);
       resetForm();
     },
   });
@@ -135,12 +143,16 @@ export const AddTestToIdentifierPage: FC = () => {
 
         {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
-        <Button variant="block" type="submit" disabled={creatingUsers || !form.isValid}>
+        <Button
+          variant="block"
+          type="submit"
+          disabled={creatingUser || creatingTest || !form.isValid}
+        >
           <Message>addTestToIdentifierPage.button</Message>
         </Button>
       </AnyBox>
 
-      {createdUser && 'TODO: createdTest' && (
+      {createdUser && createdTest && (
         <Alert variant="success" mb={2}>
           <Message params={{ identifier: createdUser.authenticationDetails.identifier }}>
             addTestToIdentifierPage.success
@@ -151,6 +163,12 @@ export const AddTestToIdentifierPage: FC = () => {
       {errorCreatingUser && (
         <Alert variant="error" mb={2}>
           {errorCreatingUser.message}
+        </Alert>
+      )}
+
+      {errorCreatingTest && (
+        <Alert variant="error" mb={2}>
+          {errorCreatingTest.message}
         </Alert>
       )}
     </Container>

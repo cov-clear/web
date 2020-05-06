@@ -251,6 +251,7 @@ export interface FieldSchema {
   title: string;
   description?: string;
   enum?: FieldValue[];
+  oneOf?: { title: string; const: boolean }[];
 }
 
 export interface ObjectSchema {
