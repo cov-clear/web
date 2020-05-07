@@ -32,12 +32,12 @@ export function aTestType(): TestType {
           type: 'boolean',
           oneOf: [
             {
-              title: 'Positive',
-              const: true,
-            },
-            {
               title: 'Negative',
               const: false,
+            },
+            {
+              title: 'Positive',
+              const: true,
             },
           ],
         },
