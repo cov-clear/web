@@ -19,7 +19,7 @@ export const AddTestForm = ({
   testType: TestType;
   onComplete: (command: CreateTestCommand) => any;
 }) => {
-  const form = useFormik({
+  const form: any = useFormik({
     initialValues: {
       ...getInitialValues(testType.resultsSchema),
       notes: '',
