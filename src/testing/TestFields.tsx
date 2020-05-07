@@ -133,7 +133,6 @@ function validationSchema({ type, oneOf }: FieldSchema, required: boolean) {
 
 function initialPropertyValue({ type, oneOf }: FieldSchema) {
   if (oneOf) {
-    // FIXME: What to do here?
     return null;
   }
 
