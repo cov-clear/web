@@ -15,6 +15,7 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
   const fieldError = (key: keyof TestType['resultsSchema']['properties']) =>
     form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
 
+  // TODO: Extract generic JSON schema generator
   return (
     <>
       {Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
