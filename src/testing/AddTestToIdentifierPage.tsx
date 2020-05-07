@@ -25,11 +25,10 @@ export const AddTestToIdentifierPage: FC = () => {
   const [selectedTestTypeId, setSelectedTestTypeId] = useState('');
 
   useEffect(() => {
-    if (!selectedTestTypeId && permittedTestTypes.length) {
+    if (!selectedTestTypeId && permittedTestTypes.length > 0) {
       setSelectedTestTypeId(permittedTestTypes[0].id);
     }
   }, [permittedTestTypes, selectedTestTypeId]);
-
   const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
 
   const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
@@ -108,7 +107,7 @@ export const AddTestToIdentifierPage: FC = () => {
           {fieldError('identifier')}
         </Box>
 
-        {permittedTestTypes.length > 1 ? (
+        {permittedTestTypes.length > 1 && (
           <>
             <Label htmlFor="test-type">
               <Message>addTestPage.testType.label</Message>
@@ -127,7 +126,7 @@ export const AddTestToIdentifierPage: FC = () => {
               ))}
             </Select>
           </>
-        ) : null}
+        )}
 
         {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
