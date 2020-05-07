@@ -6,8 +6,7 @@ import * as yup from 'yup';
 
 import { AuthenticationMethod } from '../api';
 import { useConfig } from '../common';
-import { useUserCreation } from './useUserCreation';
-import { useTestCreation } from './useTestCreation';
+import { useUserWithTestCreation } from './useUserWithTestCreation';
 import { validateIdCode } from './validateIdCode';
 import { useTestTypes } from '../resources';
 import { getInitialValues, getValidationSchema, TestFields } from './TestFields';
@@ -22,18 +21,7 @@ export const AddTestToIdentifierPage: FC = () => {
   const { authenticationMethod } = useConfig();
   const { translate } = useTranslations();
   const { permittedTestTypes } = useTestTypes();
-  const {
-    create: createUser,
-    creating: creatingUser,
-    error: errorCreatingUser,
-    createdUser,
-  } = useUserCreation();
-  const {
-    create: createTest,
-    creating: creatingTest,
-    error: errorCreatingTest,
-    createdTest,
-  } = useTestCreation();
+  const { create, creating, error, userAfterSuccess } = useUserWithTestCreation();
   const [selectedTestTypeId, setSelectedTestTypeId] = useState('');
 
   useEffect(() => {
@@ -80,20 +68,20 @@ export const AddTestToIdentifierPage: FC = () => {
       ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
     }),
     onSubmit: async ({ identifier, notes, ...details }, { resetForm }) => {
-      const user = await createUser({
+      const createUserCommand = {
         authenticationDetails: { method: authenticationMethod, identifier },
-      });
+      };
+      const createTestCommand = {
+        testTypeId: selectedTestTypeId,
+        results: {
+          details,
+          notes,
+        },
+      };
 
-      if (user) {
-        await createTest(user.id, {
-          testTypeId: selectedTestTypeId,
-          results: {
-            details,
-            notes,
-          },
-        });
-        resetForm();
-      }
+      await create(createUserCommand, createTestCommand);
+
+      resetForm();
     },
   });
 
@@ -143,32 +131,22 @@ export const AddTestToIdentifierPage: FC = () => {
 
         {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
-        <Button
-          variant="block"
-          type="submit"
-          disabled={creatingUser || creatingTest || !form.isValid}
-        >
+        <Button variant="block" type="submit" disabled={!form.isValid || creating}>
           <Message>addTestToIdentifierPage.button</Message>
         </Button>
       </AnyBox>
 
-      {createdUser && createdTest && (
+      {userAfterSuccess && (
         <Alert variant="success" mb={2}>
-          <Message params={{ identifier: createdUser.authenticationDetails.identifier }}>
+          <Message params={{ identifier: userAfterSuccess.authenticationDetails.identifier }}>
             addTestToIdentifierPage.success
           </Message>
         </Alert>
       )}
 
-      {errorCreatingUser && (
+      {error && (
         <Alert variant="error" mb={2}>
-          {errorCreatingUser.message}
-        </Alert>
-      )}
-
-      {errorCreatingTest && (
-        <Alert variant="error" mb={2}>
-          {errorCreatingTest.message}
+          {error.message}
         </Alert>
       )}
     </Container>
