@@ -24,7 +24,6 @@ export function aTestType(): TestType {
     id: 'some-test-type-id',
     name: 'PCR test',
     resultsSchema: {
-      title: 'Test result',
       type: 'object',
       properties: {
         positive: {

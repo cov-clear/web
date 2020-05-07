@@ -256,7 +256,7 @@ export interface FieldSchema {
 
 export interface ObjectSchema {
   type: 'object';
-  title: string;
+  title?: string;
   description?: string;
   properties: { [key: string]: FieldSchema };
   required?: string[];
