@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
+import nock, { Scope } from 'nock';
 
 import { useAuthentication } from '../authentication/context';
 import { useConfig } from '../common/useConfig';
@@ -15,14 +15,11 @@ jest.mock('../common/useConfig');
 describe(AddTestToIdentifierPage, () => {
   beforeEach(() => {
     mockConfigForEstonianIdMethodAndEnglish();
-    mockToken('some-token');
+    mockAuthentication();
   });
 
   it('focuses identifier input', async () => {
-    nock(/./)
-      .get('/api/v1/test-types')
-      .matchHeader('Authorization', 'Bearer some-token')
-      .reply(200, [aTestType()]);
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
 
     renderWrapped(<AddTestToIdentifierPage />);
 
@@ -30,11 +27,8 @@ describe(AddTestToIdentifierPage, () => {
     expect(identifierInput).toHaveFocus();
   });
 
-  it('creates a user for the authentication method from config and the filled identifier and adds a test', async () => {
-    nock(/./)
-      .get('/api/v1/test-types')
-      .matchHeader('Authorization', 'Bearer some-token')
-      .reply(200, [aTestType()]);
+  it('creates a user for the authentication method from config and the filled identifier and adds a test for that user', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
 
     renderWrapped(<AddTestToIdentifierPage />);
 
@@ -60,18 +54,20 @@ describe(AddTestToIdentifierPage, () => {
     userEvent.click(positiveOption);
     await waitFor(() => expect(button).not.toBeDisabled());
 
-    const authenticationDetails = { method: 'ESTONIAN_ID', identifier: '39210030814' };
-    nock(/./)
-      .post('/api/v1/users', { authenticationDetails })
-      .matchHeader('Authorization', 'Bearer some-token')
-      .reply(201, { id: 'some-user-id', authenticationDetails });
+    mockHttp()
+      .post('/api/v1/users', {
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      })
+      .reply(201, {
+        id: 'some-user-id',
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      });
 
-    nock(/./)
+    mockHttp()
       .post('/api/v1/users/some-user-id/tests', {
         testTypeId: aTestType().id,
         results: { details: { positive: true }, notes: 'Some notes' },
       })
-      .matchHeader('Authorization', 'Bearer some-token')
       .reply(201, {});
 
     submit();
@@ -84,31 +80,61 @@ describe(AddTestToIdentifierPage, () => {
   });
 
   it('shows error when user cannot be created', async () => {
-    nock(/./)
-      .get('/api/v1/test-types')
-      .matchHeader('Authorization', 'Bearer some-token')
-      .reply(200, [aTestType()]);
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
 
     renderWrapped(<AddTestToIdentifierPage />);
 
     const identifierInput = screen.getByLabelText(/identification code/i);
     const submit = () => userEvent.click(screen.getByRole('button'));
 
-    nock(/./)
+    userEvent.type(identifierInput, '39210030814');
+
+    mockHttp()
       .post('/api/v1/users', {
         authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
       })
-      .matchHeader('Authorization', 'Bearer some-token')
       .reply(403, { message: 'Some error' });
 
-    userEvent.type(identifierInput, '39210030814');
     submit();
     await screen.findByText(/failed to create user/i);
   });
 
-  function mockToken(token: string): void {
+  it('shows error when test cannot be created', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+
+    renderWrapped(<AddTestToIdentifierPage />);
+
+    const identifierInput = screen.getByLabelText(/identification code/i);
+    const submit = () => userEvent.click(screen.getByRole('button'));
+
+    const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
+
+    userEvent.type(identifierInput, '39210030814');
+    userEvent.click(negativeOption);
+
+    mockHttp()
+      .post('/api/v1/users', {
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      })
+      .reply(201, {
+        id: 'some-user-id',
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      });
+
+    mockHttp()
+      .post('/api/v1/users/some-user-id/tests', {
+        testTypeId: aTestType().id,
+        results: { details: { positive: false }, notes: '' },
+      })
+      .reply(403, { message: 'Some error' });
+
+    submit();
+    await screen.findByText(/failed to add test/i);
+  });
+
+  function mockAuthentication(): void {
     (useAuthentication as jest.Mock).mockReturnValue({
-      token,
+      token: 'some-token',
       hasPermission: (permission: string) => permission === 'CREATE_TESTS_WITHOUT_ACCESS_PASS',
     });
   }
@@ -120,5 +146,9 @@ describe(AddTestToIdentifierPage, () => {
       defaultLanguage: Language.ENGLISH,
       addressRequired: false,
     });
+  }
+
+  function mockHttp(): Scope {
+    return nock(/./).matchHeader('Authorization', 'Bearer some-token');
   }
 });
