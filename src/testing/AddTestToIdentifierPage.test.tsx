@@ -33,8 +33,8 @@ describe(AddTestToIdentifierPage, () => {
     renderWrapped(<AddTestToIdentifierPage />);
 
     const identifierInput = screen.getByLabelText(/identification code/i);
-    const button = screen.getByRole('button');
-    const submit = () => userEvent.click(button);
+    const submitButton = screen.getByRole('button');
+    const submit = () => userEvent.click(submitButton);
 
     const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
     const positiveOption = screen.getByRole('radio', { name: 'Positive' });
@@ -48,11 +48,11 @@ describe(AddTestToIdentifierPage, () => {
     await waitForElementToBeRemoved(screen.queryByText(/check the identification code/i)); // no validation error
 
     await userEvent.type(notesInput, 'Some notes');
-    expect(button).toBeDisabled(); // as a radio option has not been selected
+    expect(submitButton).toBeDisabled(); // as a radio option has not been selected
 
     userEvent.click(negativeOption);
     userEvent.click(positiveOption);
-    await waitFor(() => expect(button).not.toBeDisabled());
+    await waitFor(() => expect(submitButton).not.toBeDisabled());
 
     mockHttp()
       .post('/api/v1/users', {
