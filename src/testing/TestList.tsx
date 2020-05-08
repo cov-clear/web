@@ -3,7 +3,7 @@ import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, FlexProps } fro
 import { LinkProps, Link } from 'react-router-dom';
 import { Message } from 'retranslate';
 
-import { formatDate } from '../i18n/date';
+import { useI18n } from '../common';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
@@ -15,6 +15,7 @@ const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
+  const { formatDate } = useI18n();
 
   if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={6} sx={{ display: 'block' }} />;

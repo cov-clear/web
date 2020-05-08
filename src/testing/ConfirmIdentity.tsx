@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Spinner, Alert, Text, Button, Heading } from 'theme-ui';
 import { Message } from 'retranslate';
 
-import { formatDate } from '../i18n/date';
+import { useI18n } from '../common';
 import { useUser, useCountries } from '../resources';
 import { Warning as WarningIcon } from '../icons';
 
@@ -17,6 +17,7 @@ export const ConfirmIdentity = ({
 }) => {
   const { countries } = useCountries();
   const { user } = useUser(userId);
+  const { formatDate } = useI18n();
 
   if (!user || !countries.length) {
     return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;

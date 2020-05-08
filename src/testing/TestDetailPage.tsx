@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
 import { useTranslations, Message } from 'retranslate';
 
-import { formatDate } from '../i18n/date';
+import { useI18n } from '../common';
 import { useTest, useTestTypes } from '../resources';
 import { InterpretationBadge } from './InterpretationBadge';
 
@@ -12,6 +12,8 @@ export const TestDetailPage = () => {
   const { translate } = useTranslations();
   const { testTypes } = useTestTypes();
   const { test, loading } = useTest(testId);
+  const { formatDate } = useI18n();
+
   if (loading || !test) {
     return <Spinner variant="spinner.main" />;
   }

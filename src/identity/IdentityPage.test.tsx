@@ -28,7 +28,10 @@ jest.mock('qrcode.react', () => ({ value }: { value: string }) => `Mock QRCode: 
 
 jest.mock('../api');
 jest.mock('../authentication');
-jest.mock('../common');
+jest.mock('../common', () => ({
+  ...jest.requireActual('../common'),
+  useConfig: jest.fn(),
+}));
 
 const fetchUserMock = fetchUser as jest.MockedFunction<typeof fetchUser>;
 const updateUserMock = updateUser as jest.MockedFunction<typeof updateUser>;
@@ -642,5 +645,5 @@ function secondsFromNow(seconds: number): Date {
 }
 
 function nextTick() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }

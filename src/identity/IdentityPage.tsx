@@ -21,7 +21,6 @@ import { Message } from 'retranslate';
 
 import { useUser } from '../resources';
 import { Profile, Address } from '../api';
-import { formatDate } from '../i18n/date';
 
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
@@ -32,6 +31,7 @@ import { useAuthentication } from '../authentication';
 import { TestList } from '../testing';
 import { ViewingOtherProfileHeader } from './ViewingOtherProfileHeader';
 import { useConfig } from '../common';
+import { useI18n } from '../common';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -49,6 +49,7 @@ export const IdentityPage = () => {
   const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
   const { addressRequired } = useConfig() || { addressRequired: false };
+  const { formatDate } = useI18n();
   const isOwnUser = userId === authenticatedUserId;
 
   if (!user) {
