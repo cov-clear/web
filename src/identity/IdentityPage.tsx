@@ -17,7 +17,6 @@ import {
   NavLinkProps as RouterNavLinkProps,
   Redirect,
 } from 'react-router-dom';
-import { format } from 'date-fns';
 import { Message } from 'retranslate';
 
 import { useUser } from '../resources';
@@ -32,6 +31,7 @@ import { useAuthentication } from '../authentication';
 import { TestList } from '../testing';
 import { ViewingOtherProfileHeader } from './ViewingOtherProfileHeader';
 import { useConfig } from '../common';
+import { useI18n } from '../common';
 
 const Small = ({ children }: { children: React.ReactNode }) => (
   <Text as="small" sx={{ fontSize: 2, fontWeight: 2 }}>
@@ -49,6 +49,7 @@ export const IdentityPage = () => {
   const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
   const { addressRequired } = useConfig() || { addressRequired: false };
+  const { formatDate } = useI18n();
   const isOwnUser = userId === authenticatedUserId;
 
   if (!user) {
@@ -97,7 +98,7 @@ export const IdentityPage = () => {
         <Text mb={5}>
           {/* TODO: Add Estonian date formatting */}
           <Message>identityPage.dateOfBirth</Message>:{' '}
-          {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
+          {formatDate(new Date(user.profile.dateOfBirth))}
         </Text>
         {isOwnUser ? (
           <Flex as="nav">

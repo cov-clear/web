@@ -1,9 +1,9 @@
 import React from 'react';
 import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import { Message } from 'retranslate';
 
+import { useI18n } from '../common';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
@@ -15,6 +15,7 @@ const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
 export const TestList = ({ userId }: { userId: string }) => {
   const { loading: loadingTests, tests } = useTests(userId);
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
+  const { formatDate } = useI18n();
 
   if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={6} sx={{ display: 'block' }} />;
@@ -45,7 +46,7 @@ export const TestList = ({ userId }: { userId: string }) => {
                   <Box>
                     <Heading as="h3" mb={2}>
                       {/* TODO: Add Estonian date formatting */}
-                      {format(new Date(test.creationTime), 'd MMM yyyy')}
+                      {formatDate(new Date(test.creationTime))}
                     </Heading>
                     {test.resultsInterpretations?.map((interpretation, index) => (
                       <InterpretationBadge key={index} interpretation={interpretation} mr={2} />
