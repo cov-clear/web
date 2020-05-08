@@ -19,10 +19,12 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
   return (
     <>
       {Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
+        const isKeyRequired = testType.resultsSchema.required?.includes(key);
+
         if (value.oneOf) {
           return (
             <Box key={key}>
-              {value.title} {testType.resultsSchema.required?.includes(key) && '*'}
+              {value.title} {isKeyRequired && '*'}
               {value.oneOf.map((option) => (
                 <Label key={`${option.const}`}>
                   <Radio
@@ -49,7 +51,7 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
               <Label>
                 <Checkbox {...form.getFieldProps(key)} />
                 <Box>
-                  {value.title} *
+                  {value.title} {isKeyRequired && '*'}
                   {value.description ? (
                     <Text as="small" sx={{ display: 'block' }}>
                       {value.description}
@@ -64,7 +66,9 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
 
         return (
           <Box key={key}>
-            <Label htmlFor={`test-${key}`}>{value.title} *</Label>
+            <Label htmlFor={`test-${key}`}>
+              {value.title} {isKeyRequired && '*'}
+            </Label>
             <Input
               type={value.type === 'number' ? 'number' : 'text'}
               id={`test-${key}`}
