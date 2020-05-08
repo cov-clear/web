@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge, BadgeProps } from 'theme-ui';
 
-import { ResultInterpretation, ResultInterpretationTheme } from '../api';
+import { ResultInterpretation, InterpretationTheme } from '../api';
 
 const AnyBadge = Badge as any;
 
@@ -18,7 +18,7 @@ export const InterpretationBadge = ({
   );
 };
 
-function variantForInterpretationTheme(theme: ResultInterpretationTheme) {
+function variantForInterpretationTheme(theme: InterpretationTheme) {
   switch (theme) {
     case 'MUTED':
       return 'muted';
