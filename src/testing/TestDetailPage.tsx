@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
-import { format } from 'date-fns';
 import { useTranslations, Message } from 'retranslate';
 
+import { formatDate } from '../i18n/date';
 import { useTest, useTestTypes } from '../resources';
 import { InterpretationBadge } from './InterpretationBadge';
 
@@ -38,7 +38,7 @@ export const TestDetailPage = () => {
       </Heading>
       <Text mb={2}>
         {/* TODO: Add Estonian date formatting */}
-        <Message>testDetailPage.date</Message>: {format(new Date(test!.creationTime), 'd MMM yyyy')}
+        <Message>testDetailPage.date</Message>: {formatDate(new Date(test!.creationTime))}
       </Text>
       {test.resultsInterpretations?.map((interpretation, index) => (
         <InterpretationBadge key={index} interpretation={interpretation} mr={2} />

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Flex, Box, Spinner, Text, Button, ButtonProps, Heading, FlexProps } from 'theme-ui';
 import { LinkProps, Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import { Message } from 'retranslate';
 
+import { formatDate } from '../i18n/date';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
 
@@ -45,7 +45,7 @@ export const TestList = ({ userId }: { userId: string }) => {
                   <Box>
                     <Heading as="h3" mb={2}>
                       {/* TODO: Add Estonian date formatting */}
-                      {format(new Date(test.creationTime), 'd MMM yyyy')}
+                      {formatDate(new Date(test.creationTime))}
                     </Heading>
                     {test.resultsInterpretations?.map((interpretation, index) => (
                       <InterpretationBadge key={index} interpretation={interpretation} mr={2} />

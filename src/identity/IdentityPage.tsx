@@ -17,11 +17,11 @@ import {
   NavLinkProps as RouterNavLinkProps,
   Redirect,
 } from 'react-router-dom';
-import { format } from 'date-fns';
 import { Message } from 'retranslate';
 
 import { useUser } from '../resources';
 import { Profile, Address } from '../api';
+import { formatDate } from '../i18n/date';
 
 import { ProfileForm } from './ProfileForm';
 import { AddressForm } from './AddressForm';
@@ -97,7 +97,7 @@ export const IdentityPage = () => {
         <Text mb={5}>
           {/* TODO: Add Estonian date formatting */}
           <Message>identityPage.dateOfBirth</Message>:{' '}
-          {format(new Date(user.profile.dateOfBirth), 'd MMM yyyy')}
+          {formatDate(new Date(user.profile.dateOfBirth))}
         </Text>
         {isOwnUser ? (
           <Flex as="nav">
