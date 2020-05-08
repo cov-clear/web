@@ -16,16 +16,19 @@ describe(AddTestToIdentifierPage, () => {
   beforeEach(() => {
     mockConfigForEstonianIdMethodAndEnglish();
     mockAuthentication();
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
-
-    renderWrapped(<AddTestToIdentifierPage />);
   });
 
   it('focuses identifier input', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+    renderWrapped(<AddTestToIdentifierPage />);
+
     expect(identifierInput()).toHaveFocus();
   });
 
   it('only allows submitting the form once the identifier is valid and required test fields are filled, showing validation errors', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+    renderWrapped(<AddTestToIdentifierPage />);
+
     const positiveOption = await screen.findByRole('radio', { name: 'Positive' });
 
     userEvent.type(identifierInput(), '79210030814'); // invalid id code
@@ -42,7 +45,10 @@ describe(AddTestToIdentifierPage, () => {
     await waitFor(() => expect(submitButton()).not.toBeDisabled());
   });
 
-  it('creates a user for the authentication method from config and the filled identifier and adds a test for that user', async () => {
+  it('creates a user and and adds a PCR test for that user', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+    renderWrapped(<AddTestToIdentifierPage />);
+
     const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
     const positiveOption = screen.getByRole('radio', { name: 'Positive' });
 
@@ -78,6 +84,9 @@ describe(AddTestToIdentifierPage, () => {
   });
 
   it('shows error when user cannot be created', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+    renderWrapped(<AddTestToIdentifierPage />);
+
     userEvent.type(identifierInput(), '39210030814');
 
     mockHttp()
@@ -91,6 +100,9 @@ describe(AddTestToIdentifierPage, () => {
   });
 
   it('shows error when test cannot be created', async () => {
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+    renderWrapped(<AddTestToIdentifierPage />);
+
     const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
 
     userEvent.type(identifierInput(), '39210030814');
