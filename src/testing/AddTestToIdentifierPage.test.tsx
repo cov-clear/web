@@ -68,7 +68,7 @@ describe(AddTestToIdentifierPage, () => {
       .reply(201, {});
 
     submit();
-    await screen.findByText(/39210030814 added/i);
+    await screen.findByText(/test result for 39210030814 added/i);
 
     // form is reset
     expect(identifierInput()).toHaveValue('');
