@@ -49,7 +49,7 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
           return (
             <Box key={key}>
               <Label>
-                <Checkbox {...form.getFieldProps(key)} />
+                <Checkbox {...form.getFieldProps(key)} checked={form.getFieldProps(key).value} />
                 <Box>
                   {value.title} {isKeyRequired && '*'}
                   {value.description ? (
