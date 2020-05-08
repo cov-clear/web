@@ -16,43 +16,40 @@ describe(AddTestToIdentifierPage, () => {
   beforeEach(() => {
     mockConfigForEstonianIdMethodAndEnglish();
     mockAuthentication();
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+
+    renderWrapped(<AddTestToIdentifierPage />);
   });
 
   it('focuses identifier input', async () => {
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
-
-    renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = screen.getByLabelText(/identification code/i);
-    expect(identifierInput).toHaveFocus();
+    expect(identifierInput()).toHaveFocus();
   });
 
-  it('creates a user for the authentication method from config and the filled identifier and adds a test for that user', async () => {
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+  it('only allows submitting the form once the identifier is valid and required test fields are filled, showing validation errors', async () => {
+    const positiveOption = await screen.findByRole('radio', { name: 'Positive' });
 
-    renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = screen.getByLabelText(/identification code/i);
-    const submitButton = screen.getByRole('button');
-    const submit = () => userEvent.click(submitButton);
-
-    const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
-    const positiveOption = screen.getByRole('radio', { name: 'Positive' });
-    const notesInput = screen.getByRole('textbox', { name: /notes/ });
-
-    userEvent.type(identifierInput, '79210030814'); // invalid id code
+    userEvent.type(identifierInput(), '79210030814'); // invalid id code
     submit();
     await screen.findByText(/check the identification code/i); // validation error
 
-    userEvent.type(identifierInput, '39210030814'); // valid id code
+    userEvent.type(identifierInput(), '39210030814'); // valid id code
     await waitForElementToBeRemoved(screen.queryByText(/check the identification code/i)); // no validation error
 
-    await userEvent.type(notesInput, 'Some notes');
-    expect(submitButton).toBeDisabled(); // as a radio option has not been selected
+    await userEvent.type(notesInput(), 'Some notes');
+    expect(submitButton()).toBeDisabled(); // as a radio option has not been selected
 
-    userEvent.click(negativeOption);
     userEvent.click(positiveOption);
-    await waitFor(() => expect(submitButton).not.toBeDisabled());
+    await waitFor(() => expect(submitButton()).not.toBeDisabled());
+  });
+
+  it('creates a user for the authentication method from config and the filled identifier and adds a test for that user', async () => {
+    const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
+    const positiveOption = screen.getByRole('radio', { name: 'Positive' });
+
+    userEvent.type(identifierInput(), '39210030814');
+    await userEvent.type(notesInput(), 'Some notes');
+    userEvent.click(negativeOption);
+    userEvent.click(positiveOption); // to confirm the latest value is sent
 
     mockHttp()
       .post('/api/v1/users', {
@@ -72,22 +69,16 @@ describe(AddTestToIdentifierPage, () => {
 
     submit();
     await screen.findByText(/39210030814 added/i);
+
     // form is reset
-    expect(identifierInput).toHaveValue('');
+    expect(identifierInput()).toHaveValue('');
     expect(negativeOption).not.toBeChecked();
     expect(positiveOption).not.toBeChecked();
-    expect(notesInput).toHaveValue('');
+    expect(notesInput()).toHaveValue('');
   });
 
   it('shows error when user cannot be created', async () => {
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
-
-    renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = screen.getByLabelText(/identification code/i);
-    const submit = () => userEvent.click(screen.getByRole('button'));
-
-    userEvent.type(identifierInput, '39210030814');
+    userEvent.type(identifierInput(), '39210030814');
 
     mockHttp()
       .post('/api/v1/users', {
@@ -100,16 +91,9 @@ describe(AddTestToIdentifierPage, () => {
   });
 
   it('shows error when test cannot be created', async () => {
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
-
-    renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = screen.getByLabelText(/identification code/i);
-    const submit = () => userEvent.click(screen.getByRole('button'));
-
     const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
 
-    userEvent.type(identifierInput, '39210030814');
+    userEvent.type(identifierInput(), '39210030814');
     userEvent.click(negativeOption);
 
     mockHttp()
@@ -151,4 +135,11 @@ describe(AddTestToIdentifierPage, () => {
   function mockHttp(): Scope {
     return nock(/./).matchHeader('Authorization', 'Bearer some-token');
   }
+
+  const identifierInput = (): HTMLElement => screen.getByLabelText(/identification code/i);
+  const submitButton = (): HTMLElement => screen.getByRole('button');
+  const submit = (): void => {
+    userEvent.click(submitButton());
+  };
+  const notesInput = (): HTMLElement => screen.getByRole('textbox', { name: /notes/ });
 });
