@@ -13,5 +13,5 @@ export function useConfig(): Config {
 
 // TODO: Remove once we get the config from the API
 function isEstonianDeployment(): boolean {
-  return window.location.hostname.split('.')[0] === 'ee';
+  return window.location.hostname.split('.')[0] === 'app';
 }
