@@ -251,13 +251,15 @@ export interface FieldSchema {
   title: string;
   description?: string;
   enum?: FieldValue[];
+  oneOf?: { title: string; const: FieldValue }[];
 }
 
 export interface ObjectSchema {
   type: 'object';
-  title: string;
+  title?: string;
   description?: string;
   properties: { [key: string]: FieldSchema };
+  required?: string[];
 }
 
 export interface TestType {
@@ -265,6 +267,7 @@ export interface TestType {
   name: string;
   resultsSchema: ObjectSchema;
   neededPermissionToAddResults: string;
+  interpretationRules?: ResultInterpretation[];
 }
 
 export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise<TestType[]> {
@@ -292,9 +295,7 @@ export async function createTest(
   const response = await authenticated(options.token).post(
     `/api/v1/users/${userId}/tests`,
     command,
-    {
-      cancelToken: options.cancelToken,
-    }
+    { cancelToken: options.cancelToken }
   );
   return response.data;
 }

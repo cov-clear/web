@@ -1,10 +1,11 @@
 import React from 'react';
-import { waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
-import nock from 'nock';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock, { Scope } from 'nock';
 
 import { useAuthentication } from '../authentication/context';
 import { useConfig } from '../common/useConfig';
-import { renderWrapped } from '../testHelpers';
+import { renderWrapped, aTestType } from '../testHelpers';
 import { AddTestToIdentifierPage } from '.';
 import { Config, Language, AuthenticationMethod } from '../api';
 
@@ -14,66 +15,112 @@ jest.mock('../common/useConfig');
 describe(AddTestToIdentifierPage, () => {
   beforeEach(() => {
     mockConfigForEstonianIdMethodAndEnglish();
-    mockToken('some-token');
+    mockAuthentication();
+    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
+
+    renderWrapped(<AddTestToIdentifierPage />);
   });
 
   it('focuses identifier input', async () => {
-    const { getByLabelText } = renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = getByLabelText(/identification code/i);
-
-    expect(identifierInput).toHaveFocus();
+    expect(identifierInput()).toHaveFocus();
   });
 
-  it('creates a user for the authentication method from config and the filled identifier', async () => {
-    const authenticationDetails = { method: 'ESTONIAN_ID', identifier: '39210030814' };
-    const scope = nock(/./)
-      .post('/api/v1/users', { authenticationDetails })
-      .matchHeader('Authorization', 'Bearer some-token')
-      .reply(201, { id: 'some-id', authenticationDetails });
+  it('only allows submitting the form once the identifier is valid and required test fields are filled, showing validation errors', async () => {
+    const positiveOption = await screen.findByRole('radio', { name: 'Positive' });
 
-    const { getByText, getByLabelText, queryByText, findByText } = renderWrapped(
-      <AddTestToIdentifierPage />
-    );
-
-    const identifierInput = getByLabelText(/identification code/i) as HTMLInputElement;
-    const submit = () => fireEvent.click(getByText(/add test result/i));
-
-    fillInput(identifierInput, '79210030814'); // invalid id code
+    userEvent.type(identifierInput(), '79210030814'); // invalid id code
     submit();
-    await findByText(/check the identification code/i); // validation error
+    await screen.findByText(/check the identification code/i); // validation error
 
-    fillInput(identifierInput, '39210030814'); // valid id code
-    await waitForElementToBeRemoved(queryByText(/check the identification code/i)); // no validation error
+    userEvent.type(identifierInput(), '39210030814'); // valid id code
+    await waitForElementToBeRemoved(screen.queryByText(/check the identification code/i)); // no validation error
+
+    await userEvent.type(notesInput(), 'Some notes');
+    expect(submitButton()).toBeDisabled(); // as a radio option has not been selected
+
+    userEvent.click(positiveOption);
+    await waitFor(() => expect(submitButton()).not.toBeDisabled());
+  });
+
+  it('creates a user for the authentication method from config and the filled identifier and adds a test for that user', async () => {
+    const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
+    const positiveOption = screen.getByRole('radio', { name: 'Positive' });
+
+    userEvent.type(identifierInput(), '39210030814');
+    await userEvent.type(notesInput(), 'Some notes');
+    userEvent.click(negativeOption);
+    userEvent.click(positiveOption); // to confirm the latest value is sent
+
+    mockHttp()
+      .post('/api/v1/users', {
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      })
+      .reply(201, {
+        id: 'some-user-id',
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      });
+
+    mockHttp()
+      .post('/api/v1/users/some-user-id/tests', {
+        testTypeId: aTestType().id,
+        results: { details: { positive: true }, notes: 'Some notes' },
+      })
+      .reply(201, {});
 
     submit();
-    await findByText(/39210030814 added/i);
-    expect(identifierInput.value).toBe('');
+    await screen.findByText(/test result for 39210030814 added/i);
 
-    scope.done();
+    // form is reset
+    expect(identifierInput()).toHaveValue('');
+    expect(negativeOption).not.toBeChecked();
+    expect(positiveOption).not.toBeChecked();
+    expect(notesInput()).toHaveValue('');
   });
 
   it('shows error when user cannot be created', async () => {
-    const authenticationDetails = { method: 'ESTONIAN_ID', identifier: '39210030814' };
-    const scope = nock(/./)
-      .post('/api/v1/users', { authenticationDetails })
-      .matchHeader('Authorization', 'Bearer some-token')
+    userEvent.type(identifierInput(), '39210030814');
+
+    mockHttp()
+      .post('/api/v1/users', {
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      })
       .reply(403, { message: 'Some error' });
 
-    const { getByText, getByLabelText, findByText } = renderWrapped(<AddTestToIdentifierPage />);
-
-    const identifierInput = getByLabelText(/identification code/i);
-    const submit = () => fireEvent.click(getByText(/add test result/i));
-
-    fillInput(identifierInput, '39210030814');
     submit();
-    await findByText(/failed to create user/i);
-
-    scope.done();
+    await screen.findByText(/failed to create user/i);
   });
 
-  function mockToken(token: string): void {
-    (useAuthentication as jest.Mock).mockReturnValue({ token });
+  it('shows error when test cannot be created', async () => {
+    const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
+
+    userEvent.type(identifierInput(), '39210030814');
+    userEvent.click(negativeOption);
+
+    mockHttp()
+      .post('/api/v1/users', {
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      })
+      .reply(201, {
+        id: 'some-user-id',
+        authenticationDetails: { method: 'ESTONIAN_ID', identifier: '39210030814' },
+      });
+
+    mockHttp()
+      .post('/api/v1/users/some-user-id/tests', {
+        testTypeId: aTestType().id,
+        results: { details: { positive: false }, notes: '' },
+      })
+      .reply(403, { message: 'Some error' });
+
+    submit();
+    await screen.findByText(/failed to add test/i);
+  });
+
+  function mockAuthentication(): void {
+    (useAuthentication as jest.Mock).mockReturnValue({
+      token: 'some-token',
+      hasPermission: (permission: string) => permission === 'CREATE_TESTS_WITHOUT_ACCESS_PASS',
+    });
   }
 
   function mockConfigForEstonianIdMethodAndEnglish(): void {
@@ -81,10 +128,18 @@ describe(AddTestToIdentifierPage, () => {
     (useConfig as jest.Mock<Config>).mockReturnValue({
       authenticationMethod: AuthenticationMethod.ESTONIAN_ID,
       defaultLanguage: Language.ENGLISH,
+      addressRequired: false,
     });
   }
 
-  function fillInput(input: HTMLElement, value: string): void {
-    fireEvent.change(input, { target: { value } });
+  function mockHttp(): Scope {
+    return nock(/./).matchHeader('Authorization', 'Bearer some-token');
   }
+
+  const identifierInput = (): HTMLElement => screen.getByLabelText(/identification code/i);
+  const submitButton = (): HTMLElement => screen.getByRole('button');
+  const submit = (): void => {
+    userEvent.click(submitButton());
+  };
+  const notesInput = (): HTMLElement => screen.getByRole('textbox', { name: /notes/ });
 });

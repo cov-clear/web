@@ -11,6 +11,7 @@
   "bulkUserCreationPage.success": "{{ number }} kasutaja(t) edukalt loodud.",
   "bulkUserCreation.error.generic": "Kasutajate loomine ebaõnnestus: {{ message }}",
   "userCreation.error.generic": "Kasutaja loomine ebaõnnestus: {{ message }}",
+  "testCreation.error.generic": "Testitulemuse lisamine ebaõnnestus: {{ message }}",
   "error.authentication": "Autentimine ebaõnnestus. Palun proovi uuesti sisse logida.",
   "roles.error": "Rollide laadimine ebaõnnestus: {{ message }}",
   "loginPage.heading": "Logi sisse",
