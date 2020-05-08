@@ -43,7 +43,7 @@ export function useUserWithTestCreation(): {
       try {
         user = await createUser(createUserCommand, { token });
       } catch (error) {
-        setError(new Error(translate('userCreation.error.generic')));
+        setError(new Error(translate('userCreation.error.generic', { message: error.message })));
       }
 
       let test;
@@ -51,7 +51,7 @@ export function useUserWithTestCreation(): {
         try {
           test = await createTest(user.id, createTestCommand, { token });
         } catch (error) {
-          setError(new Error(translate('testCreation.error.generic')));
+          setError(new Error(translate('testCreation.error.generic', { message: error.message })));
         }
       }
 
