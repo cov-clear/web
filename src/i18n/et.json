@@ -54,7 +54,7 @@
   "profileForm.sex.option.male": "Mees",
   "profileForm.button": "Edasi",
   "sharingCode.description": "Luba teisel kasutajal oma kood skaneerida, et turvaliselt oma tulemusi jagada",
-  "sharingCode.button": "Skaneeri teise kasutaja kood",
+  "sharingCode.button": "Skaneeri kood",
   "viewingOtherProfileHeader.heading": "Patsiendi profiil",
   "viewingOtherProfileHeader.button": "Sulge",
   "scanPage.error.incorrectCode": "Vigane kood",
