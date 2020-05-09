@@ -11,7 +11,7 @@ export const LoginPage = () => {
   if (!config) {
     return <Spinner variant="spinner.main" />;
   }
-  const LoginImplementation = loginImplementation[config.authenticationMethod];
+  const LoginImplementation = loginImplementation[config.preferredAuthMethod];
   return <LoginImplementation />;
 };
 

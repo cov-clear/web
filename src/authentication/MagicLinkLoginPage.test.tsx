@@ -15,9 +15,10 @@ const useConfigMock = useConfig as jest.MockedFunction<typeof useConfig>;
 describe('Magic link login page', () => {
   beforeEach(() => {
     useConfigMock.mockImplementation(() => ({
-      authenticationMethod: AuthenticationMethod.MAGIC_LINK,
+      preferredAuthMethod: AuthenticationMethod.MAGIC_LINK,
       defaultLanguage: Language.ENGLISH,
       addressRequired: false,
+      appName: '',
     }));
     renderWrapped(<LoginPage />);
     createMagicLinkMock.mockImplementation(() =>

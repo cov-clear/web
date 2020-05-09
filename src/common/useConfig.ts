@@ -3,11 +3,12 @@ import { Config, AuthenticationMethod, Language } from '../api';
 export function useConfig(): Config {
   // TODO: Get from API and store in context
   return {
-    authenticationMethod: isEstonianDeployment()
+    preferredAuthMethod: isEstonianDeployment()
       ? AuthenticationMethod.ESTONIAN_ID
       : AuthenticationMethod.MAGIC_LINK,
     addressRequired: !isEstonianDeployment(),
     defaultLanguage: isEstonianDeployment() ? Language.ESTONIAN : Language.ENGLISH,
+    appName: 'COV-Clear',
   };
 }
 
