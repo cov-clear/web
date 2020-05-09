@@ -58,6 +58,7 @@
   "viewingOtherProfileHeader.heading": "Patient profile",
   "viewingOtherProfileHeader.button": "Close",
   "scanPage.error.incorrectCode": "Incorrect code",
+  "scanPage.error.generic": "Failed to scan",
   "scanPage.heading": "Scanning",
   "scanPage.description": "Point your camera at the person's sharing code",
   "addTestForm.notes.label": "Additional notes",
