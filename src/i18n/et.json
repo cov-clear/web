@@ -59,7 +59,7 @@
   "viewingOtherProfileHeader.button": "Sulge",
   "scanPage.error.incorrectCode": "Vigane kood",
   "scanPage.legacyMode.prompt": "Teie veebilehitseja ei toeta reaalajas skaneerimist",
-  "scanPage.legacyMode.chooseImage": "Vali pilt mida skaneerida",
+  "scanPage.legacyMode.chooseImage": "Vali pilt, mida skaneerida",
   "scanPage.heading": "Skaneerimine",
   "scanPage.description": "Osuta kaamerapilt teise kasutaja koodile",
   "addTestForm.notes.label": "Märkmed",
