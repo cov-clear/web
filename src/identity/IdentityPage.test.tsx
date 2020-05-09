@@ -57,8 +57,9 @@ describe('Identity page', () => {
     updateUserMock.mockImplementation(userApi.updateUser.bind(userApi));
     useConfigMock.mockImplementation(() => ({
       defaultLanguage: Language.ENGLISH,
-      authenticationMethod: AuthenticationMethod.MAGIC_LINK,
+      preferredAuthMethod: AuthenticationMethod.MAGIC_LINK,
       addressRequired: true,
+      appName: '',
     }));
     useAuthenticationMock.mockImplementation(() => ({
       token: userApi.mockToken,

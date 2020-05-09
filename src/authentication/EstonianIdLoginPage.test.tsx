@@ -23,9 +23,10 @@ describe('Estonian ID login page', () => {
     delete window.location;
     window.location = ({ assign: jest.fn() } as any) as Location;
     useConfigMock.mockImplementation(() => ({
-      authenticationMethod: AuthenticationMethod.ESTONIAN_ID,
+      preferredAuthMethod: AuthenticationMethod.ESTONIAN_ID,
       defaultLanguage: Language.ENGLISH,
       addressRequired: false,
+      appName: '',
     }));
     renderWrapped(
       <Router history={history}>

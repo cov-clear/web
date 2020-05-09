@@ -18,7 +18,7 @@ interface FormFields {
 }
 
 export const AddTestToIdentifierPage: FC = () => {
-  const { authenticationMethod } = useConfig();
+  const { preferredAuthMethod } = useConfig();
   const { translate } = useTranslations();
   const { permittedTestTypes } = useTestTypes();
   const { create, creating, error, userAfterSuccess } = useUserWithTestCreation();
@@ -63,12 +63,12 @@ export const AddTestToIdentifierPage: FC = () => {
     },
     enableReinitialize: true,
     validationSchema: yup.object().shape({
-      identifier: identifierSchemaForMethod[authenticationMethod],
+      identifier: identifierSchemaForMethod[preferredAuthMethod],
       ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
     }),
     onSubmit: async ({ identifier, notes, ...details }, { resetForm }) => {
       const createUserCommand = {
-        authenticationDetails: { method: authenticationMethod, identifier },
+        authenticationDetails: { method: preferredAuthMethod, identifier },
       };
       const createTestCommand = {
         testTypeId: selectedTestTypeId,
@@ -96,12 +96,12 @@ export const AddTestToIdentifierPage: FC = () => {
       <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit} mb={4}>
         <Box>
           <Label htmlFor="identifier">
-            <Message>{labelKeyForMethod[authenticationMethod]}</Message> *
+            <Message>{labelKeyForMethod[preferredAuthMethod]}</Message> *
           </Label>
           <Input
             id="identifier"
             {...form.getFieldProps('identifier')}
-            placeholder={translate(placeholderKeyForMethod[authenticationMethod])}
+            placeholder={translate(placeholderKeyForMethod[preferredAuthMethod])}
             autoFocus
           />
           {fieldError('identifier')}
