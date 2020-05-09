@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { ThemeProvider, Spinner } from 'theme-ui';
+import { ThemeProvider, Spinner, Container } from 'theme-ui';
 import { Provider as TranslationProvider } from 'retranslate';
 
 import {
@@ -32,51 +32,64 @@ const App = () => {
 
   return (
     <Switch>
-      <Route
-        path="/"
-        exact
-        render={() => {
-          if (userId) {
-            return <Redirect to={`/users/${userId}`} />;
-          }
-          return <Redirect to="/login" />;
-        }}
-      />
-      <Route path="/login" exact>
-        <LoginPage />
-      </Route>
-      <Route path="/authentication-callback" exact>
-        <AuthenticationCallbackPage />
-      </Route>
-      <AuthenticatedRoute path="/users/:userId/add-test">
-        <AddTestPage />
-      </AuthenticatedRoute>
-      <AuthenticatedRoute path="/users/:userId">
-        <IdentityPage />
-      </AuthenticatedRoute>
-      <AuthenticatedRoute path="/tests/:testId" exact>
-        <TestDetailPage />
-      </AuthenticatedRoute>
       <AuthenticatedRoute path="/scan" exact>
         <ScanPage />
       </AuthenticatedRoute>
-      <AuthenticatedRoute
-        path="/add-test"
-        exact
-        requiredPermissions={['CREATE_USERS', 'CREATE_TESTS_WITHOUT_ACCESS_PASS']}
-      >
-        <AddTestToIdentifierPage />
-      </AuthenticatedRoute>
-      <AuthenticatedRoute
-        path="/admin/create-users"
-        exact
-        requiredPermissions={['BULK_CREATE_USERS']}
-      >
-        <BulkUserCreationPage />
-      </AuthenticatedRoute>
-      <Route path="*">
-        <NotFoundPage />
-      </Route>
+
+      <Container variant="page">
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={() => {
+              if (userId) {
+                return <Redirect to={`/users/${userId}`} />;
+              }
+              return <Redirect to="/login" />;
+            }}
+          />
+
+          <Route path="/login" exact>
+            <LoginPage />
+          </Route>
+
+          <Route path="/authentication-callback" exact>
+            <AuthenticationCallbackPage />
+          </Route>
+
+          <AuthenticatedRoute path="/users/:userId/add-test">
+            <AddTestPage />
+          </AuthenticatedRoute>
+
+          <AuthenticatedRoute path="/users/:userId">
+            <IdentityPage />
+          </AuthenticatedRoute>
+
+          <AuthenticatedRoute path="/tests/:testId" exact>
+            <TestDetailPage />
+          </AuthenticatedRoute>
+
+          <AuthenticatedRoute
+            path="/add-test"
+            exact
+            requiredPermissions={['CREATE_USERS', 'CREATE_TESTS_WITHOUT_ACCESS_PASS']}
+          >
+            <AddTestToIdentifierPage />
+          </AuthenticatedRoute>
+
+          <AuthenticatedRoute
+            path="/admin/create-users"
+            exact
+            requiredPermissions={['BULK_CREATE_USERS']}
+          >
+            <BulkUserCreationPage />
+          </AuthenticatedRoute>
+
+          <Route path="*">
+            <NotFoundPage />
+          </Route>
+        </Switch>
+      </Container>
     </Switch>
   );
 };
