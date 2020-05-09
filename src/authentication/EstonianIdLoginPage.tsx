@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message } from 'retranslate';
-import { Container, Heading, Button, Text, Alert } from 'theme-ui';
+import { Container, Heading, Button, Text, Alert, Link } from 'theme-ui';
 import { useState } from 'react';
 import { createIdAuthenticationSession } from '../api';
 import { useLocation } from 'react-router-dom';
@@ -28,7 +28,17 @@ export const EstonianIdLoginPage = () => {
         <Message>loginPage.heading</Message>
       </Heading>
       <Text mb={5}>
-        <Message>loginPage.estonian.terms</Message>
+        <Message
+          params={{
+            termsLink: (
+              <Link href="immunitypassport.co/tingimused">
+                <Message>loginPage.estonian.termsLink</Message>
+              </Link>
+            ),
+          }}
+        >
+          loginPage.estonian.terms
+        </Message>
       </Text>
       <Button variant="block" onClick={handleLogin} disabled={loading} mb={2}>
         <Message>loginPage.estonian.button</Message>
