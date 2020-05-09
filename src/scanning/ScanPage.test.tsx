@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
-import { screen } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import QRReader from 'react-qr-reader';
 import { createMemoryHistory, History } from 'history';
 
@@ -24,6 +24,7 @@ const mockSharingCode = 'dca03948-51d0-4501-aabb-39bd08a0e60e';
 describe('Identity page', () => {
   let history: History;
   let mockScan: (data: string | null) => any;
+  let mockScanError: (error: Error) => any;
 
   beforeEach(() => {
     history = createMemoryHistory();
@@ -34,10 +35,22 @@ describe('Identity page', () => {
       signOut: jest.fn(),
       hasPermission: () => true,
     }));
-    (QRReader as any).mockImplementation(({ onScan }: { onScan: (data: string | null) => any }) => {
-      mockScan = (data: string | null) => act(() => onScan(data));
-      return <div id="mock-qr-code" />;
-    });
+
+    (QRReader as any).mockImplementation(
+      ({
+        onScan,
+        onError,
+        legacyMode,
+      }: {
+        onScan: (data: string | null) => any;
+        onError: (error: Error) => any;
+        legacyMode: boolean;
+      }) => {
+        mockScan = (data: string | null) => act(() => onScan(data));
+        mockScanError = (error: Error) => act(() => onError(error));
+        return <div id="mock-qr-code" data-legacy={legacyMode} />;
+      }
+    );
 
     renderWrapped(
       <Router history={history}>
@@ -86,5 +99,14 @@ describe('Identity page', () => {
       jest.advanceTimersByTime(10000);
     });
     expect(screen.queryByText(/incorrect/i)).not.toBeTruthy();
+  });
+
+  it('goes into legacy mode if it fails for any reason', async () => {
+    const reader = () => document.getElementById('mock-qr-code');
+    expect(screen.queryByText(/pick an image/i)).toBeFalsy();
+    expect(reader()?.dataset.legacy).toBe('false');
+
+    mockScanError(new Error('oh no'));
+    expect(reader()?.dataset.legacy).toBe('true');
   });
 });

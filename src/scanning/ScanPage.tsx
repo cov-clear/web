@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Text, Container, Heading, Box, Spinner } from 'theme-ui';
+import React, { useState, useEffect, useRef } from 'react';
+import { Text, Container, Heading, Box, Spinner, Button } from 'theme-ui';
 import QrReader from 'react-qr-reader';
 import { useHistory } from 'react-router-dom';
 import { createAccessPass } from '../api';
@@ -15,7 +15,9 @@ export const ScanPage = () => {
   const { userId, token } = useAuthentication();
   const { translate } = useTranslations();
   const [error, setError] = useState<string | null>(null);
+  const readerRef = useRef<any>();
   const [loading, setLoading] = useState(false);
+  const [legacyMode, setLegacyMode] = useState(false);
 
   async function handleScan(data: string | null) {
     if (data && userId && token && !loading) {
@@ -35,10 +37,6 @@ export const ScanPage = () => {
     }
   }
 
-  function handleError() {
-    setError(translate('scanPage.error.generic'));
-  }
-
   useEffect(() => {
     const timeout = setTimeout(() => setError(null), errorClearTimeout);
     return () => clearTimeout(timeout);
@@ -49,11 +47,15 @@ export const ScanPage = () => {
     <Container sx={{ maxWidth: '600px' }}>
       <Box mt={[0, 4]}>
         <QrReader
+          ref={readerRef as any}
           delay={100}
           style={{ width: '100%' }}
           onScan={handleScan}
-          onError={handleError}
+          onError={() => {
+            setLegacyMode(true);
+          }}
           showViewFinder={false}
+          legacyMode={legacyMode}
         />
       </Box>
       <Box
@@ -70,9 +72,20 @@ export const ScanPage = () => {
         <Heading as="h1" mb={3} sx={error ? { color: 'red' } : {}}>
           {error ? error : <Message>scanPage.heading</Message>}
         </Heading>
-        <Text mb={3}>
-          <Message>scanPage.description</Message>
-        </Text>
+        {legacyMode ? (
+          <>
+            <Text mb={3}>
+              <Message>scanPage.legacyMode.prompt</Message>
+            </Text>
+            <Button mb={3} onClick={() => readerRef.current?.openImageDialog()}>
+              <Message>scanPage.legacyMode.chooseImage</Message>
+            </Button>
+          </>
+        ) : (
+          <Text mb={3}>
+            <Message>scanPage.description</Message>
+          </Text>
+        )}
         {loading ? <Spinner mx="auto" sx={{ display: 'block' }} /> : null}
       </Box>
     </Container>
