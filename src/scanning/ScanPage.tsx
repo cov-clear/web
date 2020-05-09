@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, Container, Heading, Box, Spinner, Button } from 'theme-ui';
+import { Text, Heading, Box, Spinner, Button } from 'theme-ui';
 import QrReader from 'react-qr-reader';
 import { useHistory } from 'react-router-dom';
 import { createAccessPass } from '../api';
@@ -44,7 +44,7 @@ export const ScanPage = () => {
 
   // TODO: use legacy mode if on iOS, but not on safari.
   return (
-    <Container sx={{ maxWidth: '600px' }}>
+    <>
       <Box mt={[0, 4]}>
         <QrReader
           ref={readerRef as any}
@@ -58,6 +58,7 @@ export const ScanPage = () => {
           legacyMode={legacyMode}
         />
       </Box>
+
       <Box
         px={3}
         pt={3}
@@ -88,6 +89,6 @@ export const ScanPage = () => {
         )}
         {loading ? <Spinner mx="auto" sx={{ display: 'block' }} /> : null}
       </Box>
-    </Container>
+    </>
   );
 };

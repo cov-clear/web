@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message } from 'retranslate';
-import { Container, Heading, Button, Text, Alert, Link } from 'theme-ui';
+import { Heading, Button, Text, Alert, Link } from 'theme-ui';
 import { useState } from 'react';
 import { createIdAuthenticationSession } from '../api';
 import { useLocation } from 'react-router-dom';
@@ -18,7 +18,7 @@ export const EstonianIdLoginPage = () => {
   const invalidLink = urlParams.get('invalid');
 
   return (
-    <Container variant="page">
+    <>
       {invalidLink && (
         <Alert variant="secondary" mb={4}>
           <Message>error.authentication</Message>
@@ -43,6 +43,6 @@ export const EstonianIdLoginPage = () => {
       <Button variant="block" onClick={handleLogin} disabled={loading} mb={2}>
         <Message>loginPage.estonian.button</Message>
       </Button>
-    </Container>
+    </>
   );
 };

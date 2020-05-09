@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Message, useTranslations } from 'retranslate';
-import { Box, Label, Heading, Container, Button, Text, Textarea, Alert, Select } from 'theme-ui';
+import { Box, Label, Heading, Button, Text, Textarea, Alert, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -50,7 +50,7 @@ const BulkUserCreationPage: FC = () => {
   });
 
   return (
-    <Container variant="page">
+    <>
       <Heading as="h1" mb={4}>
         <Message>bulkUserCreationPage.heading</Message>
       </Heading>
@@ -110,7 +110,7 @@ const BulkUserCreationPage: FC = () => {
           {errorCreatingUsers.message}
         </Alert>
       )}
-    </Container>
+    </>
   );
 };
 

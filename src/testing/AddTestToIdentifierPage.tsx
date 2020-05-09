@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Message, useTranslations } from 'retranslate';
-import { Box, Label, Heading, Container, Button, Alert, Input, Text, Select } from 'theme-ui';
+import { Box, Label, Heading, Button, Alert, Input, Text, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -88,7 +88,7 @@ export const AddTestToIdentifierPage: FC = () => {
     form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
 
   return (
-    <Container variant="page">
+    <>
       <Heading as="h1" mb={4}>
         <Message>addTestToIdentifierPage.heading</Message>
       </Heading>
@@ -148,6 +148,6 @@ export const AddTestToIdentifierPage: FC = () => {
           {error.message}
         </Alert>
       )}
-    </Container>
+    </>
   );
 };

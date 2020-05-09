@@ -33,7 +33,9 @@ const App = () => {
   return (
     <Switch>
       <AuthenticatedRoute path="/scan" exact>
-        <ScanPage />
+        <Container sx={{ maxWidth: '600px' }}>
+          <ScanPage />
+        </Container>
       </AuthenticatedRoute>
 
       <Container variant="page">

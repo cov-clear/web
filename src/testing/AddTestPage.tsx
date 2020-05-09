@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Select, Label, Container } from 'theme-ui';
+import { Heading, Select, Label } from 'theme-ui';
 import { Message } from 'retranslate';
 
 import { CreateTestCommand, createTest } from '../api';
@@ -60,9 +60,8 @@ export const AddTestPage = () => {
     return (
       <>
         {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-        <Container variant="page" pt={isOwnUser ? undefined : 4}>
-          <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
-        </Container>
+
+        <ConfirmIdentity userId={userId} loading={submitting} onConfirm={handleConfirmIdentity} />
       </>
     );
   }
@@ -70,38 +69,37 @@ export const AddTestPage = () => {
   return (
     <>
       {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-      <Container variant="page" pt={isOwnUser ? undefined : 4}>
-        <Heading as="h1" mb={5}>
-          <Message>addTestPage.heading</Message>
-        </Heading>
-        {permittedTestTypes.length > 1 ? (
-          <>
-            <Label htmlFor="test-type">
-              <Message>addTestPage.testType.label</Message>
-            </Label>
-            <Select
-              id="test-type"
-              value={selectedTestTypeId}
-              onChange={(event) => setSelectedTestTypeId(event.target.value)}
-              required
-              mb={4}
-            >
-              {permittedTestTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </Select>
-          </>
-        ) : null}
-        {selectedTestType ? (
-          <AddTestForm
-            key={selectedTestType.id}
-            testType={selectedTestType}
-            onComplete={handleSubmit}
-          />
-        ) : null}
-      </Container>
+
+      <Heading as="h1" mb={5}>
+        <Message>addTestPage.heading</Message>
+      </Heading>
+      {permittedTestTypes.length > 1 ? (
+        <>
+          <Label htmlFor="test-type">
+            <Message>addTestPage.testType.label</Message>
+          </Label>
+          <Select
+            id="test-type"
+            value={selectedTestTypeId}
+            onChange={(event) => setSelectedTestTypeId(event.target.value)}
+            required
+            mb={4}
+          >
+            {permittedTestTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
+            ))}
+          </Select>
+        </>
+      ) : null}
+      {selectedTestType ? (
+        <AddTestForm
+          key={selectedTestType.id}
+          testType={selectedTestType}
+          onComplete={handleSubmit}
+        />
+      ) : null}
     </>
   );
 };
