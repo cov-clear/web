@@ -211,11 +211,11 @@ export interface TestResults {
   creationTime: string;
 }
 
-export type ResultInterpretationTheme = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MUTED';
+export type InterpretationTheme = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MUTED';
 
 export interface ResultInterpretation {
   name: string;
-  theme: ResultInterpretationTheme;
+  theme: InterpretationTheme;
 }
 
 export interface Test {
@@ -247,19 +247,30 @@ export async function fetchTests(
 export type FieldType = 'boolean' | 'string' | 'number' | 'integer' | 'null';
 
 export interface FieldSchema {
-  type: FieldType;
-  title: string;
+  type?: FieldType;
+  title?: string;
   description?: string;
   enum?: FieldValue[];
-  oneOf?: { title: string; const: FieldValue }[];
+  const?: FieldValue;
+  oneOf?: FieldSchema[];
 }
 
 export interface ObjectSchema {
   type: 'object';
+  $schema?: string;
   title?: string;
   description?: string;
   properties: { [key: string]: FieldSchema };
   required?: string[];
+}
+
+export interface InterpretationRule {
+  output: {
+    namePattern: string;
+    theme: InterpretationTheme;
+    propertyVariables?: Record<string, any>;
+  };
+  condition: ObjectSchema;
 }
 
 export interface TestType {
@@ -267,7 +278,7 @@ export interface TestType {
   name: string;
   resultsSchema: ObjectSchema;
   neededPermissionToAddResults: string;
-  interpretationRules?: ResultInterpretation[];
+  interpretationRules?: InterpretationRule[];
 }
 
 export async function fetchTestTypes(options: AuthenticatedHttpOptions): Promise<TestType[]> {
