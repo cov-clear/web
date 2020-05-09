@@ -136,13 +136,9 @@ export const IdentityPage = () => {
       <Route
         path={url}
         exact
-        render={() =>
-          isOwnUser ? (
-            <Redirect exact from={url} to={`${url}/share`} />
-          ) : (
-            <Redirect exact from={url} to={`${url}/tests`} />
-          )
-        }
+        render={() => (
+          <Redirect exact from={url} to={isOwnUser ? `${url}/share` : `${url}/tests`} />
+        )}
       />
     </>
   );
