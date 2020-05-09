@@ -54,7 +54,7 @@ export const Navigation = () => {
       </Box>
 
       <ThemeUiNavLink p={2} onClick={signOut} href="/">
-        Log out
+        <Message>navigation.logOut</Message>
       </ThemeUiNavLink>
     </Flex>
   );
