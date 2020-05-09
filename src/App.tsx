@@ -155,7 +155,7 @@ const ConfiguredApp = () => {
   return (
     <AuthenticationProvider>
       <ThemeProvider theme={theme}>
-        {!config ? <Spinner variant="spinner.main" /> : <App />}
+        {config ? <App /> : <Spinner variant="spinner.main" />}
       </ThemeProvider>
     </AuthenticationProvider>
   );
