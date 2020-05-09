@@ -46,7 +46,6 @@ export const ConfirmIdentity = ({
       </Heading>
       <Text mb={4}>
         <Message>confirmIdentity.dateOfBirth</Message>: {formatDate(new Date(dateOfBirth))}
-        {/* TODO: Add Estonian date formatting  */}
       </Text>
       {text(address1)}
       {text(address2)}

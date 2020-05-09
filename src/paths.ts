@@ -1,0 +1,9 @@
+export const PERMISSIONS_REQUIRED_FOR_USER_CREATION_PAGE = ['BULK_CREATE_USERS'];
+export const PERMISSIONS_REQUIRED_FOR_ADD_TEST_TO_IDENTIFIER_PAGE = [
+  'CREATE_USERS',
+  'CREATE_TESTS_WITHOUT_ACCESS_PASS',
+];
+
+export const USER_CREATION_PATH = '/create-users';
+export const ADD_TEST_TO_IDENTIFIER_PATH = '/add-test';
+export const HOME_PATH = '/profile';

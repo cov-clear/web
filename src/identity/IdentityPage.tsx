@@ -6,7 +6,6 @@ import {
   Heading,
   NavLink as ThemeUiNavLink,
   Flex,
-  Container,
   NavLinkProps,
 } from 'theme-ui';
 import {
@@ -44,13 +43,16 @@ const NavLink = ThemeUiNavLink as React.FC<NavLinkProps & RouterNavLinkProps>;
 export const IdentityPage = () => {
   const {
     url,
-    params: { userId },
+    params: { userId: userIdFromParams },
   } = useRouteMatch();
-  const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
+
+  const userId = userIdFromParams || authenticatedUserId;
+  const isOwnUser = userId === authenticatedUserId;
+
+  const { user, update: updateUser } = useUser(userId);
   const { addressRequired } = useConfig() || { addressRequired: false };
   const { formatDate } = useI18n();
-  const isOwnUser = userId === authenticatedUserId;
 
   if (!user) {
     return <Spinner variant="spinner.main" />;
@@ -66,82 +68,78 @@ export const IdentityPage = () => {
 
   if (!user.profile) {
     return (
-      <Container variant="page">
+      <>
         <Heading as="h1" mb={5}>
           <Message>identityPage.heading</Message>
           {addressRequired && <Small>1/2</Small>}
         </Heading>
         <ProfileForm onComplete={createProfile} />
-      </Container>
+      </>
     );
   }
 
   if (!user.address && addressRequired) {
     return (
-      <Container variant="page">
+      <>
         <Heading as="h1" mb={5}>
           <Message>identityPage.heading</Message>
           {addressRequired && <Small>2/2</Small>}
         </Heading>
         <AddressForm onComplete={createAddress} />
-      </Container>
+      </>
     );
   }
 
   return (
     <>
       {!isOwnUser ? <ViewingOtherProfileHeader /> : null}
-      <Container variant="page" pt={isOwnUser ? undefined : 4}>
-        <Heading as="h1" mb={3}>
-          {user.profile.firstName} {user.profile.lastName}
-        </Heading>
-        <Text mb={5}>
-          {/* TODO: Add Estonian date formatting */}
-          <Message>identityPage.dateOfBirth</Message>:{' '}
-          {formatDate(new Date(user.profile.dateOfBirth))}
-        </Text>
-        {isOwnUser ? (
-          <Flex as="nav">
-            <NavLink
-              as={RouterNavLink}
-              to={`${url}/tests`}
-              variant="tab"
-              data-testid="test-result-link"
-            >
-              <TestIcon mr={1} /> <Message>identityPage.results</Message>
-            </NavLink>
-            <NavLink
-              as={RouterNavLink}
-              to={`${url}/profile`}
-              variant="tab"
-              data-testid="share-access-link"
-            >
-              <ProfileIcon mr={1} /> <Message>identityPage.share</Message>
-            </NavLink>
-          </Flex>
-        ) : null}
-        <Switch>
-          <Route path={`${url}/profile`} exact>
-            <Box mt={6}>
-              <SharingCode userId={userId} />
-            </Box>
-          </Route>
-          <Route path={`${url}/tests`} exact>
-            <TestList userId={userId} />
-          </Route>
-        </Switch>
-        <Route
-          path={url}
-          exact
-          render={() =>
-            isOwnUser ? (
-              <Redirect exact from={url} to={`${url}/profile`} />
-            ) : (
-              <Redirect exact from={url} to={`${url}/tests`} />
-            )
-          }
-        />
-      </Container>
+
+      <Heading as="h1" mb={3}>
+        {user.profile.firstName} {user.profile.lastName}
+      </Heading>
+
+      <Text mb={5}>
+        <Message>identityPage.dateOfBirth</Message>:{' '}
+        {formatDate(new Date(user.profile.dateOfBirth))}
+      </Text>
+
+      {isOwnUser ? (
+        <Flex as="nav">
+          <NavLink
+            as={RouterNavLink}
+            to={`${url}/tests`}
+            variant="tab"
+            data-testid="test-result-link"
+          >
+            <TestIcon mr={1} /> <Message>identityPage.results</Message>
+          </NavLink>
+          <NavLink
+            as={RouterNavLink}
+            to={`${url}/share`}
+            variant="tab"
+            data-testid="share-access-link"
+          >
+            <ProfileIcon mr={1} /> <Message>identityPage.share</Message>
+          </NavLink>
+        </Flex>
+      ) : null}
+      <Switch>
+        <Route path={`${url}/share`} exact>
+          <Box mt={6}>
+            <SharingCode userId={userId} />
+          </Box>
+        </Route>
+        <Route path={`${url}/tests`} exact>
+          <TestList userId={userId} />
+        </Route>
+      </Switch>
+      <Route
+        path={url}
+        exact
+        render={() => (
+          <Redirect exact from={url} to={isOwnUser ? `${url}/share` : `${url}/tests`} />
+        )}
+      />
     </>
   );
 };

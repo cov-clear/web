@@ -1,4 +1,8 @@
 {
+  "navigation.home": "Home",
+  "navigation.userCreation": "Create users",
+  "navigation.addTest": "Add test",
+  "navigation.logOut": "Log out",
   "notFoundPage.heading": "This page doesn't exist",
   "notFoundPage.imageAltText": "A woman flying away with a bundle of balloons",
   "notFoundPage.button": "Go to the start page",
@@ -57,8 +61,7 @@
   "profileForm.button": "Next",
   "sharingCode.description": "Let another user scan your code to securely share your results",
   "sharingCode.button": "Scan another user",
-  "viewingOtherProfileHeader.heading": "Patient profile",
-  "viewingOtherProfileHeader.button": "Close",
+  "viewingOtherProfileHeader.alert": "You are viewing another user's profile. Click \"Home\" to go back.",
   "scanPage.error.incorrectCode": "Incorrect code",
   "scanPage.legacyMode.prompt": "Your browser does not support live scanning",
   "scanPage.legacyMode.chooseImage": "Pick an image to scan",

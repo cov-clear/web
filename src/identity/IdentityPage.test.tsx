@@ -258,9 +258,11 @@ describe('Identity page', () => {
 
     it('shows a special header that you are looking at another person', async () => {
       history.push('/users/mock-user-2');
-      await waitFor(() => expect(screen.queryByText(/patient profile/i)).not.toBeTruthy());
+      await waitFor(() =>
+        expect(screen.queryByText(/viewing another user's profile/i)).not.toBeInTheDocument()
+      );
       history.push('/users/mock-user');
-      await waitFor(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
+      await screen.findByText(/viewing another user's profile/i);
     });
 
     it('does not show their QR code', async () => {

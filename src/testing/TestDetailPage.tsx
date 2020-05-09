@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
+import { Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
 import { useTranslations, Message } from 'retranslate';
 
 import { useI18n } from '../common';
@@ -34,12 +34,11 @@ export const TestDetailPage = () => {
   });
 
   return (
-    <Container variant="page">
+    <>
       <Heading as="h1" mb={2}>
         <Message>testDetailPage.heading</Message>
       </Heading>
       <Text mb={2}>
-        {/* TODO: Add Estonian date formatting */}
         <Message>testDetailPage.date</Message>: {formatDate(new Date(test!.creationTime))}
       </Text>
       {test.resultsInterpretations?.map((interpretation, index) => (
@@ -82,6 +81,6 @@ export const TestDetailPage = () => {
           {test.results.notes}
         </>
       ) : null}
-    </Container>
+    </>
   );
 };

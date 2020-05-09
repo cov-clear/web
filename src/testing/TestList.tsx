@@ -45,7 +45,6 @@ export const TestList = ({ userId }: { userId: string }) => {
                 >
                   <Box>
                     <Heading as="h3" mb={2}>
-                      {/* TODO: Add Estonian date formatting */}
                       {formatDate(new Date(test.creationTime))}
                     </Heading>
                     {test.resultsInterpretations?.map((interpretation, index) => (

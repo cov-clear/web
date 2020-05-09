@@ -4,7 +4,7 @@ import http from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
 import { authenticate, AuthenticationMethod } from '../api';
 import { useAuthentication } from './context';
-import { decode } from './token';
+import { HOME_PATH } from '../paths';
 
 export const AuthenticationCallbackPage = () => {
   const queryParams = useQuery();
@@ -23,15 +23,14 @@ export const AuthenticationCallbackPage = () => {
             cancelToken: cancelToken.token,
           });
           saveToken(token);
-          const { userId } = decode(token);
-          history.replace(`/users/${userId}`);
+          history.replace(HOME_PATH);
         } catch (error) {
           if (!http.isCancel(error)) {
-            history.replace(`/login?invalid=true`);
+            history.replace('/login?invalid=true');
           }
         }
       } else {
-        history.replace(`/login?invalid=true`);
+        history.replace('/login?invalid=true');
       }
     }
 

@@ -120,9 +120,9 @@ describe('Test adding page', () => {
     it('shows you a special header to show you are looking at a patient', async () => {
       history.push('/users/mock-user/add-test');
       await waitFor(() => expect(screen.queryByText(/test type/i)).toBeTruthy());
-      expect(screen.queryByText(/patient profile/i)).not.toBeTruthy();
+      expect(screen.queryByText(/viewing another user's profile/i)).not.toBeInTheDocument();
       history.push('/users/mock-patient/add-test');
-      await waitFor(() => expect(screen.queryByText(/patient profile/i)).toBeTruthy());
+      await screen.findByText(/viewing another user's profile/i);
     });
 
     it('asks you to confirm their identity and then submits the test', async () => {

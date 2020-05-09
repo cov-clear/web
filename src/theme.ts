@@ -19,6 +19,9 @@ const theme = {
     ...baseTheme.colors,
     primary: '#096DD9',
   },
+  sizes: {
+    pageWidth: '600px',
+  },
   links: {
     tab: {
       textAlign: 'center',
@@ -41,8 +44,8 @@ const theme = {
   },
   layout: {
     page: {
-      maxWidth: '600px',
-      paddingTop: 6,
+      maxWidth: 'pageWidth',
+      paddingTop: 4,
       paddingBottom: 5,
       paddingRight: 3,
       paddingLeft: 3,
