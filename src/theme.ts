@@ -127,7 +127,10 @@ const theme = {
   },
   forms: {
     input: {
-      borderColor: '#D9D9D9',
+      borderColor: 'gray',
+    },
+    textarea: {
+      borderColor: 'gray',
     },
     label: {
       color: '#262626',

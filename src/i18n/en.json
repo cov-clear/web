@@ -11,6 +11,7 @@
   "bulkUserCreationPage.success": "{{ number }} user(s) successfully created.",
   "bulkUserCreation.error.generic": "Failed to create users: {{ message }}",
   "userCreation.error.generic": "Failed to create user: {{ message }}",
+  "testCreation.error.generic": "Failed to add test result: {{ message }}",
   "error.authentication": "Authentication failed. Please try logging in again.",
   "roles.error": "Failed to get roles: {{ message }}",
   "loginPage.heading": "Sign in",

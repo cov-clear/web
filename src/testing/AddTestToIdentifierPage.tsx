@@ -1,13 +1,15 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Message, useTranslations } from 'retranslate';
-import { Box, Label, Heading, Container, Button, Alert, Input, Text } from 'theme-ui';
+import { Box, Label, Heading, Container, Button, Alert, Input, Text, Select } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { CreateUserCommand, AuthenticationMethod } from '../api';
+import { AuthenticationMethod } from '../api';
 import { useConfig } from '../common';
-import { useUserCreation } from './useUserCreation';
+import { useUserWithTestCreation } from './useUserWithTestCreation';
 import { validateIdCode } from './validateIdCode';
+import { useTestTypes } from '../resources';
+import { getInitialValues, getValidationSchema, TestFields } from './TestFields';
 
 const AnyBox = Box as any;
 
@@ -18,12 +20,16 @@ interface FormFields {
 export const AddTestToIdentifierPage: FC = () => {
   const { authenticationMethod } = useConfig();
   const { translate } = useTranslations();
-  const {
-    create,
-    creating: creatingUsers,
-    error: errorCreatingUser,
-    createdUser,
-  } = useUserCreation();
+  const { permittedTestTypes } = useTestTypes();
+  const { create, creating, error, userAfterSuccess } = useUserWithTestCreation();
+  const [selectedTestTypeId, setSelectedTestTypeId] = useState('');
+
+  useEffect(() => {
+    if (!selectedTestTypeId && permittedTestTypes.length > 0) {
+      setSelectedTestTypeId(permittedTestTypes[0].id);
+    }
+  }, [permittedTestTypes, selectedTestTypeId]);
+  const selectedTestType = permittedTestTypes.find((type) => type.id === selectedTestTypeId);
 
   const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
     MAGIC_LINK: 'addTestToIdentifierPage.form.identifier.placeholder.magicLink',
@@ -50,19 +56,30 @@ export const AddTestToIdentifierPage: FC = () => {
       .required(translate('addTestToIdentifierPage.form.identifier.required.estonianId')),
   };
 
-  const form = useFormik<FormFields>({
+  const form = useFormik({
     initialValues: {
       identifier: '',
+      ...(selectedTestType ? getInitialValues(selectedTestType.resultsSchema) : {}),
     },
+    enableReinitialize: true,
     validationSchema: yup.object().shape({
       identifier: identifierSchemaForMethod[authenticationMethod],
+      ...(selectedTestType ? getValidationSchema(selectedTestType.resultsSchema) : {}),
     }),
-    onSubmit: ({ identifier }, { resetForm }) => {
-      const command: CreateUserCommand = {
+    onSubmit: async ({ identifier, notes, ...details }, { resetForm }) => {
+      const createUserCommand = {
         authenticationDetails: { method: authenticationMethod, identifier },
       };
+      const createTestCommand = {
+        testTypeId: selectedTestTypeId,
+        results: {
+          details,
+          notes,
+        },
+      };
 
-      create(command);
+      await create(createUserCommand, createTestCommand);
+
       resetForm();
     },
   });
@@ -90,22 +107,45 @@ export const AddTestToIdentifierPage: FC = () => {
           {fieldError('identifier')}
         </Box>
 
-        <Button variant="block" type="submit" disabled={creatingUsers || !form.isValid}>
+        {permittedTestTypes.length > 1 && (
+          <>
+            <Label htmlFor="test-type">
+              <Message>addTestPage.testType.label</Message>
+            </Label>
+            <Select
+              id="test-type"
+              value={selectedTestTypeId}
+              onChange={(event) => setSelectedTestTypeId(event.target.value)}
+              required
+              mb={4}
+            >
+              {permittedTestTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </Select>
+          </>
+        )}
+
+        {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
+
+        <Button variant="block" type="submit" disabled={!form.isValid || creating}>
           <Message>addTestToIdentifierPage.button</Message>
         </Button>
       </AnyBox>
 
-      {createdUser && 'TODO: createdTest' && (
+      {userAfterSuccess && (
         <Alert variant="success" mb={2}>
-          <Message params={{ identifier: createdUser.authenticationDetails.identifier }}>
+          <Message params={{ identifier: userAfterSuccess.authenticationDetails.identifier }}>
             addTestToIdentifierPage.success
           </Message>
         </Alert>
       )}
 
-      {errorCreatingUser && (
+      {error && (
         <Alert variant="error" mb={2}>
-          {errorCreatingUser.message}
+          {error.message}
         </Alert>
       )}
     </Container>

@@ -1,8 +1,8 @@
 import React from 'react';
-import { format } from 'date-fns';
 import { Box, Spinner, Alert, Text, Button, Heading } from 'theme-ui';
 import { Message } from 'retranslate';
 
+import { useI18n } from '../common';
 import { useUser, useCountries } from '../resources';
 import { Warning as WarningIcon } from '../icons';
 
@@ -17,6 +17,7 @@ export const ConfirmIdentity = ({
 }) => {
   const { countries } = useCountries();
   const { user } = useUser(userId);
+  const { formatDate } = useI18n();
 
   if (!user || !countries.length) {
     return <Spinner mx="auto" mt={4} sx={{ display: 'block' }} />;
@@ -44,8 +45,7 @@ export const ConfirmIdentity = ({
         {firstName} {lastName}
       </Heading>
       <Text mb={4}>
-        <Message>confirmIdentity.dateOfBirth</Message>:{' '}
-        {format(new Date(dateOfBirth), 'd MMM yyyy')}
+        <Message>confirmIdentity.dateOfBirth</Message>: {formatDate(new Date(dateOfBirth))}
         {/* TODO: Add Estonian date formatting  */}
       </Text>
       {text(address1)}

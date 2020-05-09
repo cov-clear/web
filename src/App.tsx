@@ -63,7 +63,7 @@ const App = () => {
       <AuthenticatedRoute
         path="/add-test"
         exact
-        requiredPermissions={['CREATE_USERS']} // TODO: Add 'CREATE_TESTS_WITHOUT_ACCESS_PASS' when test adding is there
+        requiredPermissions={['CREATE_USERS', 'CREATE_TESTS_WITHOUT_ACCESS_PASS']}
       >
         <AddTestToIdentifierPage />
       </AuthenticatedRoute>
