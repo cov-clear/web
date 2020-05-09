@@ -31,7 +31,7 @@ export const EstonianIdLoginPage = () => {
         <Message
           params={{
             termsLink: (
-              <Link href="immunitypassport.co/tingimused">
+              <Link href="https://immunitypassport.co/tingimused">
                 <Message>loginPage.estonian.termsLink</Message>
               </Link>
             ),
