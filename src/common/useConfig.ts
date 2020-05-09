@@ -1,18 +1,44 @@
-import { Config, AuthenticationMethod, Language } from '../api';
+import { useEffect, useState } from 'react';
+import http from 'axios';
+import { Config, fetchConfig } from '../api';
 
 export function useConfig(): Config {
-  // TODO: Get from API and store in context
-  return {
-    preferredAuthMethod: isEstonianDeployment()
-      ? AuthenticationMethod.ESTONIAN_ID
-      : AuthenticationMethod.MAGIC_LINK,
-    addressRequired: !isEstonianDeployment(),
-    defaultLanguage: isEstonianDeployment() ? Language.ESTONIAN : Language.ENGLISH,
-    appName: 'COV-Clear',
-  };
+  const [config, setConfig] = useState(loadConfig());
+  useEffect(() => {
+    const cancelToken = http.CancelToken.source();
+
+    async function fetchAndStoreConfig() {
+      const config = await fetchConfig({ cancelToken: cancelToken.token });
+      storeConfig(config);
+      setConfig(config);
+    }
+
+    if (!config) {
+      fetchAndStoreConfig();
+    }
+
+    return () => {
+      cancelToken.cancel();
+    };
+  }, []);
+  return config;
 }
 
-// TODO: Remove once we get the config from the API
-function isEstonianDeployment(): boolean {
-  return window.location.hostname.split('.')[0] === 'app';
+const LOCALSTORAGE_CONFIG_KEY = 'config';
+
+function loadConfig() {
+  const config = localStorage.getItem(LOCALSTORAGE_CONFIG_KEY);
+  if (!config) {
+    return null;
+  }
+  try {
+    return JSON.parse(config);
+  } catch (e) {
+    localStorage.removeItem(LOCALSTORAGE_CONFIG_KEY);
+  }
+  return null;
+}
+
+function storeConfig(config: Config) {
+  localStorage.setItem(LOCALSTORAGE_CONFIG_KEY, JSON.stringify(config));
 }
