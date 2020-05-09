@@ -43,13 +43,16 @@ const NavLink = ThemeUiNavLink as React.FC<NavLinkProps & RouterNavLinkProps>;
 export const IdentityPage = () => {
   const {
     url,
-    params: { userId },
+    params: { userId: userIdFromParams },
   } = useRouteMatch();
-  const { user, update: updateUser } = useUser(userId);
   const { userId: authenticatedUserId } = useAuthentication();
+
+  const userId = userIdFromParams || authenticatedUserId;
+  const isOwnUser = userId === authenticatedUserId;
+
+  const { user, update: updateUser } = useUser(userId);
   const { addressRequired } = useConfig() || { addressRequired: false };
   const { formatDate } = useI18n();
-  const isOwnUser = userId === authenticatedUserId;
 
   if (!user) {
     return <Spinner variant="spinner.main" />;
@@ -94,11 +97,12 @@ export const IdentityPage = () => {
       <Heading as="h1" mb={3}>
         {user.profile.firstName} {user.profile.lastName}
       </Heading>
+
       <Text mb={5}>
-        {/* TODO: Add Estonian date formatting */}
         <Message>identityPage.dateOfBirth</Message>:{' '}
         {formatDate(new Date(user.profile.dateOfBirth))}
       </Text>
+
       {isOwnUser ? (
         <Flex as="nav">
           <NavLink
@@ -111,7 +115,7 @@ export const IdentityPage = () => {
           </NavLink>
           <NavLink
             as={RouterNavLink}
-            to={`${url}/profile`}
+            to={`${url}/share`}
             variant="tab"
             data-testid="share-access-link"
           >
@@ -120,7 +124,7 @@ export const IdentityPage = () => {
         </Flex>
       ) : null}
       <Switch>
-        <Route path={`${url}/profile`} exact>
+        <Route path={`${url}/share`} exact>
           <Box mt={6}>
             <SharingCode userId={userId} />
           </Box>
@@ -134,7 +138,7 @@ export const IdentityPage = () => {
         exact
         render={() =>
           isOwnUser ? (
-            <Redirect exact from={url} to={`${url}/profile`} />
+            <Redirect exact from={url} to={`${url}/share`} />
           ) : (
             <Redirect exact from={url} to={`${url}/tests`} />
           )

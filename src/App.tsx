@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider, Spinner, Container } from 'theme-ui';
 import { Provider as TranslationProvider } from 'retranslate';
 
+import { Navigation } from './Navigation';
 import {
   LoginPage,
   AuthenticationCallbackPage,
@@ -10,7 +11,6 @@ import {
   AuthenticatedRoute,
   useAuthentication,
 } from './authentication';
-
 import { messages } from './i18n/messages';
 import theme from './theme';
 import { NotFoundPage } from './staticPages';
@@ -20,6 +20,13 @@ import { AddTestPage, TestDetailPage, AddTestToIdentifierPage } from './testing'
 import { BulkUserCreationPage } from './admin';
 import { useConfig } from './common';
 import { Language } from './api';
+import {
+  PERMISSIONS_REQUIRED_FOR_ADD_TEST_TO_IDENTIFIER_PAGE,
+  PERMISSIONS_REQUIRED_FOR_USER_CREATION_PAGE,
+  ADD_TEST_TO_IDENTIFIER_PATH,
+  USER_CREATION_PATH,
+  HOME_PATH,
+} from './paths';
 
 // Includes fairly large dependencies for QR scanning and workers
 const ScanPage = lazy(async () => {
@@ -29,69 +36,73 @@ const ScanPage = lazy(async () => {
 
 const App = () => {
   const { userId } = useAuthentication();
+  const isLoggedIn = !!userId;
 
   return (
     <Switch>
       <AuthenticatedRoute path="/scan" exact>
-        <Container sx={{ maxWidth: '600px' }}>
+        <Container sx={{ maxWidth: 'pageWidth' }}>
           <ScanPage />
         </Container>
       </AuthenticatedRoute>
 
-      <Container variant="page">
-        <Switch>
-          <Route
-            path="/"
-            exact
-            render={() => {
-              if (userId) {
-                return <Redirect to={`/users/${userId}`} />;
-              }
-              return <Redirect to="/login" />;
-            }}
-          />
+      <>
+        {isLoggedIn && <Navigation />}
 
-          <Route path="/login" exact>
-            <LoginPage />
-          </Route>
+        <Container variant="page">
+          <Switch>
+            <Route
+              path="/"
+              exact
+              render={() => <Redirect to={isLoggedIn ? HOME_PATH : '/login'} />}
+            />
 
-          <Route path="/authentication-callback" exact>
-            <AuthenticationCallbackPage />
-          </Route>
+            <Route path="/login" exact>
+              <LoginPage />
+            </Route>
 
-          <AuthenticatedRoute path="/users/:userId/add-test">
-            <AddTestPage />
-          </AuthenticatedRoute>
+            <Route path="/authentication-callback" exact>
+              <AuthenticationCallbackPage />
+            </Route>
 
-          <AuthenticatedRoute path="/users/:userId">
-            <IdentityPage />
-          </AuthenticatedRoute>
+            <AuthenticatedRoute path={HOME_PATH}>
+              <IdentityPage />
+            </AuthenticatedRoute>
 
-          <AuthenticatedRoute path="/tests/:testId" exact>
-            <TestDetailPage />
-          </AuthenticatedRoute>
+            <AuthenticatedRoute path="/users/:userId/add-test">
+              <AddTestPage />
+            </AuthenticatedRoute>
 
-          <AuthenticatedRoute
-            path="/add-test"
-            exact
-            requiredPermissions={['CREATE_USERS', 'CREATE_TESTS_WITHOUT_ACCESS_PASS']}
-          >
-            <AddTestToIdentifierPage />
-          </AuthenticatedRoute>
+            <AuthenticatedRoute path="/users/:userId">
+              <IdentityPage />
+            </AuthenticatedRoute>
 
-          <AuthenticatedRoute
-            path="/admin/create-users"
-            exact
-            requiredPermissions={['BULK_CREATE_USERS']}
-          >
-            <BulkUserCreationPage />
-          </AuthenticatedRoute>
+            <AuthenticatedRoute path="/tests/:testId" exact>
+              <TestDetailPage />
+            </AuthenticatedRoute>
 
-          <Route path="*">
-            <NotFoundPage />
-          </Route>
-        </Switch>
-      </Container>
+            <AuthenticatedRoute
+              path={ADD_TEST_TO_IDENTIFIER_PATH}
+              exact
+              requiredPermissions={PERMISSIONS_REQUIRED_FOR_ADD_TEST_TO_IDENTIFIER_PAGE}
+            >
+              <AddTestToIdentifierPage />
+            </AuthenticatedRoute>
+
+            <AuthenticatedRoute
+              path={USER_CREATION_PATH}
+              exact
+              requiredPermissions={PERMISSIONS_REQUIRED_FOR_USER_CREATION_PAGE}
+            >
+              <BulkUserCreationPage />
+            </AuthenticatedRoute>
+
+            <Route path="*">
+              <NotFoundPage />
+            </Route>
+          </Switch>
+        </Container>
+      </>
     </Switch>
   );
 };

@@ -75,9 +75,7 @@ describe('Link page', () => {
 
     it('replaces the route with the user page, removing it from history', async () => {
       history.push(`/authentication-callback?method=MAGIC_LINK&authCode=${authCode}`);
-      await waitFor(() =>
-        expect(history.location.pathname).toBe('/users/f99c9790-f137-404f-9bf1-243d6e3e6f3e')
-      );
+      await waitFor(() => expect(history.location.pathname).toBe('/profile'));
       history.goBack();
       expect(history.location.pathname).toBe('/');
     });

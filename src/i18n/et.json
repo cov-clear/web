@@ -1,4 +1,8 @@
 {
+  "navigation.home": "Profiil",
+  "navigation.userCreation": "Kasutajad",
+  "navigation.addTest": "Testid",
+  "navigation.logOut": "Välju",
   "notFoundPage.heading": "Lehte ei leitud",
   "notFoundPage.imageAltText": "Naine õhupallidega minema lendamas",
   "notFoundPage.button": "Mine avalehele",
@@ -57,8 +61,7 @@
   "profileForm.button": "Edasi",
   "sharingCode.description": "Luba teisel kasutajal oma kood skaneerida, et turvaliselt oma tulemusi jagada",
   "sharingCode.button": "Skaneeri kood",
-  "viewingOtherProfileHeader.heading": "Patsiendi profiil",
-  "viewingOtherProfileHeader.button": "Sulge",
+  "viewingOtherProfileHeader.alert": "Vaatad teise kasutaja profiili. Oma profiilile naasmiseks vajuta \"Profiil\" lingil.",
   "scanPage.error.incorrectCode": "Vigane kood",
   "scanPage.legacyMode.prompt": "Teie veebilehitseja ei toeta reaalajas skaneerimist",
   "scanPage.legacyMode.chooseImage": "Vali pilt, mida skaneerida",

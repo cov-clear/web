@@ -39,7 +39,6 @@ export const TestDetailPage = () => {
         <Message>testDetailPage.heading</Message>
       </Heading>
       <Text mb={2}>
-        {/* TODO: Add Estonian date formatting */}
         <Message>testDetailPage.date</Message>: {formatDate(new Date(test!.creationTime))}
       </Text>
       {test.resultsInterpretations?.map((interpretation, index) => (
