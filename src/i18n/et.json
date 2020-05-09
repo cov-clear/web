@@ -57,6 +57,7 @@
   "viewingOtherProfileHeader.heading": "Patsiendi profiil",
   "viewingOtherProfileHeader.button": "Sulge",
   "scanPage.error.incorrectCode": "Vigane kood",
+  "scanPage.error.generic": "Skaneerimine ei õnnestunud",
   "scanPage.heading": "Skaneerimine",
   "scanPage.description": "Osuta kaamerapilt teise kasutaja koodile",
   "addTestForm.notes.label": "Märkmed",
