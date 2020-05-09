@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Message, useTranslations } from 'retranslate';
-import { Box, Label, Heading, Button, Alert, Input, Text, Select } from 'theme-ui';
+import { Box, Label, Heading, Button, Alert, Input, Text, Select, Spinner } from 'theme-ui';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -18,7 +18,7 @@ interface FormFields {
 }
 
 export const AddTestToIdentifierPage: FC = () => {
-  const { preferredAuthMethod } = useConfig();
+  const { preferredAuthMethod } = useConfig()!;
   const { translate } = useTranslations();
   const { permittedTestTypes } = useTestTypes();
   const { create, creating, error, userAfterSuccess } = useUserWithTestCreation();
