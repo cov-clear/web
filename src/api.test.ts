@@ -17,11 +17,25 @@ import {
   fetchRoles,
   createTest,
   createUser,
+  fetchConfig,
+  Language,
 } from './api';
 
 const ANY_HOST = /./;
 
 describe('API client', () => {
+  it('fetches the config', async () => {
+    const body = {
+      preferredAuthMethod: AuthenticationMethod.MAGIC_LINK,
+      addressRequired: false,
+      defaultLanguage: Language.ENGLISH,
+      appName: 'an app name',
+    };
+    nock(ANY_HOST).get('/api/v1/config').reply(200, body);
+    const result = await fetchConfig();
+    expect(result).toEqual(body);
+  });
+
   it('creates magic links', async () => {
     const body = { creationTime: new Date().toISOString(), active: true };
     nock(ANY_HOST)

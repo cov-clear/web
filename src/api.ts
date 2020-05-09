@@ -16,6 +16,20 @@ export interface HttpOptions {
   cancelToken?: CancelToken;
 }
 
+export interface Config {
+  preferredAuthMethod: AuthenticationMethod;
+  addressRequired: boolean;
+  defaultLanguage: Language;
+  appName: string;
+}
+
+export async function fetchConfig(options?: HttpOptions): Promise<Config> {
+  const response = await unauthenticated().get('/api/v1/config', {
+    cancelToken: options?.cancelToken,
+  });
+  return response.data;
+}
+
 export interface DevelopmentAuthCode {
   value: string;
 }
@@ -327,11 +341,3 @@ export enum Language {
   ENGLISH = 'en',
   ESTONIAN = 'et',
 }
-
-export interface Config {
-  authenticationMethod: AuthenticationMethod;
-  addressRequired: boolean;
-  defaultLanguage: Language;
-}
-
-// TODO: Add config fetching
