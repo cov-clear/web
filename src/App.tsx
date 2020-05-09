@@ -35,95 +35,127 @@ const ScanPage = lazy(async () => {
 });
 
 const App = () => {
+  const { defaultLanguage } = useConfig();
   const { userId } = useAuthentication();
   const isLoggedIn = !!userId;
 
   return (
-    <Switch>
-      <AuthenticatedRoute path="/scan" exact>
-        <Container sx={{ maxWidth: 'pageWidth' }}>
-          <ScanPage />
-        </Container>
-      </AuthenticatedRoute>
-
-      <>
-        {isLoggedIn && <Navigation />}
-
-        <Container variant="page">
+    <TranslationProvider
+      messages={messages}
+      language={defaultLanguage}
+      fallbackLanguage={Language.ENGLISH}
+    >
+      <BrowserRouter>
+        <Suspense fallback={<Spinner variant="spinner.main" />}>
           <Switch>
-            <Route
-              path="/"
-              exact
-              render={() => <Redirect to={isLoggedIn ? HOME_PATH : '/login'} />}
-            />
-
-            <Route path="/login" exact>
-              <LoginPage />
-            </Route>
-
-            <Route path="/authentication-callback" exact>
-              <AuthenticationCallbackPage />
-            </Route>
-
-            <AuthenticatedRoute path={HOME_PATH}>
-              <IdentityPage />
+            <AuthenticatedRoute path="/scan" exact>
+              <Container sx={{ maxWidth: 'pageWidth' }}>
+                <ScanPage />
+              </Container>
             </AuthenticatedRoute>
 
-            <AuthenticatedRoute path="/users/:userId/add-test">
-              <AddTestPage />
-            </AuthenticatedRoute>
+            <>
+              {isLoggedIn && <Navigation />}
 
-            <AuthenticatedRoute path="/users/:userId">
-              <IdentityPage />
-            </AuthenticatedRoute>
-
-            <AuthenticatedRoute path="/tests/:testId" exact>
-              <TestDetailPage />
-            </AuthenticatedRoute>
-
-            <AuthenticatedRoute
-              path={ADD_TEST_TO_IDENTIFIER_PATH}
-              exact
-              requiredPermissions={PERMISSIONS_REQUIRED_FOR_ADD_TEST_TO_IDENTIFIER_PAGE}
-            >
-              <AddTestToIdentifierPage />
-            </AuthenticatedRoute>
-
-            <AuthenticatedRoute
-              path={USER_CREATION_PATH}
-              exact
-              requiredPermissions={PERMISSIONS_REQUIRED_FOR_USER_CREATION_PAGE}
-            >
-              <BulkUserCreationPage />
-            </AuthenticatedRoute>
-
-            <Route path="*">
-              <NotFoundPage />
-            </Route>
+              <Container variant="page">
+                <Switch>
+                  <Route
+                    path="/"
+                    exact
+                    render={() => <Redirect to={isLoggedIn ? HOME_PATH : '/login'} />}
+                  />
+                  <Route path="/login" exact>
+                    <LoginPage />
+                  </Route>
+                  <Route path="/authentication-callback" exact>
+                    <AuthenticationCallbackPage />
+                  </Route>
+                  <AuthenticatedRoute path={HOME_PATH}>
+                    <IdentityPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/users/:userId/add-test">
+                    <AddTestPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/users/:userId">
+                    <IdentityPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/tests/:testId" exact>
+                    <TestDetailPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute
+                    path={ADD_TEST_TO_IDENTIFIER_PATH}
+                    exact
+                    requiredPermissions={PERMISSIONS_REQUIRED_FOR_ADD_TEST_TO_IDENTIFIER_PAGE}
+                  >
+                    <AddTestToIdentifierPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute
+                    path={USER_CREATION_PATH}
+                    exact
+                    requiredPermissions={PERMISSIONS_REQUIRED_FOR_USER_CREATION_PAGE}
+                  >
+                    <BulkUserCreationPage />
+                  </AuthenticatedRoute>
+                  render=
+                  {() => {
+                    if (userId) {
+                      return <Redirect to={`/users/${userId}`} />;
+                    }
+                    return <Redirect to="/login" />;
+                  }}
+                  />
+                  <Route path="/login" exact>
+                    <LoginPage />
+                  </Route>
+                  <Route path="/authentication-callback" exact>
+                    <AuthenticationCallbackPage />
+                  </Route>
+                  <AuthenticatedRoute path="/users/:userId/add-test">
+                    <AddTestPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/users/:userId">
+                    <IdentityPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/tests/:testId" exact>
+                    <TestDetailPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/scan" exact>
+                    <ScanPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute
+                    path="/add-test"
+                    exact
+                    requiredPermissions={['CREATE_USERS', 'CREATE_TESTS_WITHOUT_ACCESS_PASS']}
+                  >
+                    <AddTestToIdentifierPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute
+                    path="/admin/create-users"
+                    exact
+                    requiredPermissions={['BULK_CREATE_USERS']}
+                  >
+                    <BulkUserCreationPage />
+                  </AuthenticatedRoute>
+                  <Route path="*">
+                    <NotFoundPage />
+                  </Route>
+                </Switch>
+              </Container>
+            </>
           </Switch>
-        </Container>
-      </>
-    </Switch>
+        </Suspense>
+      </BrowserRouter>
+    </TranslationProvider>
   );
 };
 
 const ConfiguredApp = () => {
-  const { defaultLanguage } = useConfig();
+  const config = useConfig();
 
   return (
     <AuthenticationProvider>
       <ThemeProvider theme={theme}>
-        <TranslationProvider
-          messages={messages}
-          language={defaultLanguage}
-          fallbackLanguage={Language.ENGLISH}
-        >
-          <BrowserRouter>
-            <Suspense fallback={<Spinner variant="spinner.main" />}>
-              <App />
-            </Suspense>
-          </BrowserRouter>
-        </TranslationProvider>
+        {!config ? <Spinner variant="spinner.main" /> : <App />}
       </ThemeProvider>
     </AuthenticationProvider>
   );

@@ -20,7 +20,7 @@ export function useConfig(): Config {
     return () => {
       cancelToken.cancel();
     };
-  }, []);
+  }, [config]);
   return config;
 }
 
