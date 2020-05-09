@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import http from 'axios';
 import { Config, fetchConfig } from '../api';
 
-export function useConfig(): Config {
+export function useConfig(): Config | null {
   const [config, setConfig] = useState(loadConfig());
   useEffect(() => {
     const cancelToken = http.CancelToken.source();
@@ -26,7 +26,7 @@ export function useConfig(): Config {
 
 const LOCALSTORAGE_CONFIG_KEY = 'config';
 
-function loadConfig() {
+function loadConfig(): Config | null {
   const config = localStorage.getItem(LOCALSTORAGE_CONFIG_KEY);
   if (!config) {
     return null;

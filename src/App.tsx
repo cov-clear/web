@@ -35,14 +35,14 @@ const ScanPage = lazy(async () => {
 });
 
 const App = () => {
-  const { defaultLanguage } = useConfig();
+  const config = useConfig();
   const { userId } = useAuthentication();
   const isLoggedIn = !!userId;
 
   return (
     <TranslationProvider
       messages={messages}
-      language={defaultLanguage}
+      language={config?.defaultLanguage}
       fallbackLanguage={Language.ENGLISH}
     >
       <BrowserRouter>
