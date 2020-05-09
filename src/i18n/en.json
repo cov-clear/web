@@ -16,6 +16,7 @@
   "roles.error": "Failed to get roles: {{ message }}",
   "loginPage.heading": "Sign in",
   "loginPage.estonian.button": "Sign in via Estonian ID",
+  "loginPage.estonian.terms": "Log in to see and securely share your test results. By continuing, you agree to the ImmunityPassport terms of use.",
   "loginPage.invalidLink": "That link wasn't valid, please request a new one.",
   "loginPage.description.notSubmitted": "We’ll send you a secure sign in link to your email",
   "loginPage.description.submitted": "We sent an email to {{ email }} with a secure link to sign you in.",
