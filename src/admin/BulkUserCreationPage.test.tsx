@@ -3,8 +3,9 @@ import { waitFor, fireEvent } from '@testing-library/react';
 
 import { BulkUserCreationPage } from '.';
 import { useAuthentication } from '../authentication/context';
-import { User, AuthenticationMethod } from '../api';
+import { User, AuthenticationMethod, Config, Language } from '../api';
 import { renderWrapped } from '../testHelpers';
+import { useConfig } from '../common/useConfig';
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
@@ -13,12 +14,17 @@ jest.mock('axios', () => ({
   create: () => ({ get: mockGet, post: mockPost }),
 }));
 jest.mock('../authentication/context');
+jest.mock('../common/useConfig');
 
 describe('Bulk user creation page', () => {
-  beforeEach(mockAuthentication);
+  beforeEach(() => {
+    mockAuthentication();
+    mockConfig();
+  });
+
   afterEach(jest.resetAllMocks);
 
-  it('creates users with emails from comma-separated input and selected role and shows a success or error message', async () => {
+  it('creates users with identifiers from comma-separated input and selected role and shows a success or error message', async () => {
     mockWindowConfirm();
 
     mockGet.mockImplementationOnce((url) =>
@@ -128,10 +134,22 @@ describe('Bulk user creation page', () => {
     (useAuthentication as jest.Mock).mockReturnValue({ token: 'some-token' });
   }
 
-  function aUser(email: User['email']): User {
+  function mockConfig(): void {
+    (useConfig as jest.Mock<Config>).mockReturnValue({
+      preferredAuthMethod: AuthenticationMethod.MAGIC_LINK,
+      defaultLanguage: Language.ENGLISH,
+      addressRequired: false,
+      appName: '',
+    });
+  }
+
+  function aUser(identifier: User['authenticationDetails']['identifier']): User {
     return {
-      email,
-      id: email,
+      id: `user-id-for-${identifier}`,
+      authenticationDetails: {
+        method: AuthenticationMethod.MAGIC_LINK,
+        identifier,
+      },
       creationTime: new Date('2020-02-20').toISOString(),
     };
   }

@@ -7,10 +7,12 @@ import * as yup from 'yup';
 import { Role, CreateUserWithRolesCommand, AuthenticationMethod } from '../api';
 import useBulkUserCreation from './useBulkUserCreation';
 import useRoles from './useRoles';
+import { useConfig } from '../common';
 
 const AnyBox = Box as any;
 
 const BulkUserCreationPage: FC = () => {
+  const { preferredAuthMethod } = useConfig()!;
   const { translate } = useTranslations();
   const {
     create,
@@ -20,23 +22,22 @@ const BulkUserCreationPage: FC = () => {
   } = useBulkUserCreation();
   const { roles, loading: loadingRoles, error: errorLoadingRoles } = useRoles();
 
-  const form = useFormik<{ emailsString: string; role: Role['name'] }>({
+  const form = useFormik<{ identifiersString: string; role: Role['name'] }>({
     initialValues: {
       role: roles[0]?.name || '',
-      emailsString: '',
+      identifiersString: '',
     },
     enableReinitialize: true,
     validationSchema: yup.object().shape({
       role: yup.string().required(),
-      emailsString: yup.string().required(),
+      identifiersString: yup.string().required(),
     }),
-    onSubmit: ({ role, emailsString }) => {
-      const emails = getEmails(emailsString);
-      // TODO: support ESTONIAN_ID authentication method
-      const command: CreateUserWithRolesCommand[] = emails.map((email) => ({
+    onSubmit: ({ role, identifiersString }) => {
+      const identifiers = getIdentifiers(identifiersString);
+      const command: CreateUserWithRolesCommand[] = identifiers.map((identifier) => ({
         authenticationDetails: {
-          method: AuthenticationMethod.MAGIC_LINK,
-          identifier: email,
+          method: preferredAuthMethod,
+          identifier,
         },
         roles: [role],
       }));
@@ -48,6 +49,16 @@ const BulkUserCreationPage: FC = () => {
       }
     },
   });
+
+  const labelKeyForMethod: Record<AuthenticationMethod, string> = {
+    MAGIC_LINK: 'bulkUserCreationPage.identifiers.label.magicLink',
+    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.label.estonianId',
+  };
+
+  const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
+    MAGIC_LINK: 'bulkUserCreationPage.identifiers.placeholder.magicLink',
+    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.placeholder.estonianId',
+  };
 
   return (
     <>
@@ -74,13 +85,13 @@ const BulkUserCreationPage: FC = () => {
         </Box>
 
         <Box>
-          <Label htmlFor="emails">
-            <Message>bulkUserCreationPage.emails.label</Message> *
+          <Label htmlFor="identifiers">
+            <Message>{labelKeyForMethod[preferredAuthMethod]}</Message> *
           </Label>
           <Textarea
-            id="emails"
-            {...form.getFieldProps('emailsString')}
-            placeholder={'jane@email.com,john@email.com'}
+            id="identifiers"
+            {...form.getFieldProps('identifiersString')}
+            placeholder={translate(placeholderKeyForMethod[preferredAuthMethod])}
           />
         </Box>
 
@@ -114,7 +125,7 @@ const BulkUserCreationPage: FC = () => {
   );
 };
 
-function getEmails(string: string): string[] {
+function getIdentifiers(string: string): string[] {
   return string.replace(/\s+/g, '').split(',');
 }
 

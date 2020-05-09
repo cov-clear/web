@@ -184,7 +184,6 @@ describe(AddTestToIdentifierPage, () => {
   }
 
   function mockConfigForEstonianIdMethodAndEnglish(): void {
-    // TODO: Mock config response on API level when we start calling a config endpoint
     (useConfig as jest.Mock<Config>).mockReturnValue({
       preferredAuthMethod: AuthenticationMethod.ESTONIAN_ID,
       defaultLanguage: Language.ENGLISH,
