@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useParams } from 'react-router-dom';
-import { Heading, Spinner, Text, Divider, Flex, Box } from 'theme-ui';
+import { Heading, Spinner, Text, Divider, Box, Grid } from 'theme-ui';
 import { useTranslations, Message } from 'retranslate';
 
 import { useI18n } from '../common';
@@ -53,15 +53,11 @@ export const TestDetailPage = () => {
             <Message>testDetailPage.resultDetails</Message>
           </Text>
           <Divider mb={3} />
-          <Flex>
-            <Box sx={{ display: 'grid', gridGap: 2 }}>
-              {testResults.map(({ label }, index) => (
-                <Text key={index}>{label}:</Text>
-              ))}
-            </Box>
-            <Box ml={5} sx={{ display: 'grid', gridGap: 2 }}>
-              {testResults.map(({ value }, index) => (
-                <Text key={index}>
+          <Grid gap={3} columns="max-content 2fr" as="dl">
+            {testResults.map(({ value, label }, index) => (
+              <Fragment key={index}>
+                <Box as="dt">{label}:</Box>
+                <Box as="dd">
                   <strong>
                     {typeof value === 'boolean'
                       ? value
@@ -69,10 +65,10 @@ export const TestDetailPage = () => {
                         : translate('testDetailPage.no')
                       : value}
                   </strong>
-                </Text>
-              ))}
-            </Box>
-          </Flex>
+                </Box>
+              </Fragment>
+            ))}
+          </Grid>
         </>
       ) : null}
 
