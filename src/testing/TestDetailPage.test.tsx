@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { TestDetailPage } from './TestDetailPage';
 
-import { fetchTest, Test, TestType, fetchTestTypes } from '../api';
+import { fetchTest, Test, TestType } from '../api';
 import { useAuthentication } from '../authentication';
 import { renderWrapped } from '../testHelpers';
 
@@ -13,7 +13,6 @@ jest.mock('../api');
 jest.mock('../authentication');
 
 const fetchTestMock = fetchTest as jest.MockedFunction<typeof fetchTest>;
-const fetchTestTypesMock = fetchTestTypes as jest.MockedFunction<typeof fetchTestTypes>;
 const useAuthenticationMock = useAuthentication as jest.MockedFunction<typeof useAuthentication>;
 
 describe('Test detail page', () => {
@@ -30,7 +29,6 @@ describe('Test detail page', () => {
       hasPermission: (key: string) => key === 'mock-permission',
     }));
     fetchTestMock.mockImplementation(() => Promise.resolve(aTest()));
-    fetchTestTypesMock.mockImplementation(() => Promise.resolve([aTestType()]));
 
     renderWrapped(
       <Router history={history}>
