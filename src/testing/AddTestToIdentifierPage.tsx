@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { AuthenticationMethod } from '../api';
 import { useConfig } from '../common';
 import { useUserWithTestCreation } from './useUserWithTestCreation';
-import { validateIdCode } from './validateIdCode';
+import { validateIdCode } from '../common/idCodeValidation';
 import { useTestTypes } from '../resources';
 import { getInitialValues, getValidationSchema, TestFields } from './TestFields';
 

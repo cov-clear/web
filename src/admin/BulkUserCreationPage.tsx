@@ -8,8 +8,11 @@ import { Role, CreateUserWithRolesCommand, AuthenticationMethod } from '../api';
 import useBulkUserCreation from './useBulkUserCreation';
 import useRoles from './useRoles';
 import { useConfig } from '../common';
+import { validateIdCodes } from '../common/idCodeValidation';
 
 const AnyBox = Box as any;
+
+type FormFields = { identifiersString: string; role: Role['name'] };
 
 const BulkUserCreationPage: FC = () => {
   const { preferredAuthMethod } = useConfig()!;
@@ -22,7 +25,31 @@ const BulkUserCreationPage: FC = () => {
   } = useBulkUserCreation();
   const { roles, loading: loadingRoles, error: errorLoadingRoles } = useRoles();
 
-  const form = useFormik<{ identifiersString: string; role: Role['name'] }>({
+  const labelKeyForMethod: Record<AuthenticationMethod, string> = {
+    MAGIC_LINK: 'bulkUserCreationPage.identifiers.label.magicLink',
+    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.label.estonianId',
+  };
+
+  const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
+    MAGIC_LINK: 'bulkUserCreationPage.identifiers.placeholder.magicLink',
+    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.placeholder.estonianId',
+  };
+
+  const identifiersSchemaForMethod: Record<AuthenticationMethod, yup.Schema<string>> = {
+    MAGIC_LINK: yup
+      .string()
+      .required(translate('bulkUserCreationPage.identifiers.required.magicLink')),
+    ESTONIAN_ID: yup
+      .string()
+      .test(
+        'are-valid-estonian-ids',
+        translate('bulkUserCreationPage.identifiers.invalid.estonianId'),
+        (identifiersString) =>
+          identifiersString && validateIdCodes(getIdentifiers(identifiersString))
+      ),
+  };
+
+  const form = useFormik<FormFields>({
     initialValues: {
       role: roles[0]?.name || '',
       identifiersString: '',
@@ -30,7 +57,7 @@ const BulkUserCreationPage: FC = () => {
     enableReinitialize: true,
     validationSchema: yup.object().shape({
       role: yup.string().required(),
-      identifiersString: yup.string().required(),
+      identifiersString: identifiersSchemaForMethod[preferredAuthMethod],
     }),
     onSubmit: ({ role, identifiersString }) => {
       const identifiers = getIdentifiers(identifiersString);
@@ -50,15 +77,8 @@ const BulkUserCreationPage: FC = () => {
     },
   });
 
-  const labelKeyForMethod: Record<AuthenticationMethod, string> = {
-    MAGIC_LINK: 'bulkUserCreationPage.identifiers.label.magicLink',
-    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.label.estonianId',
-  };
-
-  const placeholderKeyForMethod: Record<AuthenticationMethod, string> = {
-    MAGIC_LINK: 'bulkUserCreationPage.identifiers.placeholder.magicLink',
-    ESTONIAN_ID: 'bulkUserCreationPage.identifiers.placeholder.estonianId',
-  };
+  const fieldError = (key: keyof FormFields) =>
+    form.submitCount > 0 && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
 
   return (
     <>
@@ -93,13 +113,10 @@ const BulkUserCreationPage: FC = () => {
             {...form.getFieldProps('identifiersString')}
             placeholder={translate(placeholderKeyForMethod[preferredAuthMethod])}
           />
+          {fieldError('identifiersString')}
         </Box>
 
-        <Button
-          variant="block"
-          type="submit"
-          disabled={loadingRoles || creatingUsers || !form.isValid}
-        >
+        <Button variant="block" type="submit" disabled={loadingRoles || creatingUsers}>
           <Message>bulkUserCreationPage.button</Message>
         </Button>
       </AnyBox>
