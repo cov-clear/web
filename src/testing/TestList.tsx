@@ -6,6 +6,7 @@ import { Message } from 'retranslate';
 import { useI18n } from '../common';
 import { Plus as PlusIcon, Caret } from '../icons';
 import { useTests, useTestTypes } from '../resources';
+import { useAuthentication } from '../authentication';
 
 import { InterpretationBadge } from './InterpretationBadge';
 
@@ -13,6 +14,7 @@ const LinkButton = Button as React.FC<ButtonProps & LinkProps>;
 const LinkFlex = Flex as React.FC<FlexProps & LinkProps>;
 
 export const TestList = ({ userId }: { userId: string }) => {
+  const { userId: authenticatedUserId, hasPermission } = useAuthentication();
   const { loading: loadingTests, tests } = useTests(userId);
   const { permittedTestTypes, loading: loadingTestTypes } = useTestTypes();
   const { formatDate } = useI18n();
@@ -20,6 +22,10 @@ export const TestList = ({ userId }: { userId: string }) => {
   if (loadingTests || loadingTestTypes) {
     return <Spinner mx="auto" mt={6} sx={{ display: 'block' }} />;
   }
+
+  const isOwnUser = userId === authenticatedUserId;
+  const showAddTestResultButton =
+    permittedTestTypes.length > 0 && (!isOwnUser || hasPermission('ADD_TAKE_HOME_TEST_RESULT'));
 
   return (
     <>
@@ -58,11 +64,12 @@ export const TestList = ({ userId }: { userId: string }) => {
           })}
         </Box>
       )}
-      {permittedTestTypes.length ? (
+
+      {showAddTestResultButton && (
         <LinkButton as={Link} to={`/users/${userId}/add-test`} variant="block" mt={4}>
           <PlusIcon mr={1} /> <Message>testList.button</Message>
         </LinkButton>
-      ) : null}
+      )}
     </>
   );
 };

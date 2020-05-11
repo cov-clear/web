@@ -66,7 +66,8 @@ describe('Identity page', () => {
       userId: 'mock-user',
       authenticate: jest.fn(),
       signOut,
-      hasPermission: (key: string) => key === 'mock-permission',
+      hasPermission: (key: string) =>
+        key === 'mock-permission' || key === 'ADD_TAKE_HOME_TEST_RESULT',
     }));
     fetchTestsMock.mockImplementation(() => Promise.resolve([]));
     fetchTestTypesMock.mockImplementation(() => Promise.resolve([aNonPermittedTestType()]));
