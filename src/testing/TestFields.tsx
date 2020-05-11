@@ -21,6 +21,10 @@ export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
       {Object.entries(testType.resultsSchema.properties).map(([key, value]) => {
         const isKeyRequired = testType.resultsSchema.required?.includes(key);
 
+        if (value.const) {
+          return null;
+        }
+
         if (value.oneOf) {
           return (
             <Box key={key}>
@@ -139,7 +143,11 @@ function validationSchema({ type, oneOf }: FieldSchema, required: boolean) {
   return validation;
 }
 
-function initialPropertyValue({ type, oneOf }: FieldSchema) {
+function initialPropertyValue({ type, oneOf, const: constValue }: FieldSchema) {
+  if (constValue) {
+    return constValue;
+  }
+
   if (oneOf) {
     return null;
   }
