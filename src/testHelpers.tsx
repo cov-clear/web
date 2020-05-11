@@ -71,6 +71,10 @@ export function antibodyTestType(): TestType {
           type: 'boolean',
           description: 'Indicator if sample shows IgM positive',
         },
+        msa: {
+          title: 'MSA',
+          const: '123456',
+        },
       },
     },
     neededPermissionToAddResults: 'CREATE_TESTS_WITHOUT_ACCESS_PASS',

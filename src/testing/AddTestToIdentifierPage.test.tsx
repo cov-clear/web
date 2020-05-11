@@ -114,6 +114,7 @@ describe(AddTestToIdentifierPage, () => {
             c: true,
             igg: false,
             igm: true,
+            msa: antibodyTestType().resultsSchema.properties.msa.const,
           },
           notes: 'Some notes',
         },
