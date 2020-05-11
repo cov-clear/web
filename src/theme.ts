@@ -135,6 +135,9 @@ const theme = {
     textarea: {
       borderColor: 'gray',
     },
+    select: {
+      borderColor: 'gray',
+    },
     label: {
       color: '#262626',
     },

@@ -107,26 +107,24 @@ export const AddTestToIdentifierPage: FC = () => {
           {fieldError('identifier')}
         </Box>
 
-        {permittedTestTypes.length > 1 && (
-          <>
-            <Label htmlFor="test-type">
-              <Message>addTestPage.testType.label</Message>
-            </Label>
-            <Select
-              id="test-type"
-              value={selectedTestTypeId}
-              onChange={(event) => setSelectedTestTypeId(event.target.value)}
-              required
-              mb={4}
-            >
-              {permittedTestTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </Select>
-          </>
-        )}
+        <Box>
+          <Label htmlFor="test-type">
+            <Message>addTestPage.testType.label</Message> *
+          </Label>
+
+          <Select
+            id="test-type"
+            value={selectedTestTypeId}
+            onChange={(event) => setSelectedTestTypeId(event.target.value)}
+            required
+          >
+            {permittedTestTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
+            ))}
+          </Select>
+        </Box>
 
         {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
