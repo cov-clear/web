@@ -85,7 +85,7 @@ export const AddTestToIdentifierPage: FC = () => {
   });
 
   const fieldError = (key: keyof FormFields) =>
-    form.submitCount > 0 && form.errors[key] ? (
+    (form.submitCount > 0 || form.touched[key]) && form.errors[key] ? (
       <Text variant="validation">{form.errors[key]}</Text>
     ) : null;
 

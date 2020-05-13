@@ -13,7 +13,7 @@ interface TestFieldsProps {
 
 export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
   const fieldError = (key: keyof TestType['resultsSchema']['properties']) =>
-    form.submitCount > 0 && form.errors[key] ? (
+    (form.submitCount > 0 || form.touched[key]) && form.errors[key] ? (
       <Text variant="validation">
         <Message>testFields.error.generic</Message>
       </Text>

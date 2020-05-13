@@ -46,7 +46,7 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
   });
 
   const fieldError = (key: keyof ProfileFormFields) =>
-    form.submitCount > 0 && form.errors[key] ? (
+    (form.submitCount > 0 || form.touched[key]) && form.errors[key] ? (
       <Text variant="validation">{form.errors[key]}</Text>
     ) : null;
 
