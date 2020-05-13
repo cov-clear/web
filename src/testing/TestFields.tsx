@@ -13,7 +13,11 @@ interface TestFieldsProps {
 
 export const TestFields: FC<TestFieldsProps> = ({ form, testType }) => {
   const fieldError = (key: keyof TestType['resultsSchema']['properties']) =>
-    form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
+    form.submitCount > 0 && form.errors[key] ? (
+      <Text variant="validation">
+        <Message>testFields.error.generic</Message>
+      </Text>
+    ) : null;
 
   // TODO: Extract generic JSON schema generator
   return (

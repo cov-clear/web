@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock, { Scope } from 'nock';
 
@@ -25,35 +25,23 @@ describe(AddTestToIdentifierPage, () => {
     expect(identifierInput()).toHaveFocus();
   });
 
-  it('only allows submitting the form once the identifier is valid and required test fields are filled, showing validation errors', async () => {
-    mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
-    renderWrapped(<AddTestToIdentifierPage />);
-
-    const positiveOption = await screen.findByRole('radio', { name: 'Positive' });
-
-    userEvent.type(identifierInput(), '79210030814'); // invalid id code
-    submit();
-    await screen.findByText(/check the identification code/i); // validation error
-
-    userEvent.type(identifierInput(), '39210030814'); // valid id code
-    await waitForElementToBeRemoved(screen.queryByText(/check the identification code/i)); // no validation error
-
-    await userEvent.type(notesInput(), 'Some notes');
-    expect(submitButton()).toBeDisabled(); // as a radio option has not been selected
-
-    userEvent.click(positiveOption);
-    await waitFor(() => expect(submitButton()).not.toBeDisabled());
-  });
-
-  it('creates a user and and adds a PCR test for that user', async () => {
+  it('creates a user and adds a PCR test for that user only when identifier is valid and required test fields are filled', async () => {
     mockHttp().get('/api/v1/test-types').reply(200, [aTestType()]);
     renderWrapped(<AddTestToIdentifierPage />);
 
     const negativeOption = await screen.findByRole('radio', { name: 'Negative' });
     const positiveOption = screen.getByRole('radio', { name: 'Positive' });
 
-    userEvent.type(identifierInput(), '39210030814');
+    userEvent.type(identifierInput(), '79210030814'); // invalid id code
+    submit();
+    await screen.findByText(/check the identification code/i); // validation error
+
+    userEvent.type(identifierInput(), '39210030814'); // valid id code
+    submit();
+    await waitForElementToBeRemoved(screen.queryByText(/check the identification code/i)); // no validation error
+
     await userEvent.type(notesInput(), 'Some notes');
+
     userEvent.click(negativeOption);
     userEvent.click(positiveOption); // to confirm the latest value is sent
 

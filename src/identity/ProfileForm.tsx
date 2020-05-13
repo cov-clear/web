@@ -46,7 +46,9 @@ export const ProfileForm = ({ onComplete }: { onComplete: (profile: Profile) => 
   });
 
   const fieldError = (key: keyof ProfileFormFields) =>
-    form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
+    form.submitCount > 0 && form.errors[key] ? (
+      <Text variant="validation">{form.errors[key]}</Text>
+    ) : null;
 
   return (
     <AnyBox as="form" sx={{ display: 'grid', gridGap: 4 }} onSubmit={form.handleSubmit}>

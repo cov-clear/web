@@ -18,6 +18,8 @@ const theme = {
   colors: {
     ...baseTheme.colors,
     primary: '#096DD9',
+    success: '#52c41a', // Primary green from https://ant.design/docs/spec/colors
+    error: '#f5222d', // Primary red from https://ant.design/docs/spec/colors
   },
   sizes: {
     pageWidth: '600px',
@@ -102,10 +104,10 @@ const theme = {
       paddingRight: 4,
     },
     success: {
-      background: '#52c41a', // Primary green from https://ant.design/docs/spec/colors
+      backgroundColor: 'success',
     },
     error: {
-      background: '#f5222d', // Primary red from https://ant.design/docs/spec/colors
+      backgroundColor: 'error',
     },
   },
   badges: {
@@ -146,6 +148,12 @@ const theme = {
     ...baseTheme.styles,
     hr: {
       borderBottom: '1px solid #DEDEDE',
+    },
+  },
+  text: {
+    validation: {
+      color: 'error',
+      fontSize: 1,
     },
   },
 };

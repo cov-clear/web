@@ -99,5 +99,6 @@
   "addTestToIdentifierPage.form.identifier.invalid.magicLink": "Palun kontrolli meiliaadressi",
   "addTestToIdentifierPage.form.identifier.invalid.estonianId": "Palun kontrolli isikukoodi",
   "addTestToIdentifierPage.button": "Lisa testitulemus",
-  "addTestToIdentifierPage.success": "Testitulemus isikule {{ identifier }} lisatud."
+  "addTestToIdentifierPage.success": "Testitulemus isikule {{ identifier }} lisatud.",
+  "testFields.error.generic": "Palun kontrolli sisestatud väärtust"
 }

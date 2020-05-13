@@ -99,5 +99,6 @@
   "addTestToIdentifierPage.form.identifier.invalid.magicLink": "Please check the email address",
   "addTestToIdentifierPage.form.identifier.invalid.estonianId": "Please check the identification code",
   "addTestToIdentifierPage.button": "Add test result",
-  "addTestToIdentifierPage.success": "Test result for {{ identifier }} added."
+  "addTestToIdentifierPage.success": "Test result for {{ identifier }} added.",
+  "testFields.error.generic": "Please check the input"
 }
