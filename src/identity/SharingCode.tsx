@@ -17,7 +17,7 @@ export const SharingCode = ({ userId }: { userId: string }) => {
     return <Spinner sx={{ display: 'block' }} mx="auto" />;
   }
 
-  return <QRCode value={sharingCode!.code} />;
+  return <QRCode value={buildSharingUrl(sharingCode!.code)} />;
 };
 
 const QRCode = ({ value }: { value: string }) => {
@@ -50,3 +50,7 @@ const QRCode = ({ value }: { value: string }) => {
     </Measure>
   );
 };
+
+function buildSharingUrl(sharingCode: string): string {
+  return `${window.location.origin}/scan/${sharingCode}`;
+}
