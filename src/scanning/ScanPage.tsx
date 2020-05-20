@@ -6,7 +6,7 @@ import { createAccessPass } from '../api';
 import { useAuthentication } from '../authentication';
 import { useTranslations, Message } from 'retranslate';
 
-const uuidValidationRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { UUID_VALIDATION_REGEX } from './UUID_VALIDATION_REGEX';
 
 const errorClearTimeout = 5000;
 
@@ -19,13 +19,13 @@ export const ScanPage = () => {
   const [loading, setLoading] = useState(false);
   const [legacyMode, setLegacyMode] = useState(false);
 
-  async function handleScan(data: string | null) {
-    if (data && userId && token && !loading) {
-      // TODO: embed a piece of info before uuid (cov-user?) to make sure it's our uuid
-      if (data.match(uuidValidationRegex)) {
+  async function handleScan(url: string | null) {
+    if (url && userId && token && !loading) {
+      const code = parseSharingCodeFromUrl(url);
+      if (code && code.match(UUID_VALIDATION_REGEX)) {
         setLoading(true);
         try {
-          const accessPass = await createAccessPass(userId, data, { token });
+          const accessPass = await createAccessPass(userId, code, { token });
           history.push(`/users/${accessPass.userId}`);
         } catch (e) {
           setError(translate('scanPage.error.incorrectCode'));
@@ -92,3 +92,11 @@ export const ScanPage = () => {
     </>
   );
 };
+
+function parseSharingCodeFromUrl(data: string): string | null {
+  try {
+    return new URL(data).searchParams.get('sharingCode');
+  } catch (error) {
+    return null;
+  }
+}
