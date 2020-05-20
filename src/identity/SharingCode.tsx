@@ -52,5 +52,5 @@ const QRCode = ({ value }: { value: string }) => {
 };
 
 function buildSharingUrl(sharingCode: string): string {
-  return `${window.location.origin}/scan?sharingCode=${encodeURIComponent(sharingCode)}`;
+  return `${window.location.origin}/scan-callback?sharingCode=${encodeURIComponent(sharingCode)}`;
 }

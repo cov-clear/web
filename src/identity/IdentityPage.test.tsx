@@ -109,7 +109,9 @@ describe('Identity page', () => {
     it('loads and shows their sharing code in a qr code', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
       expect(
-        screen.queryByText(/Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i)
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
       ).toBeInTheDocument();
     });
 
@@ -124,7 +126,9 @@ describe('Identity page', () => {
       );
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeInTheDocument());
       expect(
-        screen.queryByText(/Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i)
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
       ).toBeInTheDocument();
       createSharingCodeForUserIdMock.mockImplementation(async () => {
         return { code: 'mock-sharing-code-2', expiryTime: secondsFromNow(90).toISOString() };
@@ -138,7 +142,7 @@ describe('Identity page', () => {
       expect(createSharingCodeForUserIdMock).toHaveBeenCalledTimes(2);
       expect(
         screen.queryByText(
-          /Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code-2/i
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code-2/i
         )
       ).toBeInTheDocument();
       await act(async () => {
@@ -153,7 +157,7 @@ describe('Identity page', () => {
       await waitFor(() =>
         expect(
           screen.queryByText(
-            /Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
           )
         ).toBeTruthy()
       );
@@ -163,13 +167,15 @@ describe('Identity page', () => {
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
       expect(
-        screen.queryByText(/Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i)
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
       ).toBeFalsy();
       fireEvent.click(getShareAccessLink());
       await waitFor(() =>
         expect(
           screen.queryByText(
-            /Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
           )
         ).toBeTruthy()
       );
@@ -214,7 +220,7 @@ describe('Identity page', () => {
       await waitFor(() =>
         expect(
           screen.queryByText(
-            /Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
           )
         ).toBeTruthy()
       );
@@ -223,13 +229,15 @@ describe('Identity page', () => {
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
       expect(
-        screen.queryByText(/Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i)
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
       ).toBeFalsy();
       history.goBack();
       await waitFor(() =>
         expect(
           screen.queryByText(
-            /Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
           )
         ).toBeTruthy()
       );
@@ -239,7 +247,9 @@ describe('Identity page', () => {
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
       expect(
-        screen.queryByText(/Mock QRCode: http:\/\/localhost\/scan\?sharingCode=mock-sharing-code/i)
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
       ).toBeFalsy();
     });
 
