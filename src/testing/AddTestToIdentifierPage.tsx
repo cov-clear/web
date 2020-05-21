@@ -85,7 +85,9 @@ export const AddTestToIdentifierPage: FC = () => {
   });
 
   const fieldError = (key: keyof FormFields) =>
-    form.touched[key] && form.errors[key] ? <Text>{form.errors[key]}</Text> : null;
+    (form.submitCount > 0 || form.touched[key]) && form.errors[key] ? (
+      <Text variant="validation">{form.errors[key]}</Text>
+    ) : null;
 
   return (
     <>
@@ -128,7 +130,7 @@ export const AddTestToIdentifierPage: FC = () => {
 
         {selectedTestType && <TestFields form={form} testType={selectedTestType} />}
 
-        <Button variant="block" type="submit" disabled={!form.isValid || creating}>
+        <Button variant="block" type="submit" disabled={creating}>
           <Message>addTestToIdentifierPage.button</Message>
         </Button>
       </AnyBox>
