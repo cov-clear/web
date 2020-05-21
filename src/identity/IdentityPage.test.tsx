@@ -108,7 +108,11 @@ describe('Identity page', () => {
 
     it('loads and shows their sharing code in a qr code', async () => {
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeTruthy());
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
+      ).toBeInTheDocument();
     });
 
     it('automatically refreshes the sharing code when it is about to expire', async () => {
@@ -121,7 +125,11 @@ describe('Identity page', () => {
         </Router>
       );
       await waitFor(() => expect(screen.queryByText(/first middle last/i)).toBeInTheDocument());
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
+      ).toBeInTheDocument();
       createSharingCodeForUserIdMock.mockImplementation(async () => {
         return { code: 'mock-sharing-code-2', expiryTime: secondsFromNow(90).toISOString() };
       });
@@ -132,7 +140,11 @@ describe('Identity page', () => {
         await nextTick();
       });
       expect(createSharingCodeForUserIdMock).toHaveBeenCalledTimes(2);
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code-2/i)).toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code-2/i
+        )
+      ).toBeInTheDocument();
       await act(async () => {
         MockDate.set(secondsFromNow(10));
         jest.advanceTimersToNextTimer();
@@ -143,17 +155,29 @@ describe('Identity page', () => {
 
     it('lets you switch to the tests tab', async () => {
       await waitFor(() =>
-        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+        expect(
+          screen.queryByText(
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+          )
+        ).toBeTruthy()
       );
       expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
       fireEvent.click(getTestResultsLink());
       await waitFor(() =>
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
+      ).toBeFalsy();
       fireEvent.click(getShareAccessLink());
       await waitFor(() =>
-        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+        expect(
+          screen.queryByText(
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+          )
+        ).toBeTruthy()
       );
       expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
     });
@@ -194,23 +218,39 @@ describe('Identity page', () => {
 
     it('lets you navigate with browser history', async () => {
       await waitFor(() =>
-        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+        expect(
+          screen.queryByText(
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+          )
+        ).toBeTruthy()
       );
       fireEvent.click(getTestResultsLink());
       await waitFor(() =>
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
+      ).toBeFalsy();
       history.goBack();
       await waitFor(() =>
-        expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeTruthy()
+        expect(
+          screen.queryByText(
+            /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+          )
+        ).toBeTruthy()
       );
       expect(screen.queryByText(/test results will appear here/i)).toBeFalsy();
       history.goForward();
       await waitFor(() =>
         expect(screen.queryByText(/test results will appear here/i)).toBeTruthy()
       );
-      expect(screen.queryByText(/Mock QRCode: mock-sharing-code/i)).toBeFalsy();
+      expect(
+        screen.queryByText(
+          /Mock QRCode: http:\/\/localhost\/scan-callback\?sharingCode=mock-sharing-code/i
+        )
+      ).toBeFalsy();
     });
 
     it('lets you go to the scan page', async () => {

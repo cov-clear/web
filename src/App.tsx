@@ -17,6 +17,7 @@ import { NotFoundPage } from './staticPages';
 
 import { IdentityPage } from './identity';
 import { AddTestPage, TestDetailPage, AddTestToIdentifierPage } from './testing';
+import { ScanCallbackPage } from './scanning';
 import { BulkUserCreationPage } from './admin';
 import { useConfig } from './common';
 import { Language } from './api';
@@ -121,6 +122,9 @@ const App = () => {
                   </AuthenticatedRoute>
                   <AuthenticatedRoute path="/scan" exact>
                     <ScanPage />
+                  </AuthenticatedRoute>
+                  <AuthenticatedRoute path="/scan-callback" exact>
+                    <ScanCallbackPage />
                   </AuthenticatedRoute>
                   <AuthenticatedRoute
                     path="/add-test"
