@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import QRReader from 'react-qr-reader';
 import { createMemoryHistory, History } from 'history';
 
@@ -21,7 +21,7 @@ const mockToken = 'mock-token';
 const mockUser = 'mock-user';
 const mockSharingCode = 'dca03948-51d0-4501-aabb-39bd08a0e60e';
 
-describe('Identity page', () => {
+describe('Scan page', () => {
   let history: History;
   let mockScan: (data: string | null) => any;
   let mockScanError: (error: Error) => any;
@@ -65,20 +65,20 @@ describe('Identity page', () => {
       .matchHeader('Authorization', `Bearer ${mockToken}`)
       .reply(200, { userId: 'mock-patient-id', expiryTime: new Date().toISOString() });
     expect(history.location.pathname).not.toBe('/users/mock-user');
-    await mockScan(mockSharingCode);
+    await mockScan(`https://example.com?sharingCode=${mockSharingCode}`);
     expect(history.location.pathname).toBe('/users/mock-patient-id');
   });
 
   it('does not try to create access passes for invalid sharing codes', async () => {
     const scope = nock(/./).post('/api/v1/users/mock-user/access-passes').reply(500);
-    await mockScan('wrong-data');
+    await mockScan('https://example.com?sharingCode=wrong-data');
     await mockScan(null);
     expect(scope.isDone()).toBe(false);
   });
 
   it('shows errors for incorrect codes', async () => {
     expect(screen.queryByText(/incorrect/i)).not.toBeTruthy();
-    await mockScan('wrong-data');
+    await mockScan('https://example.com?sharingCode=wrong-data');
     expect(screen.queryByText(/incorrect/i)).toBeTruthy();
   });
 
@@ -88,12 +88,12 @@ describe('Identity page', () => {
       .matchHeader('Authorization', `Bearer ${mockToken}`)
       .reply(400);
     expect(screen.queryByText(/incorrect/i)).not.toBeTruthy();
-    await mockScan(mockSharingCode);
+    await mockScan(`https://example.com?sharingCode=${mockSharingCode}`);
     expect(screen.queryByText(/incorrect/i)).toBeTruthy();
   });
 
   it('clears errors after a time', async () => {
-    await mockScan('wrong-data');
+    await mockScan('https://example.com?sharingCode=wrong-data');
     expect(screen.queryByText(/incorrect/i)).toBeTruthy();
     act(() => {
       jest.advanceTimersByTime(10000);
