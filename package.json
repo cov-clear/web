@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@theme-ui/presets": "^0.3.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.11.1",
     "formik": "^2.1.4",
     "isikukood": "^1.2.3",
